@@ -3,6 +3,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+Backbone.LocalStorage = require('backbone.localstorage');
 
 var Item = Backbone.Model.extend({
     defaults: {
@@ -11,7 +12,8 @@ var Item = Backbone.Model.extend({
 });
 
 var List = Backbone.Collection.extend({
-    model: Item
+    model: Item,
+    localStorage: new Backbone.LocalStorage('TaskList'),
 });
 
 var ItemView = Backbone.View.extend({
@@ -45,12 +47,14 @@ var ItemView = Backbone.View.extend({
         this.model.get('completed') ?
         this.model.set({'completed': false}) :
         this.model.set({'completed': true});
+        this.model.save(); // save completed attribute
         this.$el.toggleClass('text-muted completed');
     },
 
     render: function () {
         this.$el.html(this.template(this.model.attributes));
         this.delegateEvents(); // because of list re-renders
+        if (this.model.get('completed')) this.$el.addClass('text-muted completed');
         return this;
     }
 
@@ -110,7 +114,7 @@ var InputView = Backbone.View.extend({
             var input = this.$('input'),
             value = input.val().trim();
             if (value != '') {
-                this.collection.push({data: value});
+                this.collection.create({data: value});
                 input.val('');
             }
         }
@@ -158,6 +162,7 @@ var AppView = Backbone.View.extend({
         this.$('#task-input').html(new InputView({collection: list}).render().$el);
         this.$('#task-list').html(new ListView({collection: list}).render().$el);
         this.$('#task-info').html(new InfoView({collection: list}).render().$el);
+        list.fetch(); // fetch from local storage after view is rendered
         return this;
     }
 });

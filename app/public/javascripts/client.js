@@ -4,6 +4,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+Backbone.LocalStorage = require('backbone.localstorage');
 
 var Item = Backbone.Model.extend({
     defaults: {
@@ -12,7 +13,8 @@ var Item = Backbone.Model.extend({
 });
 
 var List = Backbone.Collection.extend({
-    model: Item
+    model: Item,
+    localStorage: new Backbone.LocalStorage('TaskList'),
 });
 
 var ItemView = Backbone.View.extend({
@@ -46,12 +48,14 @@ var ItemView = Backbone.View.extend({
         this.model.get('completed') ?
         this.model.set({'completed': false}) :
         this.model.set({'completed': true});
+        this.model.save(); // save completed attribute
         this.$el.toggleClass('text-muted completed');
     },
 
     render: function () {
         this.$el.html(this.template(this.model.attributes));
         this.delegateEvents(); // because of list re-renders
+        if (this.model.get('completed')) this.$el.addClass('text-muted completed');
         return this;
     }
 
@@ -111,7 +115,7 @@ var InputView = Backbone.View.extend({
             var input = this.$('input'),
             value = input.val().trim();
             if (value != '') {
-                this.collection.push({data: value});
+                this.collection.create({data: value});
                 input.val('');
             }
         }
@@ -159,6 +163,7 @@ var AppView = Backbone.View.extend({
         this.$('#task-input').html(new InputView({collection: list}).render().$el);
         this.$('#task-list').html(new ListView({collection: list}).render().$el);
         this.$('#task-info').html(new InfoView({collection: list}).render().$el);
+        list.fetch(); // fetch from local storage after view is rendered
         return this;
     }
 });
@@ -167,7 +172,7 @@ $(function () {
     new AppView().render();
 });
 
-},{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"../templates/ListView.html":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+},{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"../templates/ListView.html":6,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
 module.exports = "<style>\n\tbody {\n\t\tfont-weight: 300;\n\t\tbackground-color:#F9F9F9;\n\t}\n\t#task-input::-webkit-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input::-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input:-ms-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\tinput:-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input div.well {\n\t\tpadding: 2px;\n\t}\n\t#task-input input {\n\t\tborder-radius: 4px;\n\t}\n\t#task-list ul {\n\t}\n\t#task-list li {\n\t\tcursor: pointer;\n\t}\n\t#task-list li.completed {\n\t\ttext-decoration: line-through;\n\t}\n\t#task-list li #destroy {\n\t\tdisplay: none;\n\t}\n\t#task-list li:hover #destroy {\n\t\tdisplay: block;\n\t}\n</style>\n<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n\t\t\t<div id=\"task-input\"></div>\n\t\t\t<div id=\"task-list\"></div>\n\t\t\t<div id=\"task-info\"></div>\n\t\t</div>\n\t</div>\n</div>";
 
 },{}],3:[function(require,module,exports){
