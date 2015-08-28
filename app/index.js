@@ -4,12 +4,17 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var glob = require('glob');
 var app = express();
 
-// TODO: dynamically load routes
-require('./routes/index')(app);
-require('./routes/meta')(app);
+/**
+ * Load all routes synchronously.
+ */
+
+var routes = glob.sync('./routes/*.js', {cwd: path.join(process.cwd(), '/app')});
+routes.forEach(function (route) {
+  require(route)(app);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'public'));
