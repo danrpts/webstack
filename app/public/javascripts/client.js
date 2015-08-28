@@ -6,173 +6,169 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var Item = Backbone.Model.extend({
-	defaults: {
-		'completed': false
-	}
+    defaults: {
+        'completed': false
+    }
 });
 
 var List = Backbone.Collection.extend({
-	model: Item
+    model: Item
 });
 
 var ItemView = Backbone.View.extend({
-		
-	tagName: 'li',
-	
-	className: 'list-group-item',
-	
-	events: {
-		'click #destroy': '_destroy',
-		'click': '_click'
-	},
-	
-	template: _.template(require('../templates/ItemView.html')),
-	
-	initialize: function () {
-		// re-renders can cause problems with with unsaved state like checkboxes
-		// this.listenTo(this.model, 'change', this.render);
-		this.listenTo(this.model, 'destroy', this.remove);
-	},
-	
-	_destroy: function (e) {
-		e.stopImmediatePropagation(); // so we do not call _click
-		var that = this;
-		this.$el.fadeOut('fast', function () {
-			that.model.destroy();
-		});
-	},
 
-	_click: function () {
-		this.model.get('completed') ?
-		this.model.set({'completed': false}) :
-		this.model.set({'completed': true});
-		this.$el.toggleClass('text-muted completed');
-	},
+    tagName: 'li',
 
-	render: function () {
-		this.$el.html(this.template(this.model.attributes));
-		this.delegateEvents(); // because of list re-renders
-		return this;
-	}
+    className: 'list-group-item',
+
+    events: {
+        'click #destroy': '_destroy',
+        'click': '_click'
+    },
+
+    template: _.template(require('../templates/ItemView.html')),
+
+    initialize: function () {
+        // re-renders can cause problems with with unsaved state like checkboxes
+        // this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'destroy', this.remove);
+    },
+
+    _destroy: function (e) {
+        e.stopImmediatePropagation(); // so we do not call _click
+        var that = this;
+        this.$el.fadeOut('fast', function () {
+            that.model.destroy();
+        });
+    },
+
+    _click: function () {
+        this.model.get('completed') ?
+        this.model.set({'completed': false}) :
+        this.model.set({'completed': true});
+        this.$el.toggleClass('text-muted completed');
+    },
+
+    render: function () {
+        this.$el.html(this.template(this.model.attributes));
+        this.delegateEvents(); // because of list re-renders
+        return this;
+    }
 
 });
 
 var ListView = Backbone.View.extend({
-	
-	tagName: 'div',
 
-	_childViews: [], // view management
+    tagName: 'div',
 
-	template: _.template(require('../templates/ListView.html')),
+    _childViews: [], // simple view management
 
-	initialize: function () {
-		this.listenTo(this.collection, 'add', this._add);
-		this.listenTo(this.collection, 'remove', this._remove);
-	},
+    template: _.template(require('../templates/ListView.html')),
 
-	_add: function (task) {
-		var view = new ItemView({model: task});
-		this._childViews.push(view);
-		this.render();
-		view.$el.hide().fadeIn('fast');
-	},
+    initialize: function () {
+        this.listenTo(this.collection, 'add', this._add);
+        this.listenTo(this.collection, 'remove', this._remove);
+    },
 
-	_remove: function (task) {
-		var index = _.findIndex(this._childViews, function (found) {
-			return found.model.cid === task.cid;
-		});
-		this._childViews.splice(index, 1);
-	},
+    _add: function (task) {
+        var view = new ItemView({model: task});
+        this._childViews.push(view);
+        this.render();
+        view.$el.hide().fadeIn('fast');
+    },
 
-	render: function () {
-		var that = this;
-		this.$el.html(this.template());
-		_.each(this._childViews, function (view) {
-			that.$('ul').append(view.render().$el);
-		});
-		return this;
-	}
+    _remove: function (task) {
+        var index = _.findIndex(this._childViews, function (found) {
+            return found.model.cid === task.cid;
+        });
+        this._childViews.splice(index, 1);
+    },
 
+    render: function () {
+        var that = this;
+        this.$el.html(this.template());
+        _.each(this._childViews, function (view) {
+            that.$('ul').append(view.render().$el);
+        });
+        return this;
+    }
 });
 
 var InputView = Backbone.View.extend({
 
-	tagName: 'div',
+    tagName: 'div',
 
-	className: 'form-group',
+    className: 'form-group',
 
-	events: {
-		'keydown': '_keydown'
-	},
+    events: {
+        'keydown': '_keydown'
+    },
 
-	template: _.template(require('../templates/InputView.html')),
+    template: _.template(require('../templates/InputView.html')),
 
-	_keydown: function (e) {
-		if (e.which === 13) {
-			var input = this.$('input'),
-				value = input.val().trim();
-			if (value != '') {
-				this.collection.push({data: value});
-				input.val('');
-			}
-		}
-	},
+    _keydown: function (e) {
+        if (e.which === 13) {
+            var input = this.$('input'),
+            value = input.val().trim();
+            if (value != '') {
+                this.collection.push({data: value});
+                input.val('');
+            }
+        }
+    },
 
-	render: function () {
-		this.$el.html(this.template());
-		return this;
-	}
-
+    render: function () {
+        this.$el.html(this.template());
+        return this;
+    }
 });
 
 var InfoView = Backbone.View.extend({
 
-	tagName: 'p',
+    tagName: 'p',
 
-	className: 'text-center text-muted',
+    className: 'text-center text-muted',
 
-	template: _.template(require('../templates/InfoView.html')),
+    template: _.template(require('../templates/InfoView.html')),
 
-	initialize: function () {
-		this.listenTo(this.collection, 'change update', this.render);
-	},
+    initialize: function () {
+        this.listenTo(this.collection, 'change update', this.render);
+    },
 
-	render: function () {
-		this.$el.html(this.template({
-			'completed': this.collection.where({'completed': true}).length,
-			'total': this.collection.size()
-		}));
-		this.collection.isEmpty() ?
-		this.$el.hide() :
-		this.$el.show(); 
-		return this;
-	}
-
+    render: function () {
+        this.$el.html(this.template({
+            'completed': this.collection.where({'completed': true}).length,
+            'total': this.collection.size()
+        }));
+        this.collection.isEmpty() ?
+        this.$el.hide() :
+        this.$el.show(); 
+        return this;
+    }
 });
 
 var AppView = Backbone.View.extend({
-	
-	el: 'body',
 
-	template: _.template(require('../templates/AppView.html')),
+    el: 'body',
 
-	render: function () {
-		this.$el.html(this.template());
-		var list = new List();
-		this.$('#task-input').html(new InputView({collection: list}).render().$el);
-		this.$('#task-list').html(new ListView({collection: list}).render().$el);
-		this.$('#task-info').html(new InfoView({collection: list}).render().$el);
-		return this;
-	}
+    template: _.template(require('../templates/AppView.html')),
 
+    render: function () {
+        this.$el.html(this.template());
+        var list = new List(); // shared resource
+        this.$('#task-input').html(new InputView({collection: list}).render().$el);
+        this.$('#task-list').html(new ListView({collection: list}).render().$el);
+        this.$('#task-info').html(new InfoView({collection: list}).render().$el);
+        return this;
+    }
 });
 
 $(function () {
-	new AppView().render();
+    new AppView().render();
 });
 
 },{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"../templates/ListView.html":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
-module.exports = "<style>\r\n\tbody {\r\n\t\tfont-weight: 300;\r\n\t\tbackground-color:#F9F9F9;\r\n\t}\r\n\t#task-input::-webkit-input-placeholder {\r\n\t\tfont-weight: 300;\r\n\t}\r\n\t#task-input::-moz-placeholder {\r\n\t\tfont-weight: 300;\r\n\t}\r\n\t#task-input:-ms-input-placeholder {\r\n\t\tfont-weight: 300;\r\n\t}\r\n\tinput:-moz-placeholder {\r\n\t\tfont-weight: 300;\r\n\t}\r\n\t#task-input div.well {\r\n\t\tpadding: 2px;\r\n\t}\r\n\t#task-input input {\r\n\t\tborder-radius: 4px;\r\n\t}\r\n\t#task-list ul {\r\n\t}\r\n\t#task-list li {\r\n\t\tcursor: pointer;\r\n\t}\r\n\t#task-list li.completed {\r\n\t\ttext-decoration: line-through;\r\n\t}\r\n\t#task-list li #destroy {\r\n\t\tdisplay: none;\r\n\t}\r\n\t#task-list li:hover #destroy {\r\n\t\tdisplay: block;\r\n\t}\r\n</style>\r\n<div class=\"container\" style=\"padding-top: 10%\">\r\n\t<div class=\"row\">\r\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\r\n\t\t\t<div id=\"task-input\"></div>\r\n\t\t\t<div id=\"task-list\"></div>\r\n\t\t\t<div id=\"task-info\"></div>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+module.exports = "<style>\n\tbody {\n\t\tfont-weight: 300;\n\t\tbackground-color:#F9F9F9;\n\t}\n\t#task-input::-webkit-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input::-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input:-ms-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\tinput:-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input div.well {\n\t\tpadding: 2px;\n\t}\n\t#task-input input {\n\t\tborder-radius: 4px;\n\t}\n\t#task-list ul {\n\t}\n\t#task-list li {\n\t\tcursor: pointer;\n\t}\n\t#task-list li.completed {\n\t\ttext-decoration: line-through;\n\t}\n\t#task-list li #destroy {\n\t\tdisplay: none;\n\t}\n\t#task-list li:hover #destroy {\n\t\tdisplay: block;\n\t}\n</style>\n<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n\t\t\t<div id=\"task-input\"></div>\n\t\t\t<div id=\"task-list\"></div>\n\t\t\t<div id=\"task-info\"></div>\n\t\t</div>\n\t</div>\n</div>";
 
 },{}],3:[function(require,module,exports){
 module.exports = "<%= completed %> of <%= total%> tasks completed";
@@ -181,7 +177,7 @@ module.exports = "<%= completed %> of <%= total%> tasks completed";
 module.exports = "<div class=\"form-group\">\n\t<div class=\"well\">\n\t\t<input type=\"text\" class=\"form-control input-lg\" placeholder=\"What needs to be done?\" maxlength=\"35\">\n\t</div>\n</div>";
 
 },{}],5:[function(require,module,exports){
-module.exports = "<form class=\"form-inline\">\r\n\t<span>\r\n\t\t<%= data %>\r\n\t</span>\r\n\t<button id=\"destroy\" type=\"button\" class=\"close\">\r\n\t\t<span aria-hidden=\"true\">&times;</span>\r\n\t</button>\r\n</form>";
+module.exports = "<form class=\"form-inline\">\n\t<span>\n\t\t<%= data %>\n\t</span>\n\t<button id=\"destroy\" type=\"button\" class=\"close\">\n\t\t<span aria-hidden=\"true\">&times;</span>\n\t</button>\n</form>";
 
 },{}],6:[function(require,module,exports){
 module.exports = "<ul class=\"list-group\"></ul>";
