@@ -33,6 +33,10 @@ module.exports = function (plugins, config) {
     // setup gulp pipeline
     function rebundler () {
       return watcher.bundle()
+        .on('error', function (err) {
+          plugins.util.log(plugins.util.colors.red(err.toString()));
+          this.emit('end');
+        })
         .pipe(source('client.js'))
         //.pipe(buffer())
         //.pipe(plugins.uglify())
