@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "author": {
+    "name": "Daniel Peterson",
+    "email": "danrpts@gmail.com"
+  },
   "dependencies": {
     "backbone": "^1.2.2",
     "backbone.babysitter": "^0.1.9",
