@@ -9,7 +9,7 @@ var argv = require('minimist')(process.argv.slice(2));
  
 var config = {
   entry: './app/src/javascripts/index.js',
-  libs: 'jquery underscore backbone backbone.radio backbone.babysitter backbone.marionette'.split(' '),
+  libs: 'jquery underscore backbone backbone.localstorage'.split(' '),
   templates: '.html .ejs .tpl .tmpl'.split(' '), // stringify has open issue for glob support
   fonts: '*.{eot,svg,ttf,woff,woff2}',
   styles: '*.{css,}', // notice the comma
