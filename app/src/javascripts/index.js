@@ -62,11 +62,11 @@ var ItemView = Backbone.View.extend({
 
 var ListView = Backbone.View.extend({
 
-    tagName: 'div',
+    tagName: 'ul',
+
+    className: 'list-group',
 
     _childViews: [], // simple view management
-
-    template: _.template(require('../templates/ListView.html')),
 
     initialize: function () {
         this.listenTo(this.collection, 'add', this._add);
@@ -89,9 +89,8 @@ var ListView = Backbone.View.extend({
 
     render: function () {
         var that = this;
-        this.$el.html(this.template());
         _.each(this._childViews, function (view) {
-            that.$('ul').append(view.render().$el);
+            that.$el.append(view.render().$el);
         });
         return this;
     }
