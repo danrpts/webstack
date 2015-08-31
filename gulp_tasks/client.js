@@ -3,7 +3,6 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var stringify = require('stringify');
 
 /**
  * Bundle client.
@@ -27,21 +26,21 @@ module.exports = function (plugins, config) {
         
     // setup file watcher
     var watcher = watchify(bundler)
-      .on('update', rebundler)
-      .on('log', function (info) {
-        plugins.util.log(
-          'Bundled',
-          '\'' + plugins.util.colors.cyan(taskname) + '\'',
-          plugins.util.colors.yellow(info)
-        );
-      });
+        .on('update', rebundler)
+        .on('log', function (info) {
+            plugins.util.log(
+                'Bundled',
+                '\'' + plugins.util.colors.cyan(taskname) + '\'',
+                plugins.util.colors.yellow(info)
+            );
+        });
         
     // setup gulp pipeline
     function rebundler () {
       return watcher.bundle()
         .on('error', function (err) {
-          plugins.util.log(plugins.util.colors.red(err.toString()));
-          this.emit('end');
+            plugins.util.log(plugins.util.colors.red(err.toString()));
+            this.emit('end');
         })
         .pipe(source('client.js'))
         //.pipe(buffer())
