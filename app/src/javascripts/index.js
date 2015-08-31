@@ -98,9 +98,9 @@ var ListView = Backbone.View.extend({
 
 var InputView = Backbone.View.extend({
 
-    tagName: 'div',
+    tagName: 'form',
 
-    className: 'form-group',
+    className: 'form-horizontal',
 
     events: {
         'keydown': '_keydown'

@@ -1,0 +1,30 @@
+body {
+    font-weight: 300;
+    background-color:#F9F9F9;
+}
+#task-input::-webkit-input-placeholder {
+    font-weight: 300;
+}
+#task-input::-moz-placeholder {
+    font-weight: 300;
+}
+#task-input:-ms-input-placeholder {
+    font-weight: 300;
+}
+input:-moz-placeholder {
+    font-weight: 300;
+}
+#task-list li {
+    cursor: pointer;
+}
+#task-list li.completed {
+    text-decoration: line-through;
+}
+#task-list li #destroy {
+    display: none;
+    line-height: 18px;
+    outline: none;
+}
+#task-list li:hover #destroy {
+    display: block;
+}

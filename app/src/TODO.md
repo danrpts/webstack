@@ -1,2 +1,1 @@
-- [x] Add local storage
 - [ ] Persist task list changes across all open clients in the same browser

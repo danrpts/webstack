@@ -99,9 +99,9 @@ var ListView = Backbone.View.extend({
 
 var InputView = Backbone.View.extend({
 
-    tagName: 'div',
+    tagName: 'form',
 
-    className: 'form-group',
+    className: 'form-horizontal',
 
     events: {
         'keydown': '_keydown'
@@ -172,15 +172,15 @@ $(function () {
 });
 
 },{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
-module.exports = "<style>\n\tbody {\n\t\tfont-weight: 300;\n\t\tbackground-color:#F9F9F9;\n\t}\n\t#task-input::-webkit-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input::-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input:-ms-input-placeholder {\n\t\tfont-weight: 300;\n\t}\n\tinput:-moz-placeholder {\n\t\tfont-weight: 300;\n\t}\n\t#task-input div.well {\n\t\tpadding: 2px;\n\t}\n\t#task-input input {\n\t\tborder-radius: 4px;\n\t}\n\t#task-list ul {\n\t}\n\t#task-list li {\n\t\tcursor: pointer;\n\t}\n\t#task-list li.completed {\n\t\ttext-decoration: line-through;\n\t}\n\t#task-list li #destroy {\n\t\tdisplay: none;\n\t}\n\t#task-list li:hover #destroy {\n\t\tdisplay: block;\n\t}\n</style>\n<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n\t\t\t<div id=\"task-input\"></div>\n\t\t\t<div id=\"task-list\"></div>\n\t\t\t<div id=\"task-info\"></div>\n\t\t</div>\n\t</div>\n</div>";
+module.exports = "<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n            <div class=\"well\">\n    \t\t\t<div id=\"task-input\"></div>\n    \t\t\t<div id=\"task-list\"></div>\n    \t\t\t<div id=\"task-info\"></div>\n            </div>\n\t\t</div>\n\t</div>\n</div>";
 
 },{}],3:[function(require,module,exports){
 module.exports = "<%= completed %> of <%= total%> tasks completed";
 
 },{}],4:[function(require,module,exports){
-module.exports = "<div class=\"form-group\">\n\t<div class=\"well\">\n\t\t<input type=\"text\" class=\"form-control input-lg\" placeholder=\"What needs to be done?\" maxlength=\"35\">\n\t</div>\n</div>";
+module.exports = "<fieldset>\n    <div class=\"form-group\">\n    \t<input type=\"text\" class=\"form-control\" placeholder=\"What needs to be done?\" maxlength=\"35\">\n    </div>\n</fieldset>";
 
 },{}],5:[function(require,module,exports){
-module.exports = "<form class=\"form-inline\">\n\t<span>\n\t\t<%= data %>\n\t</span>\n\t<button id=\"destroy\" type=\"button\" class=\"close\">\n\t\t<span aria-hidden=\"true\">&times;</span>\n\t</button>\n</form>";
+module.exports = "<span><%= data %></span>\n<button id=\"destroy\" type=\"button\" class=\"close\">\n\t<span aria-hidden=\"true\">&times;</span>\n</button>";
 
 },{}]},{},[1]);

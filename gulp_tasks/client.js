@@ -5,6 +5,10 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var stringify = require('stringify');
 
+/**
+ * Bundle client.
+ */
+
 module.exports = function (plugins, config) {
 
   // include in default gulp tasks
@@ -15,11 +19,13 @@ module.exports = function (plugins, config) {
 
     // setup file bundle
     var bundler = browserify(watchify.args)
-      .transform(stringify(config.templates)) // simple templating
-      .add(config.entry) // main client file
-      .external(config.libs); // don't bundle libs
+        .transform('stringify', {  // simple templating
+            extensions: config.templates
+        })
+        .add(config.entry) // main client file
+        .external(config.libs); // don't bundle libs
         
-        // setup file watcher
+    // setup file watcher
     var watcher = watchify(bundler)
       .on('update', rebundler)
       .on('log', function (info) {

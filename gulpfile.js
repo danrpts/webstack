@@ -8,16 +8,15 @@ var argv = require('minimist')(process.argv.slice(2));
  */
  
 var config = {
-  entry: './app/src/javascripts/index.js',
-  libs: 'jquery underscore backbone backbone.localstorage'.split(' '),
-  templates: '.html .ejs .tpl .tmpl'.split(' '), // stringify has open issue for glob support
-  fonts: '*.{eot,svg,ttf,woff,woff2}',
-  styles: '*.{css,}', // notice the comma
-  defaults: []
+    entry: './app/src/javascripts/index.js',
+    libs: 'jquery underscore backbone backbone.localstorage'.split(' '),
+    templates: '.html .ejs .tpl .tmpl .glsl'.split(' '),
+    fonts: 'eot svg ttf woff woff2'.split(' '),
+    defaults: []
 }
 
 /**
- * Development or Production.
+ * Development or Production. TODO
  */
 
 //check node environment

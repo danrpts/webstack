@@ -1,7 +1,3 @@
-- [ ] Get rid of bower. Can be done with parcelify transform
-- [ ] Styles task needs custom css capability
-- [x] Symlinking app dir in node_moudles causes problems for browserify / stringify
+- [ ] Bootstrap/less task needs work
 - [ ] Watch for Gulp 4 release and then update code i.e. gulp-util
-- [ ] Log browserify parse errors. i.e. missing commma prevents rebundle
-- [ ] Customize express code
-- [ ] Add localstorage to sample client app
+- [ ] Customize express server
