@@ -117,6 +117,7 @@ var InputView = Backbone.View.extend({
                 this.collection.create({data: value});
                 input.val('');
             }
+            e.preventDefault();
         }
     },
 
