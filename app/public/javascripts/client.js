@@ -172,7 +172,7 @@ $(function () {
 });
 
 },{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
-module.exports = "<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n            <div class=\"well\">\n    \t\t\t<div id=\"task-input\"></div>\n    \t\t\t<div id=\"task-list\"></div>\n    \t\t\t<div id=\"task-info\"></div>\n            </div>\n\t\t</div>\n\t</div>\n</div>";
+module.exports = "<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n\t\t\t<div id=\"task-input\"></div>\n\t\t\t<div id=\"task-list\"></div>\n\t\t\t<div id=\"task-info\"></div>\n\t\t</div>\n\t</div>\n</div>";
 
 },{}],3:[function(require,module,exports){
 module.exports = "<%= completed %> of <%= total%> tasks completed";

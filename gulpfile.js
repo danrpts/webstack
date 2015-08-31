@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var glob = require('glob');
-var plugins = require('gulp-load-plugins')(); // could config it
+var plugins = require('gulp-load-plugins')();
 var argv = require('minimist')(process.argv.slice(2));
 
 /**
