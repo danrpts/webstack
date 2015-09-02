@@ -11,6 +11,7 @@ module.exports = function (plugins, config) {
 
   gulp.task(taskname, function () {
     return gulp.src('./app/src/stylesheets/index.css')
+        .pipe(plugins.watch('./app/src/stylesheets/*.css', ['styles']))
         .pipe(plugins.importCss())
         .pipe(plugins.rename('default.css'))
         .pipe(gulp.dest('./app/public/stylesheets/'));  
