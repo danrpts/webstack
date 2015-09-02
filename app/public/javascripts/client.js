@@ -158,7 +158,7 @@ var AppView = Backbone.View.extend({
     template: _.template(require('../templates/AppView.html')),
 
     render: function () {
-        this.$el.html(this.template());
+        this.$el.prepend(this.template());
         var list = new List(); // shared resource
         this.$('#task-input').html(new InputView({collection: list}).render().$el);
         this.$('#task-list').html(new ListView({collection: list}).render().$el);
