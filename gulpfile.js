@@ -11,7 +11,7 @@ var config = {
     entry: './app/src/javascripts/index.js',
     libs: 'jquery underscore backbone backbone.localstorage'.split(' '),
     templates: '.html .ejs .tpl .tmpl .glsl'.split(' '),
-    fonts: 'eot svg ttf woff woff2'.split(' '),
+    fonts: 'eot svg ttf woff woff2 otf'.split(' '),
     defaults: []
 }
 

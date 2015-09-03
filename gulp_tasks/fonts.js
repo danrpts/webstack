@@ -10,7 +10,8 @@ module.exports = function (plugins, config) {
     config.defaults.push(taskname);
 
     gulp.task(taskname, function () {
-        return gulp.src('./node_modules/bootstrap/fonts/*.{' + config.fonts + '}')
+        return gulp.src(['./node_modules/bootstrap/fonts/*.{' + config.fonts + '}',
+						 './node_modules/font-awesome/fonts/*.{' + config.fonts + '}'])
             .pipe(gulp.dest('./app/public/fonts/'));
     });
 }
