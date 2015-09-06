@@ -1,5 +1,5 @@
-- [ ] Bootstrap/less task
-- [ ] CSS task watcher
+- [ ] Improved Bootstrap/CSS/LESS task
+- [ ] Custom CSS task-watcher
 - [ ] Watch for Gulp 4 release and then update code i.e. gulp-util
 - [ ] Customize express server
-- [ ] Move to Kickstart and Font Awesome
+- [ ] Include font-awesome
