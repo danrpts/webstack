@@ -2,4 +2,3 @@
 - [ ] Custom CSS task-watcher
 - [ ] Watch for Gulp 4 release and then update code i.e. gulp-util
 - [ ] Customize express server
-- [ ] Include font-awesome
