@@ -58,7 +58,7 @@ var ItemView = Backbone.View.extend({
     complete: function (e) {
         e.stopImmediatePropagation();
         this.model.toggle();
-        this.$el.toggleClass('completed');
+        this.$('span').toggleClass('completed', status);
     },
 
     render: function () {
@@ -67,7 +67,7 @@ var ItemView = Backbone.View.extend({
                 'checked': status ? 'checked' : ''
             }); // checkbox state
         this.$el.html(this.template(data));
-        this.$el.toggleClass('completed', status);
+        this.$('span').toggleClass('completed', status);
         componentHandler.upgradeElements(this.el); // mdl
         return this;
     }
@@ -187,7 +187,7 @@ $(function () {
 module.exports = "<div style=\"width: 300px; margin:0 auto; padding-top: 2%\">\n    <div id=\"task-menu\"></div>\n    <div id=\"task-list\"></div>\n</div>";
 
 },{}],3:[function(require,module,exports){
-module.exports = "<div class=\"flex\">\n    <div id=\"task-input\" class=\"mdl-textfield mdl-js-textfield\">\n        <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-item\" maxlength=\"25\" placeholder=\"What needs to be done?\" />\n        <label class=\"mdl-textfield__label\" for=\"input-item\"></label>\n    </div>\n</div>";
+module.exports = "<div class=\"flex\">\n    <div id=\"task-input\" class=\"mdl-textfield mdl-js-textfield\">\n        <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-item\" maxlength=\"23\" placeholder=\"What needs to be done?\" />\n        <label class=\"mdl-textfield__label\" for=\"input-item\"></label>\n    </div>\n</div>";
 
 },{}],4:[function(require,module,exports){
 module.exports = "<span class=\"mdl-badge\" data-badge=\"<%= completed %> / <%= total%>\"></span>";

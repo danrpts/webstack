@@ -57,7 +57,7 @@ var ItemView = Backbone.View.extend({
     complete: function (e) {
         e.stopImmediatePropagation();
         this.model.toggle();
-        this.$el.toggleClass('completed');
+        this.$('span').toggleClass('completed', status);
     },
 
     render: function () {
@@ -66,7 +66,7 @@ var ItemView = Backbone.View.extend({
                 'checked': status ? 'checked' : ''
             }); // checkbox state
         this.$el.html(this.template(data));
-        this.$el.toggleClass('completed', status);
+        this.$('span').toggleClass('completed', status);
         componentHandler.upgradeElements(this.el); // mdl
         return this;
     }
