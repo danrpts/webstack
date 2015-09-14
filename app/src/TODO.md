@@ -1,1 +1,2 @@
 - [ ] Persist task list changes across all open clients in the same browser
+- [ ] Stats view + UI

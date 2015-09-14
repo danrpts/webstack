@@ -6,55 +6,68 @@ var Backbone = require('backbone');
 Backbone.LocalStorage = require('backbone.localstorage');
 
 var Item = Backbone.Model.extend({
+
     defaults: {
         'completed': false
+    },
+
+    toggle: function () {
+        this.save({completed: !this.get('completed')});
     }
+
 });
 
 var List = Backbone.Collection.extend({
+
     model: Item,
+
     localStorage: new Backbone.LocalStorage('TaskList'),
+
+    completed: function () {
+        return this.where({'completed': true}).length;
+    }
+
 });
 
 var ItemView = Backbone.View.extend({
 
     tagName: 'li',
 
-    className: 'list-group-item',
+    className: 'flexbox',
 
     events: {
-        'click #destroy': '_destroy',
-        'click': '_click'
+        'mouseup #destroy': 'destroy',
+        'mouseup #task': 'complete' // bug with 'click'; two click events; mdl-js-checkbox
     },
 
     template: _.template(require('../templates/ItemView.html')),
 
     initialize: function () {
-        // re-renders can cause problems with with unsaved state like checkboxes
-        // this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
     },
 
-    _destroy: function (e) {
-        e.stopImmediatePropagation(); // so we do not call _click
+    destroy: function (e) {
+        e.stopImmediatePropagation();
         var that = this;
         this.$el.fadeOut('fast', function () {
             that.model.destroy();
         });
     },
 
-    _click: function () {
-        this.model.get('completed') ?
-        this.model.set({'completed': false}) :
-        this.model.set({'completed': true});
-        this.model.save(); // save completed attribute
-        this.$el.toggleClass('text-muted completed');
+    complete: function (e) {
+        e.stopImmediatePropagation();
+        this.model.toggle();
+        this.$el.toggleClass('completed');
     },
 
     render: function () {
-        this.$el.html(this.template(this.model.attributes));
-        this.delegateEvents(); // because of list re-renders
-        if (this.model.get('completed')) this.$el.addClass('text-muted completed');
+        var status = this.model.get('completed'),
+            data = _.extend(this.model.toJSON(), {
+                'checked': status ? 'checked' : ''
+            }); // checkbox state
+        this.$el.html(this.template(data));
+        this.$el.toggleClass('completed', status);
+        componentHandler.upgradeElements(this.el); // mdl
         return this;
     }
 
@@ -62,61 +75,52 @@ var ItemView = Backbone.View.extend({
 
 var ListView = Backbone.View.extend({
 
-    tagName: 'ul',
+    tagName: 'ol',
 
-    className: 'list-group',
-
-    _childViews: [], // simple view management
+    _childViews: [], // view management
 
     initialize: function () {
-        this.listenTo(this.collection, 'add', this._add);
-        this.listenTo(this.collection, 'remove', this._remove);
+        this.listenTo(this.collection, 'add', this.add);
+        this.listenTo(this.collection, 'remove', this.remove);
     },
 
-    _add: function (task) {
+    add: function (task) {
         var view = new ItemView({model: task});
         this._childViews.push(view);
-        this.render();
-        view.$el.hide().fadeIn('fast');
+        view.render().$el.hide();
+        this.$el.append(view.$el);
+        view.$el.fadeIn('fast');
     },
 
-    _remove: function (task) {
+    remove: function (task) {
         var index = _.findIndex(this._childViews, function (found) {
             return found.model.cid === task.cid;
         });
         this._childViews.splice(index, 1);
-    },
-
-    render: function () {
-        var that = this;
-        _.each(this._childViews, function (view) {
-            that.$el.append(view.render().$el);
-        });
-        return this;
     }
+
 });
 
-var InputView = Backbone.View.extend({
+var ControlView = Backbone.View.extend({
 
-    tagName: 'form',
+    tagName: 'div',
 
-    className: 'form-horizontal',
+    className: 'flexbox',
 
     events: {
-        'keydown': '_keydown'
+        'keydown': 'keydown'
     },
 
-    template: _.template(require('../templates/InputView.html')),
+    template: _.template(require('../templates/ControlView.html')),
 
-    _keydown: function (e) {
+    keydown: function (e) {
         if (e.which === 13) {
             var input = this.$('input'),
             value = input.val().trim();
             if (value != '') {
-                this.collection.create({data: value});
+                this.collection.create({'text': value});
                 input.val('');
             }
-            e.preventDefault();
         }
     },
 
@@ -124,13 +128,12 @@ var InputView = Backbone.View.extend({
         this.$el.html(this.template());
         return this;
     }
+
 });
 
 var InfoView = Backbone.View.extend({
 
-    tagName: 'p',
-
-    className: 'text-center text-muted',
+    tagName: 'span',
 
     template: _.template(require('../templates/InfoView.html')),
 
@@ -140,12 +143,12 @@ var InfoView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template({
-            'completed': this.collection.where({'completed': true}).length,
+            'completed': this.collection.completed(),
             'total': this.collection.size()
         }));
         this.collection.isEmpty() ?
-        this.$el.hide() :
-        this.$el.show(); 
+            this.$el.hide() :
+            this.$el.show();
         return this;
     }
 });
@@ -157,12 +160,20 @@ var AppView = Backbone.View.extend({
     template: _.template(require('../templates/AppView.html')),
 
     render: function () {
+
+        // messy
         this.$el.prepend(this.template());
+
         var list = new List(); // shared resource
-        this.$('#task-input').html(new InputView({collection: list}).render().$el);
-        this.$('#task-list').html(new ListView({collection: list}).render().$el);
-        this.$('#task-info').html(new InfoView({collection: list}).render().$el);
-        list.fetch(); // fetch from local storage after view is rendered
+
+        this.$('#task-menu').html(new ControlView({collection: list}).render().$el);
+
+        this.$('#task-list').html(new ListView({collection: list}).$el);
+
+        //$('#task-info').html(new InfoView({collection: list}).render().$el);
+
+        list.fetch();
+
         return this;
     }
 });

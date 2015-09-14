@@ -7,55 +7,68 @@ var Backbone = require('backbone');
 Backbone.LocalStorage = require('backbone.localstorage');
 
 var Item = Backbone.Model.extend({
+
     defaults: {
         'completed': false
+    },
+
+    toggle: function () {
+        this.save({completed: !this.get('completed')});
     }
+
 });
 
 var List = Backbone.Collection.extend({
+
     model: Item,
+
     localStorage: new Backbone.LocalStorage('TaskList'),
+
+    completed: function () {
+        return this.where({'completed': true}).length;
+    }
+
 });
 
 var ItemView = Backbone.View.extend({
 
     tagName: 'li',
 
-    className: 'list-group-item',
+    className: 'flexbox',
 
     events: {
-        'click #destroy': '_destroy',
-        'click': '_click'
+        'mouseup #destroy': 'destroy',
+        'mouseup #task': 'complete' // bug with 'click'; two click events; mdl-js-checkbox
     },
 
     template: _.template(require('../templates/ItemView.html')),
 
     initialize: function () {
-        // re-renders can cause problems with with unsaved state like checkboxes
-        // this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
     },
 
-    _destroy: function (e) {
-        e.stopImmediatePropagation(); // so we do not call _click
+    destroy: function (e) {
+        e.stopImmediatePropagation();
         var that = this;
         this.$el.fadeOut('fast', function () {
             that.model.destroy();
         });
     },
 
-    _click: function () {
-        this.model.get('completed') ?
-        this.model.set({'completed': false}) :
-        this.model.set({'completed': true});
-        this.model.save(); // save completed attribute
-        this.$el.toggleClass('text-muted completed');
+    complete: function (e) {
+        e.stopImmediatePropagation();
+        this.model.toggle();
+        this.$el.toggleClass('completed');
     },
 
     render: function () {
-        this.$el.html(this.template(this.model.attributes));
-        this.delegateEvents(); // because of list re-renders
-        if (this.model.get('completed')) this.$el.addClass('text-muted completed');
+        var status = this.model.get('completed'),
+            data = _.extend(this.model.toJSON(), {
+                'checked': status ? 'checked' : ''
+            }); // checkbox state
+        this.$el.html(this.template(data));
+        this.$el.toggleClass('completed', status);
+        componentHandler.upgradeElements(this.el); // mdl
         return this;
     }
 
@@ -63,61 +76,52 @@ var ItemView = Backbone.View.extend({
 
 var ListView = Backbone.View.extend({
 
-    tagName: 'ul',
+    tagName: 'ol',
 
-    className: 'list-group',
-
-    _childViews: [], // simple view management
+    _childViews: [], // view management
 
     initialize: function () {
-        this.listenTo(this.collection, 'add', this._add);
-        this.listenTo(this.collection, 'remove', this._remove);
+        this.listenTo(this.collection, 'add', this.add);
+        this.listenTo(this.collection, 'remove', this.remove);
     },
 
-    _add: function (task) {
+    add: function (task) {
         var view = new ItemView({model: task});
         this._childViews.push(view);
-        this.render();
-        view.$el.hide().fadeIn('fast');
+        view.render().$el.hide();
+        this.$el.append(view.$el);
+        view.$el.fadeIn('fast');
     },
 
-    _remove: function (task) {
+    remove: function (task) {
         var index = _.findIndex(this._childViews, function (found) {
             return found.model.cid === task.cid;
         });
         this._childViews.splice(index, 1);
-    },
-
-    render: function () {
-        var that = this;
-        _.each(this._childViews, function (view) {
-            that.$el.append(view.render().$el);
-        });
-        return this;
     }
+
 });
 
-var InputView = Backbone.View.extend({
+var ControlView = Backbone.View.extend({
 
-    tagName: 'form',
+    tagName: 'div',
 
-    className: 'form-horizontal',
+    className: 'flexbox',
 
     events: {
-        'keydown': '_keydown'
+        'keydown': 'keydown'
     },
 
-    template: _.template(require('../templates/InputView.html')),
+    template: _.template(require('../templates/ControlView.html')),
 
-    _keydown: function (e) {
+    keydown: function (e) {
         if (e.which === 13) {
             var input = this.$('input'),
             value = input.val().trim();
             if (value != '') {
-                this.collection.create({data: value});
+                this.collection.create({'text': value});
                 input.val('');
             }
-            e.preventDefault();
         }
     },
 
@@ -125,13 +129,12 @@ var InputView = Backbone.View.extend({
         this.$el.html(this.template());
         return this;
     }
+
 });
 
 var InfoView = Backbone.View.extend({
 
-    tagName: 'p',
-
-    className: 'text-center text-muted',
+    tagName: 'span',
 
     template: _.template(require('../templates/InfoView.html')),
 
@@ -141,12 +144,12 @@ var InfoView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template({
-            'completed': this.collection.where({'completed': true}).length,
+            'completed': this.collection.completed(),
             'total': this.collection.size()
         }));
         this.collection.isEmpty() ?
-        this.$el.hide() :
-        this.$el.show(); 
+            this.$el.hide() :
+            this.$el.show();
         return this;
     }
 });
@@ -158,12 +161,20 @@ var AppView = Backbone.View.extend({
     template: _.template(require('../templates/AppView.html')),
 
     render: function () {
+
+        // messy
         this.$el.prepend(this.template());
+
         var list = new List(); // shared resource
-        this.$('#task-input').html(new InputView({collection: list}).render().$el);
-        this.$('#task-list').html(new ListView({collection: list}).render().$el);
-        this.$('#task-info').html(new InfoView({collection: list}).render().$el);
-        list.fetch(); // fetch from local storage after view is rendered
+
+        this.$('#task-menu').html(new ControlView({collection: list}).render().$el);
+
+        this.$('#task-list').html(new ListView({collection: list}).$el);
+
+        //$('#task-info').html(new InfoView({collection: list}).render().$el);
+
+        list.fetch();
+
         return this;
     }
 });
@@ -172,16 +183,16 @@ $(function () {
     new AppView().render();
 });
 
-},{"../templates/AppView.html":2,"../templates/InfoView.html":3,"../templates/InputView.html":4,"../templates/ItemView.html":5,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
-module.exports = "<div class=\"container\" style=\"padding-top: 10%\">\n\t<div class=\"row\">\n\t\t<div class=\"col-lg-6 col-md-6 col-sm-6 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-2\">\n\t\t\t<div id=\"task-input\"></div>\n\t\t\t<div id=\"task-list\"></div>\n\t\t\t<div id=\"task-info\"></div>\n\t\t</div>\n\t</div>\n</div>";
+},{"../templates/AppView.html":2,"../templates/ControlView.html":3,"../templates/InfoView.html":4,"../templates/ItemView.html":5,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+module.exports = "<div style=\"width: 300px; margin:0 auto; padding-top: 2%\">\n    <div id=\"task-menu\"></div>\n    <div id=\"task-list\"></div>\n</div>";
 
 },{}],3:[function(require,module,exports){
-module.exports = "<%= completed %> of <%= total%> tasks completed";
+module.exports = "<div class=\"flex\">\n    <div id=\"task-input\" class=\"mdl-textfield mdl-js-textfield\">\n        <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-item\" maxlength=\"25\" placeholder=\"What needs to be done?\" />\n        <label class=\"mdl-textfield__label\" for=\"input-item\"></label>\n    </div>\n</div>";
 
 },{}],4:[function(require,module,exports){
-module.exports = "<fieldset>\n    <div class=\"form-group\">\n    \t<input type=\"text\" class=\"form-control\" placeholder=\"What needs to be done?\" maxlength=\"35\">\n    </div>\n</fieldset>";
+module.exports = "<span class=\"mdl-badge\" data-badge=\"<%= completed %> / <%= total%>\"></span>";
 
 },{}],5:[function(require,module,exports){
-module.exports = "<span><%= data %></span>\n<button id=\"destroy\" type=\"button\" class=\"close\">\n\t<span aria-hidden=\"true\">&times;</span>\n</button>";
+module.exports = "<div class=\"flex\">\n    <p class=\"text\">\n        <label id=\"task\" class=\"mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect\">\n            <input type=\"checkbox\" class=\"mdl-checkbox__input\" <%= checked %>/>\n            <span class=\"mdl-checkbox__label\"><%= text %></span>\n        </label>\n    </p>\n</div>\n<div class=\"raw\">\n    <p class=\"icon\">\n        <button id=\"destroy\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n            <i class=\"material-icons\">close</i>\n        </button>\n    </p>\n</div>";
 
 },{}]},{},[1]);
