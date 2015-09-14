@@ -24,6 +24,9 @@ label {
 }
 
 li #destroy {
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
   transition: all 0.2s linear;
   opacity: 0;
   color: rgb(119, 119, 119);
