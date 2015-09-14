@@ -7,13 +7,6 @@ p {
   margin: 0px;
 }
 
-#task-input input {
-  outline: none;
-  font-size: 24px;
-  font-family: Roboto;
-  font-weight: 300;
-}
-
 ol {
   list-style: none;
   width: 100%;
@@ -26,7 +19,31 @@ li {
   height: 64px;
 }
 
+label {
+  cursor: pointer;
+}
 
+li #destroy {
+  transition: all 0.2s linear;
+  opacity: 0;
+  color: rgb(119, 119, 119);
+  outline: none;
+}
+
+li:hover #destroy {
+  opacity: 1;
+}
+
+li #destroy:hover {
+  color: rgb(169, 68, 66);
+}
+
+#task-input input {
+  outline: none;
+  font-size: 24px;
+  font-family: Roboto;
+  font-weight: 300;
+}
 
 .mdl-checkbox__label {
   padding-left: 20px;
@@ -67,24 +84,4 @@ li {
   font-size: 24px;
   padding: 16px;
   height: 32px;
-}
-
-.raw .icon2 {
-  font-size: 11px;
-  padding: 20px;
-  height: 24px;
-}
-
-li #destroy {
-  color: rgb(119, 119, 119);
-  display: none;
-  outline: none;
-}
-
-li:hover #destroy {
-  display: block;
-}
-
-li #destroy:hover {
-  color: rgb(169, 68, 66);
 }
