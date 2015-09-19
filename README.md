@@ -1,3 +1,3 @@
 # webstack
 
-Boilerplate webstack for Javascript SPA using Node, Gulp, Express and Backbone
+A lightweight webstack for Javascript SPA using Node, Gulp, Express and Backbone
