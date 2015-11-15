@@ -1,3 +1,4 @@
+'use strict';
 var $ = require('jquery');
 
 /**
@@ -7,9 +8,8 @@ var $ = require('jquery');
  * @param <String> token
  * @throws <Error> w/o token
  */
- 
+
 function setStateToken (token) {
-  'use strict';
   var err;
   if (typeof token != 'string') {
     err = new Error('Cannot set state without token.');
@@ -25,9 +25,8 @@ function setStateToken (token) {
  *
  * @return <String> token
  */
- 
+
 function getStateToken () {
-  'use strict';
   return $('meta[name="state-token"]').attr('content');
 };
 

@@ -8,8 +8,8 @@ module.exports = function (plugins, config) {
 
   gulp.task(taskname, function () {
     return gulp.src('./app/src/stylesheets/index.css')
-        .pipe(plugins.importCss())
-        .pipe(plugins.rename('default.css'))
-        .pipe(gulp.dest('./app/public/stylesheets/'));  
+      .pipe(plugins.importCss())
+      .pipe(plugins.rename('default.css'))
+      .pipe(gulp.dest('./app/public/stylesheets/'));
   });
 }

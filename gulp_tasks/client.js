@@ -15,35 +15,35 @@ module.exports = function (plugins, config) {
 
     // Setup file bundle
     var bundler = browserify(watchify.args)
-        .transform('stringify', {  // simple templating
-            extensions: config.templates
-        })
-        .add(config.entry) // main client file
-        .external(config.libs); // don't bundle libs
+      .transform('stringify', {  // simple templating
+        extensions: config.templates
+      })
+      .add(config.entry) // main client file
+      .external(config.libs); // don't bundle libs
         
     // Setup file watcher
     var watcher = watchify(bundler)
-        .on('update', rebundler)
-        .on('log', function (info) {
-            plugins.util.log(
-                'Bundled',
-                '\'' + plugins.util.colors.cyan(taskname) + '\'',
-                plugins.util.colors.yellow(info)
-            );
-        });
+      .on('update', rebundler)
+      .on('log', function (info) {
+        plugins.util.log(
+          'Bundled',
+          '\'' + plugins.util.colors.cyan(taskname) + '\'',
+          plugins.util.colors.yellow(info)
+        );
+      });
         
     // Setup gulp pipeline
     function rebundler () {
-      return watcher.bundle()
-        .on('error', function (err) {
-            plugins.util.log(plugins.util.colors.red(err.toString()));
-            this.emit('end');
-        })
-        .pipe(source('client.js'))
-        //.pipe(buffer())
-        //.pipe(plugins.uglify())
-        //.pipe(plugins.gzip())
-        .pipe(gulp.dest('./app/public/javascripts/'));
+    return watcher.bundle()
+      .on('error', function (err) {
+        plugins.util.log(plugins.util.colors.red(err.toString()));
+        this.emit('end');
+      })
+      .pipe(source('client.js'))
+      //.pipe(buffer())
+      //.pipe(plugins.uglify())
+      //.pipe(plugins.gzip())
+      .pipe(gulp.dest('./app/public/javascripts/'));
     }
       
     // Return as completion hint
