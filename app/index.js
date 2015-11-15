@@ -7,16 +7,13 @@ var bodyParser = require('body-parser');
 var glob = require('glob');
 var app = express();
 
-/**
-* Load all routes synchronously.
-*/
-
+// Load all routes synchronously
 var routes = glob.sync('./routes/*.js', {cwd: path.join(process.cwd(), '/app')});
     routes.forEach(function (route) {
     require(route)(app);
 });
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
 
@@ -27,17 +24,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
+// Development error handler; will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
@@ -48,8 +42,7 @@ if (app.get('env') === 'development') {
     });
 }
 
-// production error handler
-// no stacktraces leaked to user
+// Production error handler; no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

@@ -1,9 +1,6 @@
 var gulp = require('gulp');
 
-/**
- * Bundle css
- */
-
+// Bundle css
 module.exports = function (plugins, config) {
 
   var taskname = 'styles';

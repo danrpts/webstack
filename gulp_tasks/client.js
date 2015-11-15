@@ -4,19 +4,16 @@ var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
-/**
- * Bundle client.
- */
-
+// Bundle client
 module.exports = function (plugins, config) {
 
-  // include in default gulp tasks
+  // Include in default gulp tasks
   var taskname = 'client';
   config.defaults.push(taskname);
 
   gulp.task(taskname, function () {
 
-    // setup file bundle
+    // Setup file bundle
     var bundler = browserify(watchify.args)
         .transform('stringify', {  // simple templating
             extensions: config.templates
@@ -24,7 +21,7 @@ module.exports = function (plugins, config) {
         .add(config.entry) // main client file
         .external(config.libs); // don't bundle libs
         
-    // setup file watcher
+    // Setup file watcher
     var watcher = watchify(bundler)
         .on('update', rebundler)
         .on('log', function (info) {
@@ -35,7 +32,7 @@ module.exports = function (plugins, config) {
             );
         });
         
-    // setup gulp pipeline
+    // Setup gulp pipeline
     function rebundler () {
       return watcher.bundle()
         .on('error', function (err) {
@@ -49,7 +46,7 @@ module.exports = function (plugins, config) {
         .pipe(gulp.dest('./app/public/javascripts/'));
     }
       
-    // return as completion hint
+    // Return as completion hint
     return rebundler();
   });
 }

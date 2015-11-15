@@ -4,10 +4,7 @@ var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
-/**
- * Bundle libs.
- */
- 
+// Bundle libs
 module.exports = function (plugins, config) {
 
     var taskname = 'libs';
@@ -15,14 +12,14 @@ module.exports = function (plugins, config) {
 
     gulp.task(taskname, function () {
 
-        // setup file bundle
+        // Setup file bundle
         var bundler = browserify(watchify.args)
             .require(config.libs, {noParse: config.libs}); // libs must be require-able
 
-        // setup file watcher
+        // Setup file watcher
         var watcher = watchify(bundler).on('update', rebundler);
 
-        // setup the gulp pipeline
+        // Setup the gulp pipeline
         function rebundler () {
             return watcher.bundle()
                 .pipe(source('libs.js'))
@@ -32,7 +29,7 @@ module.exports = function (plugins, config) {
                 .pipe(gulp.dest('./app/public/javascripts/'));
         }
 
-        // return as completion hint
+        // Return as completion hint
         return rebundler();
     });
 }
