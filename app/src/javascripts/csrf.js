@@ -15,9 +15,9 @@ function setStateToken (token) {
     err = new Error('Cannot set state without token.');
     err.name = 'InvalidArgumentError';
     return err;
-  };
+  }
   $('meta[name="state-token"]').attr('content', token);
-};
+}
 
 /**
  * getStateToken() gets the meta 'state-token' content attribute
@@ -28,11 +28,11 @@ function setStateToken (token) {
 
 function getStateToken () {
   return $('meta[name="state-token"]').attr('content');
-};
+}
 
 module.exports = function signinCallback (authResult) {
   if (authResult['code']) {
-    var payload = { "authCode": authResult['code'] };
+    var payload = { "authCode": authResult['code'] }
 
     // set x-csrf-token header on all jqXHR's
     $.ajaxPrefilter(function (options, originalOptions, xhr) {
@@ -41,7 +41,7 @@ module.exports = function signinCallback (authResult) {
         xhr.setRequestHeader('x-csrf-token', token);
       } else {
         return false;
-      };
+      }
     });
 
     $.ajax({
@@ -58,5 +58,5 @@ module.exports = function signinCallback (authResult) {
         console.log(data.user);
       }
     });
-  };
-};
+  }
+}
