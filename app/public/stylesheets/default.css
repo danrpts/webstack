@@ -7,7 +7,7 @@ p {
   margin: 0px;
 }
 
-ol {
+ul {
   list-style: none;
   width: 100%;
   padding: 8px 0px 8px 0px;
@@ -23,7 +23,7 @@ label {
   cursor: pointer;
 }
 
-li #destroy {
+li #delete {
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
@@ -33,15 +33,15 @@ li #destroy {
   outline: none;
 }
 
-li:hover #destroy {
+li:hover #delete {
   opacity: 1;
 }
 
-li #destroy:hover {
+li #delete:hover {
   color: rgb(169, 68, 66);
 }
 
-#task-input input {
+input {
   outline: none;
   font-size: 24px;
   font-family: Roboto;
@@ -52,7 +52,7 @@ li #destroy:hover {
   padding-left: 20px;
 }
 
-.completed {
+.complete {
   text-decoration: line-through;
   color: rgb(119, 119, 119);
 }
@@ -64,26 +64,30 @@ li #destroy:hover {
   flex-direction: row;
 }
 
-.flex,
+.flexible,
 .raw {
   height: 64px;
 }
 
-.flex {
+.flexible {
   flex: 1;
   -webkit-flex: 1;
 }
 
-.raw {
+.raw24 {
+  width: 24px;
+}
+
+.raw64 {
   width: 64px;
 }
 
-.flex .text {
+.text {
   padding: 20px 0px 20px 0px;
   height: 24px;
 }
 
-.raw .icon {
+.icon {
   font-size: 24px;
   padding: 16px;
   height: 32px;
