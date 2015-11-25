@@ -1,14 +1,13 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View_class.js');
 var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 
-
-var CardView = View.extend({
+var CardView = Backbone.View.extend({
 
   events: {
-    'mouseup #back': 'back'
+    'mouseup #back': 'back',
+    'mouseup #delete': 'delete'
   },
 
   initialize: function () {
@@ -17,24 +16,33 @@ var CardView = View.extend({
 
   template: _.template(require('../../templates/tasks_CardTemplate.html')),
 
-  back: function (event) {
-    event.preventDefault();
+  back: function () {
     Backbone.trigger('router:goto', '');
+  },
+
+  delete: function () {
+    this.model.destroy();
+    this.remove();
+    this.back();
   },
 
   render: function () {
 
     var helpers = new ItemPresenter({model: this.model});
     var $compiled = $(this.template(helpers));
-    if (!!this.rendered) {
+
+    if (this.rendered) {
+
+      // Re-renders
       this.$el.html($compiled.html());
-      console.log('Re-rendering card.');
     } else {
+
+      // Initial render
       this.setElement($compiled);
       this.rendered = true;
-      console.log('Rendering card.');
     }
     
+    componentHandler.upgradeElements(this.el);
     return this.$el;
   }
 });

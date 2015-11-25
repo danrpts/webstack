@@ -1,11 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View_class.js');
 var ListPresenter = require('../presenters/tasks_ListPresenter.js');
 var ItemView = require('../views/tasks_ItemView.js');
 
-var ListView = View.extend({
+var ListView = Backbone.View.extend({
 
   template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
@@ -29,13 +28,16 @@ var ListView = View.extend({
 
     var helpers = new ListPresenter({collection: this.collection});
     var $compiled = $(this.template(helpers));
-    if (!!this.rendered) {
+
+    if (this.rendered) {
+
+      // Re-renders
       this.$el.html($compiled.html());
-      console.log('Re-rendering list.');
     } else {
+
+      // Initial render
       this.setElement($compiled);
       this.rendered = true;
-      console.log('Initial list render.');
     }
 
     var $listfragment = document.createDocumentFragment();

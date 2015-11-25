@@ -1,10 +1,9 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View_class.js');
 var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 
-var ItemView = View.extend({
+var ItemView = Backbone.View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
@@ -15,7 +14,7 @@ var ItemView = View.extend({
   template: _.template(require('../../templates/tasks_ItemTemplate.html')),
 
   initialize: function () {
-    this.listenTo(this.model, 'destroy', this.remove);
+    // Nothing yet
   },
 
   toggle: function () {
@@ -30,20 +29,26 @@ var ItemView = View.extend({
 
   delete: function () {
     this.model.destroy();
+    this.remove();
   },
 
   render: function () {
 
     var helpers = new ItemPresenter({model: this.model});
     var $compiled = $(this.template(helpers));
-    if (!!this.rendered) {
+
+    if (this.rendered) {
+
+      // Re-renders
       this.$el.html($compiled.html());
-      console.log('Re-rendering item: %s', this.model.get('text'));
     } else {
+
+      // Initial render
       this.setElement($compiled);
       this.rendered = true;
-      console.log('Initial item render for: %s', this.model.get('text'));
     }
+
+    console.log(this.model.toJSON());
     
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
