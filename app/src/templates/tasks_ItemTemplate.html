@@ -1,15 +1,29 @@
 <li>
-  <div class="mdl-card mdl-shadow--4dp">
-    <div class="mdl-card__title">
-      <label id="toggle" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-        <input type="checkbox" class="mdl-checkbox__input" />
-      </label>
-      <label id="title"><%- data.title %></label>
-      <label>
-        <button id="delete" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect">
-          <i class="material-icons">close</i>
-        </button>
-      </label>
-    </div>
+  <div class="mdl-card mdl-shadow--4dp mdl-card-64">
+
+      <div class="flexbox">
+        <div class="raw48x64">
+          <div class="checkbox">
+            <label id="toggle" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+              <input type="checkbox" class="mdl-checkbox__input" />
+            </label>
+          </div>
+        </div>
+
+        <div class="flexible">
+          <div class="text">
+            <label id="title" class="mdl-checkbox__label"><%- data.title %></label>
+          </div>
+        </div>
+
+        <div class="raw64">
+          <div class="icon">
+            <button id="delete" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+        </div>
+      </div>
+
   </div>
 </li>

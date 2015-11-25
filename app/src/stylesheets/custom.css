@@ -74,3 +74,47 @@ label #delete:hover {
     -ms-transform: translate(0px, -28px);
     transform: translate(0px, -28px);
 }
+
+.mdl-card-64 {
+    height: 64px;
+}
+
+.flexbox {
+    width: 100%;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    display: flex;
+    flex-direction: row;
+}
+
+.flexible {
+
+    height: 64px;
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+.raw48x64 {
+    width: 48px;
+    height: 64px;
+}
+
+.raw64 {
+    width: 64px;
+}
+
+.checkbox {
+    padding: 20px 16px 20px 16px;
+    height: 24px;
+}
+
+.text {
+    padding: 20px 0px 20px 0px;
+    height: 24px;
+}
+
+.icon {
+    font-size: 24px;
+    padding: 16px;
+    height: 32px;
+}
