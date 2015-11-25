@@ -29,22 +29,17 @@ label#title {
   color: rgb(119, 119, 119);
 }
 
-.icon > #delete {
+li #delete {
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
   transition: all 0.2s linear;
   opacity: 0;
-  color: rgb(119, 119, 119);
   outline: none;
 }
 
 li:hover #delete {
   opacity: 1;
-}
-
-.icon #delete:hover {
-  color: rgb(169, 68, 66);
 }
 
 .complete {

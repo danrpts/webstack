@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
+var itemPresenter = require('../presenters/tasks_itemPresenter.js');
 
 var CardView = Backbone.View.extend({
 
@@ -41,16 +41,16 @@ var CardView = Backbone.View.extend({
   },
 
   updateTitle: function () {
-    this.model.save({'title': this.$('#title-input').val().trim()});
+    this.model.save({'title': this.$('#title-input').val().trim()}, {wait: true});
   },
 
   updateDetails: function () {
-    this.model.save({'details': this.$('#details-input').val().trim()});
+    this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
   render: function () {
 
-    var helpers = new ItemPresenter({model: this.model});
+    var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
     if (this.rendered) {

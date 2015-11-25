@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var ListPresenter = require('../presenters/tasks_ListPresenter.js');
+var listPresenter = require('../presenters/tasks_listPresenter.js');
 var ItemView = require('../views/tasks_ItemView.js');
 
 var ListView = Backbone.View.extend({
@@ -26,7 +26,7 @@ var ListView = Backbone.View.extend({
 
   render: function () {
 
-    var helpers = new ListPresenter({collection: this.collection});
+    var helpers = listPresenter(this.collection);
     var $compiled = $(this.template(helpers));
 
     if (this.rendered) {

@@ -1,15 +1,19 @@
-var Presenter = require('../classes/Presenter_class.js');
+var _ = require('underscore');
 
-var ItemPresenter = Presenter.extend({
+var helpers = {
 
   isComplete: function () {
-    return !!this.data.complete;
+    return !!this.complete;
   },
 
   hasDetails: function () {
-    return ("details" in this.data && this.data.details.length > 0);
+    return ("details" in this && this.details.length > 0);
   }
 
-});
+};
 
-module.exports = ItemPresenter;
+var buildPresenter = function (resource) {
+  return _.extend(resource.toJSON(), helpers);
+}
+
+module.exports = buildPresenter;

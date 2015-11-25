@@ -1,16 +1,15 @@
 var _ = require('underscore');
-var Presenter = require('../classes/Presenter_class.js');
 
-var ListPresenter = Presenter.extend({
+var helpers = {
 
   totalComplete: function () {
-    return _.where(this.data, {'complete': true}).length;
-  },
-
-  isEmpty: function () {
-    return this.collection.size() === 0;
+    return _.where(this, {'complete': true}).length;
   }
 
-});
+};
 
-module.exports = ListPresenter;
+var buildPresenter = function (resource) {
+  return _.extend(resource.toJSON(), helpers);
+}
+
+module.exports = buildPresenter;
