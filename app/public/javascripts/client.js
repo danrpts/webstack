@@ -271,8 +271,6 @@ var ItemView = Backbone.View.extend({
       this.setElement($compiled);
       this.rendered = true;
     }
-
-    console.log(this.model.toJSON());
     
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
