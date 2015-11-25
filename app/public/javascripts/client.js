@@ -145,6 +145,10 @@ var ItemPresenter = Presenter.extend({
 
   isComplete: function () {
     return !!this.data.complete;
+  },
+
+  hasDetails: function () {
+    return ("details" in this.data && this.data.details.length > 0);
   }
 
 });
@@ -178,10 +182,12 @@ var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 var CardView = Backbone.View.extend({
 
   events: {
+    'keyup': 'onEscape',
+    'mouseup #toggle': 'toggle',
     'mouseup #back': 'back',
     'mouseup #delete': 'delete',
-    'blur #title': 'updateTitle',
-    'blur #details': 'updateDetails'
+    'blur #title-input': 'updateTitle',
+    'blur #details-input': 'updateDetails'
   },
 
   initialize: function () {
@@ -190,8 +196,18 @@ var CardView = Backbone.View.extend({
 
   template: _.template(require('../../templates/tasks_CardTemplate.html')),
 
+  toggle: function () {
+    this.model.toggle();
+  },
+
   back: function () {
     Backbone.trigger('router:goto', '');
+  },
+
+  onEscape: function (event) {
+    if (event.which === 27) {
+      this.back();
+    }
   },
 
   delete: function () {
@@ -201,11 +217,11 @@ var CardView = Backbone.View.extend({
   },
 
   updateTitle: function () {
-    this.model.save({'title': this.$('#title').val().trim()});
+    this.model.save({'title': this.$('#title-input').val().trim()});
   },
 
   updateDetails: function () {
-    this.model.save({'details': this.$('#details').val().trim()});
+    this.model.save({'details': this.$('#details-input').val().trim()});
   },
 
   render: function () {
@@ -224,6 +240,9 @@ var CardView = Backbone.View.extend({
       this.rendered = true;
     }
     
+    if (helpers.isComplete()) {
+      this.$('#toggle').toggleClass('mdl-color--green');
+    }
     componentHandler.upgradeElements(this.el);
     return this.$el;
   }
@@ -241,20 +260,18 @@ var ItemView = Backbone.View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
-    'dblclick #open': 'open',
+    'dblclick #title': 'open',
     'mouseup #delete': 'delete'
   },
 
   template: _.template(require('../../templates/tasks_ItemTemplate.html')),
 
   initialize: function () {
-    // Nothing yet
+    this.listenTo(this.model, 'change', this.render);
   },
 
   toggle: function () {
     this.model.toggle();
-    this.$el.toggleClass('complete');
-    this.el.querySelector('#toggle').MaterialCheckbox.checkToggleState();
   },
 
   open: function () {
@@ -284,7 +301,7 @@ var ItemView = Backbone.View.extend({
     
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
-      this.$el.addClass('complete');
+      this.$('#title').addClass('complete');
       this.el.querySelector('#toggle').MaterialCheckbox.check();
     }
     return this.$el;
@@ -305,16 +322,16 @@ var ListView = Backbone.View.extend({
   template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
   events: {
-    'keyup #input': 'enter'
+    'keyup': 'onEnter'
   },
 
   initialize: function () {
     this.listenTo(this.collection, 'add', this.render);
   },
 
-  enter: function (event) {
+  onEnter: function (event) {
     if (event.which === 13) {
-      var input = this.$('#input');
+      var input = this.$('#input-title');
       this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');
     }
@@ -352,13 +369,13 @@ var ListView = Backbone.View.extend({
 module.exports = ListView;
 
 },{"../../templates/tasks_ListTemplate.html":14,"../presenters/tasks_ListPresenter.js":8,"../views/tasks_ItemView.js":10,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],12:[function(require,module,exports){
-module.exports = "<div style=\"width: 300px; margin:0 auto; padding-top: 2%\">\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__title\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <input id=\"title\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" value=\"<%- data.title %>\" />\n        <label class=\"mdl-textfield__label\" for=\"title\"></label>\n      </div>\n    </div>\n    <div class=\"mdl-card__supporting-text\">\n      <div class=\"mdl-textfield mdl-js-textfield\">\n        <input id=\"details\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" value=\"<%- data.details %>\" placeholder=\"Add details...\" />\n        <label class=\"mdl-textfield__label\" for=\"details\"></label>\n      </div>\n    </div>\n    <div class=\"mdl-card__menu\">\n      <button id=\"back\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons\">arrow_back</i>\n      </button>\n      <button id=\"delete\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons\">delete</i>\n      </button>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-card mdl-shadow--2dp custom-card\">\n\n    <button id=\"toggle\" class=\"mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored\">\n      <i class=\"material-icons\">check</i>\n    </button>\n\n    <div class=\"mdl-card__title custom-card__title\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <input id=\"title-input\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" value=\"<%- data.title %>\"/>\n          <label class=\"mdl-textfield__label\" for=\"title-input\" id=\"title-label\"><%- data.title %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__supporting-text custom-card__supporting-text\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <textarea id=\"details-input\" class=\"mdl-textfield__input\" type=\"text\" rows=\"1\"><% hasDetails() && print(data.details) %></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\" id=\"details-label\"><% !hasDetails() && print(\"Add details...\") %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__actions mdl-card--border\">\n      <button id=\"back\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons\">arrow_back</i>\n      </button>\n      <button id=\"delete\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons\">delete</i>\n      </button>\n    </div>\n\n  </div>\n</div>\n";
 
 },{}],13:[function(require,module,exports){
-module.exports = "<li class=\"flexbox\">\n  <div class=\"raw24\">\n    <p class=\"text\">\n      <label id=\"toggle\" class=\"mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect\">\n        <input type=\"checkbox\" class=\"mdl-checkbox__input\" />\n      </label>\n    </p>\n  </div>\n  <div class=\"flexible\">\n    <p class=\"text\">\n      <span id=\"open\" class=\"mdl-checkbox__label\"><%- data.title %></span>\n    </p>\n  </div>\n  <div class=\"raw64\">\n    <p class=\"icon\">\n      <button id=\"delete\" class=\"mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect\">\n        <i class=\"material-icons\">close</i>\n      </button>\n    </p>\n  </div>\n</li>";
+module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--4dp\">\n    <div class=\"mdl-card__title\">\n      <label id=\"toggle\" class=\"mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect\">\n        <input type=\"checkbox\" class=\"mdl-checkbox__input\" />\n      </label>\n      <label id=\"title\"><%- data.title %></label>\n      <label>\n        <button id=\"delete\" class=\"mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect\">\n          <i class=\"material-icons\">close</i>\n        </button>\n      </label>\n    </div>\n  </div>\n</li>\n";
 
 },{}],14:[function(require,module,exports){
-module.exports = "<div style=\"width: 300px; margin:0 auto; padding-top: 2%\">\n  <div class=\"flexbox\">\n    <div class=\"flex\">\n      <div class=\"mdl-textfield mdl-js-textfield\">\n        <input id=\"input\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" placeholder=\"What needs to be done?\" />\n        <label class=\"mdl-textfield__label\" for=\"input\"></label>\n      </div>\n    </div>\n  </div>\n  <ul></ul>\n</div>\n";
+module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-textfield\">\n    <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" maxlength=\"23\">\n    <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n  </div>\n  <ul></ul>\n</div>\n\n";
 
 },{}],15:[function(require,module,exports){
 (function (global){

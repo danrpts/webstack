@@ -9,16 +9,16 @@ var ListView = Backbone.View.extend({
   template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
   events: {
-    'keyup #input': 'enter'
+    'keyup': 'onEnter'
   },
 
   initialize: function () {
     this.listenTo(this.collection, 'add', this.render);
   },
 
-  enter: function (event) {
+  onEnter: function (event) {
     if (event.which === 13) {
-      var input = this.$('#input');
+      var input = this.$('#input-title');
       this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');
     }

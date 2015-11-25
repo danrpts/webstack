@@ -6,10 +6,12 @@ var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 var CardView = Backbone.View.extend({
 
   events: {
+    'keyup': 'onEscape',
+    'mouseup #toggle': 'toggle',
     'mouseup #back': 'back',
     'mouseup #delete': 'delete',
-    'blur #title': 'updateTitle',
-    'blur #details': 'updateDetails'
+    'blur #title-input': 'updateTitle',
+    'blur #details-input': 'updateDetails'
   },
 
   initialize: function () {
@@ -18,8 +20,18 @@ var CardView = Backbone.View.extend({
 
   template: _.template(require('../../templates/tasks_CardTemplate.html')),
 
+  toggle: function () {
+    this.model.toggle();
+  },
+
   back: function () {
     Backbone.trigger('router:goto', '');
+  },
+
+  onEscape: function (event) {
+    if (event.which === 27) {
+      this.back();
+    }
   },
 
   delete: function () {
@@ -29,11 +41,11 @@ var CardView = Backbone.View.extend({
   },
 
   updateTitle: function () {
-    this.model.save({'title': this.$('#title').val().trim()});
+    this.model.save({'title': this.$('#title-input').val().trim()});
   },
 
   updateDetails: function () {
-    this.model.save({'details': this.$('#details').val().trim()});
+    this.model.save({'details': this.$('#details-input').val().trim()});
   },
 
   render: function () {
@@ -52,6 +64,9 @@ var CardView = Backbone.View.extend({
       this.rendered = true;
     }
     
+    if (helpers.isComplete()) {
+      this.$('#toggle').toggleClass('mdl-color--green');
+    }
     componentHandler.upgradeElements(this.el);
     return this.$el;
   }

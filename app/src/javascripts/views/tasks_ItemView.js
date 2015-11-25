@@ -7,20 +7,18 @@ var ItemView = Backbone.View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
-    'dblclick #open': 'open',
+    'dblclick #title': 'open',
     'mouseup #delete': 'delete'
   },
 
   template: _.template(require('../../templates/tasks_ItemTemplate.html')),
 
   initialize: function () {
-    // Nothing yet
+    this.listenTo(this.model, 'change', this.render);
   },
 
   toggle: function () {
     this.model.toggle();
-    this.$el.toggleClass('complete');
-    this.el.querySelector('#toggle').MaterialCheckbox.checkToggleState();
   },
 
   open: function () {
@@ -50,7 +48,7 @@ var ItemView = Backbone.View.extend({
     
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
-      this.$el.addClass('complete');
+      this.$('#title').addClass('complete');
       this.el.querySelector('#toggle').MaterialCheckbox.check();
     }
     return this.$el;
