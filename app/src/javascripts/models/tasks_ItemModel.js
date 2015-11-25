@@ -1,7 +1,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
+var Model = require('../classes/Model_class.js');
 
-var ItemModel = Backbone.Model.extend({
+var ItemModel = Model.extend({
 
   defaults: {
     'complete': false

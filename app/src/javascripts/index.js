@@ -25,8 +25,6 @@ $(function() {
 
   new Router();
 
-  Backbone.history.start();
-
-  //{pushState: true}; TODO: catch request before browser trys to resolve on server
+  Backbone.history.start(); //{pushState: true} TODO server mods
 
 });

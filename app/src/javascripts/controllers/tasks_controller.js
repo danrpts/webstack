@@ -4,7 +4,6 @@ var Backbone = require('Backbone');
 var list = require('../instances/tasks_collection_instance.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
-var ItemModel = require('../models/tasks_ItemModel.js');
 
 // Parent DOM node
 var $container = $('#app');

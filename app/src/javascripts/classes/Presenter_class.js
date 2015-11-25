@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-
 // An object that provides helpers and model attributes to templates
 function Presenter (options) {
 

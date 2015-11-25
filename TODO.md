@@ -3,4 +3,3 @@
 - [ ] Customize express server
 - [ ] Move to webpack for bundling commonjs style modules and other assets
 - [ ] ES6
-- [ ] Need data store

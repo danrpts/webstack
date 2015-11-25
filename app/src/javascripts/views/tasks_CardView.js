@@ -1,10 +1,11 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View_class.js');
 var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 
 
-var CardView = Backbone.View.extend({
+var CardView = View.extend({
 
   events: {
     'mouseup #back': 'back'

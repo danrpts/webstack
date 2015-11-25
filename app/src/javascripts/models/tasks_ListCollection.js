@@ -1,6 +1,7 @@
 var Backbone = require('backbone');
+var Collection = require('../classes/Collection_class.js');
 
-var ListCollection = Backbone.Collection.extend({
+var ListCollection = Collection.extend({
 
   model: require('./tasks_ItemModel.js'),
   

@@ -23,8 +23,8 @@ View.prototype.assign = function (selector, view) {
 }
 
 
-Model.extend = Backbone.View.extend;
+View.extend = Backbone.View.extend;
 
 _.extend(View.prototype, Backbone.View.prototype);
 
-module.exports = Model;
+module.exports = View;

@@ -1,9 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View_class.js');
 var ItemPresenter = require('../presenters/tasks_ItemPresenter.js');
 
-var ItemView = Backbone.View.extend({
+var ItemView = View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
