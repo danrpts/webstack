@@ -25,7 +25,11 @@ label#title {
     cursor: pointer;
 }
 
-label > #delete {
+.grey {
+    color: rgb(119, 119, 119);
+}
+
+.icon > #delete {
     -webkit-transition: all 0.2s linear;
     -moz-transition: all 0.2s linear;
     -o-transition: all 0.2s linear;
@@ -35,11 +39,11 @@ label > #delete {
     outline: none;
 }
 
-label:hover #delete {
+li:hover #delete {
     opacity: 1;
 }
 
-label #delete:hover {
+.icon #delete:hover {
     color: rgb(169, 68, 66);
 }
 
@@ -109,7 +113,7 @@ label #delete:hover {
 }
 
 .text {
-    padding: 20px 0px 20px 0px;
+    padding: 21px 0px 19px 0px;
     height: 24px;
 }
 
