@@ -7,7 +7,9 @@ var CardView = Backbone.View.extend({
 
   events: {
     'mouseup #back': 'back',
-    'mouseup #delete': 'delete'
+    'mouseup #delete': 'delete',
+    'blur #title': 'updateTitle',
+    'blur #details': 'updateDetails'
   },
 
   initialize: function () {
@@ -24,6 +26,14 @@ var CardView = Backbone.View.extend({
     this.model.destroy();
     this.remove();
     this.back();
+  },
+
+  updateTitle: function () {
+    this.model.save({'title': this.$('#title').val().trim()});
+  },
+
+  updateDetails: function () {
+    this.model.save({'details': this.$('#details').val().trim()});
   },
 
   render: function () {

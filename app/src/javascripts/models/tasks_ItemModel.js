@@ -12,8 +12,8 @@ var ItemModel = Backbone.Model.extend({
   },
 
   validate: function (attributes) {
-    if ("text" in attributes && attributes.text.length === 0) {
-      return "Text cannot be empty.";
+    if ("title" in attributes && attributes.title.length === 0) {
+      return "Title cannot be empty.";
     }
   }
 

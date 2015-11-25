@@ -1,10 +1,16 @@
 <div style="width: 300px; margin:0 auto; padding-top: 2%">
   <div class="mdl-card mdl-shadow--2dp">
     <div class="mdl-card__title">
-      <h2 class="mdl-card__title-text"><%- data.text %></h2>
+        <div class="mdl-textfield mdl-js-textfield">
+          <input id="title" class="mdl-textfield__input" type="text" maxlength="23" value="<%- data.title %>" />
+        <label class="mdl-textfield__label" for="title"></label>
+      </div>
     </div>
     <div class="mdl-card__supporting-text">
-      Add details...
+      <div class="mdl-textfield mdl-js-textfield">
+        <input id="details" class="mdl-textfield__input" type="text" maxlength="23" value="<%- data.details %>" placeholder="Add details..." />
+        <label class="mdl-textfield__label" for="details"></label>
+      </div>
     </div>
     <div class="mdl-card__menu">
       <button id="back" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
