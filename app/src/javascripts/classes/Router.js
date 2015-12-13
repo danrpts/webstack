@@ -2,12 +2,12 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var Router = function (options) {
-  Backbone.Router.prototype.constructor.call(this, options);
+  Backbone.Router.call(this, options);
 }
 
-_.extend(Router.prototype, Backbone.Router.prototype, {
+Router.prototype = Object.create(Backbone.Router.prototype);
 
-});
+_.extend(Router.prototype, {});
 
 Router.extend = Backbone.Router.extend;
 

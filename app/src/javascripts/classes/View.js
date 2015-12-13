@@ -2,12 +2,12 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var View = function (options) {
-  Backbone.View.prototype.constructor.call(this, options);
+  Backbone.View.call(this, options);
 }
 
-_.extend(View.prototype, Backbone.View.prototype, {
+View.prototype = Object.create(Backbone.View.prototype);
 
-});
+_.extend(View.prototype, {});
 
 View.extend = Backbone.View.extend;
 
