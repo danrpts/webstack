@@ -19,7 +19,7 @@ var ListView = Backbone.View.extend({
   onEnter: function (event) {
     if (event.which === 13) {
       var input = this.$('#input-title');
-      this.collection.create({'title': input.val().trim()}, {wait: true});
+      this.collection.create({'title': input.val().trim()});
       input.val('');
     }
   },

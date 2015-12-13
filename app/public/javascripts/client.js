@@ -4,10 +4,12 @@ var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
 
 var Collection = function (models, options) {
-  Backbone.Collection.prototype.constructor.apply(this, arguments);
+  Backbone.Collection.apply(this, arguments);
 }
 
-_.extend(Collection.prototype, Backbone.Collection.prototype, helpers);
+Collection.prototype = Object.create(Backbone.Collection.prototype);
+
+_.extend(Collection.prototype, helpers);
 
 Collection.extend = Backbone.Collection.extend;
 
@@ -19,10 +21,12 @@ var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
 
 var Model = function (attributes, options) {
-  Backbone.Model.prototype.constructor.call(this, attributes, options);
+  Backbone.Model.call(this, attributes, options);
 }
 
-_.extend(Model.prototype, Backbone.Model.prototype, helpers);
+Model.prototype = Object.create(Backbone.Model.prototype);
+
+_.extend(Model.prototype, helpers);
 
 Model.extend = Backbone.Model.extend;
 
@@ -368,15 +372,15 @@ var ItemView = Backbone.View.extend({
     var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
-    if (!!this.rendered) {
-
-      // Re-renders
-      this.$el.html($compiled.html());
-    } else {
-
-      // Initial render
+    // When it's the initial render
+    if (!this.rendered) {
       this.setElement($compiled);
       this.rendered = true;
+    }
+
+    // When it's a re-render
+    else {
+      this.$el.html($compiled.html());
     }
     
     componentHandler.upgradeElements(this.el);
@@ -412,7 +416,7 @@ var ListView = Backbone.View.extend({
   onEnter: function (event) {
     if (event.which === 13) {
       var input = this.$('#input-title');
-      this.collection.create({'title': input.val().trim()}, {wait: true});
+      this.collection.create({'title': input.val().trim()});
       input.val('');
     }
   },

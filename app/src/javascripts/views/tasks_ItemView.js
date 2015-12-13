@@ -38,15 +38,15 @@ var ItemView = Backbone.View.extend({
     var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
-    if (!!this.rendered) {
-
-      // Re-renders
-      this.$el.html($compiled.html());
-    } else {
-
-      // Initial render
+    // When it's the initial render
+    if (!this.rendered) {
       this.setElement($compiled);
       this.rendered = true;
+    }
+
+    // When it's a re-render
+    else {
+      this.$el.html($compiled.html());
     }
     
     componentHandler.upgradeElements(this.el);
