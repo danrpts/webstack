@@ -51,27 +51,33 @@ var CardView = Backbone.View.extend({
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
-  // Bug 
+  // Bugged
   render: function () {
 
+    // Build template
     var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
-    if (!!this.rendered) {
-
-      // Re-renders
-      this.$el.html($compiled.html());
-    } else {
-
-      // Initial render
+    // When it's the initial render
+    if (!this.rendered) {
       this.setElement($compiled);
       this.rendered = true;
+      console.log('Initial render card.');
+    }
+
+    // When it's a re-render
+    else {
+      this.$el.html($compiled.html());
+      console.log('Re-render card.');
     }
     
     if (helpers.isComplete()) {
       this.$('#toggle').toggleClass('mdl-color--green');
     }
+
+    // MDL
     componentHandler.upgradeElements(this.el);
+
     return this.$el;
   }
 });
