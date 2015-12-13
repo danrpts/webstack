@@ -9,7 +9,7 @@ var API = {
 
   list: function () {
 
-    // Create its preliminary view
+    // Create its view
     var view = new ListView({collection: list});
 
     // Then swap the view into the default region
@@ -30,7 +30,7 @@ var API = {
     // If not build it
     if (!item) item = list.add({id: itemid});
 
-    // Now create its preliminary view
+    // Now create its view
     var view = new CardView({model: item});
 
     // Then swap the view into the default region

@@ -30,11 +30,13 @@ module.exports = {
     
     if (!!options.loading) {
       console.log('Loading...');
+      region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>');
+      componentHandler.upgradeElements(region[0]);
       options.loading.done(function () {
-        //setTimeout(function () {
+        setTimeout(function () {
           console.log('Resoloved!');
-          region.html(view.render())
-        //}, 1000);
+          region.html(view.render());
+        }, 1500);
       });
     }
 

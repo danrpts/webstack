@@ -7,7 +7,7 @@ var ItemView = Backbone.View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
-    'dblclick #title': 'open',
+    'dblclick .text': 'open',
     'mouseup #delete': 'delete'
   },
 

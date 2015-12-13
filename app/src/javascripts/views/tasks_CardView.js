@@ -61,6 +61,7 @@ var CardView = Backbone.View.extend({
     // When it's the initial render
     if (!this.rendered) {
       this.setElement($compiled);
+      this.$el.hide().fadeIn( "slow");
       this.rendered = true;
       console.log('Initial render card.');
     }

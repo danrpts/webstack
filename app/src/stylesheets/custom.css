@@ -21,7 +21,7 @@ li > .mdl-card {
     min-height: 64px;
 }
 
-label#title {
+div.text {
     cursor: pointer;
 }
 

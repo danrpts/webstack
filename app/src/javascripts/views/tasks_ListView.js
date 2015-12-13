@@ -12,15 +12,12 @@ var ListView = Backbone.View.extend({
     'keyup #input-title': 'onEnter'
   },
 
-  initialize: function () {
-    this.listenTo(this.collection, 'add', this.render);
-  },
-
   onEnter: function (event) {
     if (event.which === 13) {
       var input = this.$('#input-title');
-      this.collection.create({'title': input.val().trim()});
+      this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');
+      this.render();
     }
   },
 
@@ -34,6 +31,7 @@ var ListView = Backbone.View.extend({
     // When it's the initial render
     if (!this.rendered) {
       this.setElement($compiled);
+      this.$el.hide().fadeIn( "slow");
       this.rendered = true;
       console.log('Initial render list.');
     }

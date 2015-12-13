@@ -43,7 +43,7 @@ var API = {
 
   list: function () {
 
-    // Create its preliminary view
+    // Create its view
     var view = new ListView({collection: list});
 
     // Then swap the view into the default region
@@ -64,7 +64,7 @@ var API = {
     // If not build it
     if (!item) item = list.add({id: itemid});
 
-    // Now create its preliminary view
+    // Now create its view
     var view = new CardView({model: item});
 
     // Then swap the view into the default region
@@ -131,11 +131,13 @@ module.exports = {
     
     if (!!options.loading) {
       console.log('Loading...');
+      region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>');
+      componentHandler.upgradeElements(region[0]);
       options.loading.done(function () {
-        //setTimeout(function () {
+        setTimeout(function () {
           console.log('Resoloved!');
-          region.html(view.render())
-        //}, 1000);
+          region.html(view.render());
+        }, 1500);
       });
     }
 
@@ -308,6 +310,7 @@ var CardView = Backbone.View.extend({
     // When it's the initial render
     if (!this.rendered) {
       this.setElement($compiled);
+      this.$el.hide().fadeIn( "slow");
       this.rendered = true;
       console.log('Initial render card.');
     }
@@ -341,7 +344,7 @@ var ItemView = Backbone.View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
-    'dblclick #title': 'open',
+    'dblclick .text': 'open',
     'mouseup #delete': 'delete'
   },
 
@@ -409,15 +412,12 @@ var ListView = Backbone.View.extend({
     'keyup #input-title': 'onEnter'
   },
 
-  initialize: function () {
-    this.listenTo(this.collection, 'add', this.render);
-  },
-
   onEnter: function (event) {
     if (event.which === 13) {
       var input = this.$('#input-title');
-      this.collection.create({'title': input.val().trim()});
+      this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');
+      this.render();
     }
   },
 
@@ -431,6 +431,7 @@ var ListView = Backbone.View.extend({
     // When it's the initial render
     if (!this.rendered) {
       this.setElement($compiled);
+      this.$el.hide().fadeIn( "slow");
       this.rendered = true;
       console.log('Initial render list.');
     }
