@@ -36,8 +36,11 @@ var CardView = Backbone.View.extend({
 
   delete: function () {
     this.model.destroy();
-    this.remove();
-    this.back();
+    var that = this;
+    this.$el.fadeOut('fast', function () {
+      that.remove();
+      Backbone.trigger('router:goto', '');
+    });  
   },
 
   updateTitle: function () {
@@ -48,12 +51,13 @@ var CardView = Backbone.View.extend({
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
+  // Bug 
   render: function () {
 
     var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
-    if (this.rendered) {
+    if (!!this.rendered) {
 
       // Re-renders
       this.$el.html($compiled.html());

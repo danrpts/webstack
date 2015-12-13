@@ -27,7 +27,10 @@ var ItemView = Backbone.View.extend({
 
   delete: function () {
     this.model.destroy();
-    this.remove();
+    var that = this;
+    this.$el.fadeOut('slow', function () {
+      that.remove();
+    });
   },
 
   render: function () {
@@ -35,7 +38,7 @@ var ItemView = Backbone.View.extend({
     var helpers = itemPresenter(this.model);
     var $compiled = $(this.template(helpers));
 
-    if (this.rendered) {
+    if (!!this.rendered) {
 
       // Re-renders
       this.$el.html($compiled.html());

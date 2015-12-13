@@ -6,10 +6,8 @@ var helpers = {
     return _.where(this, {'complete': true}).length;
   }
 
-};
-
-var buildPresenter = function (resource) {
-  return _.extend(resource.toJSON(), helpers);
 }
 
-module.exports = buildPresenter;
+module.exports = function (resource) {
+  return _.extend(resource.toJSON(), helpers);
+}

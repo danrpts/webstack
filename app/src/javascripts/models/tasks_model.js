@@ -1,7 +1,10 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
+var Model = require('../classes/Model.js');
+var Collection = require('../classes/Collection.js');
 
-var ItemModel = Backbone.Model.extend({
+// Private data representations
+var ItemModel = Model.extend({
 
   defaults: {
     'complete': false
@@ -19,4 +22,13 @@ var ItemModel = Backbone.Model.extend({
 
 });
 
-module.exports = ItemModel;
+var ListCollection = Collection.extend({
+
+  model: ItemModel,
+  
+  localStorage: new Backbone.LocalStorage('TasksApp')
+
+});
+
+// Public
+module.exports =  new ListCollection();

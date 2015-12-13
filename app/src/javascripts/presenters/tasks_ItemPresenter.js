@@ -10,10 +10,8 @@ var helpers = {
     return ("details" in this && this.details.length > 0);
   }
 
-};
-
-var buildPresenter = function (resource) {
-  return _.extend(resource.toJSON(), helpers);
 }
 
-module.exports = buildPresenter;
+module.exports = function (resource) {
+  return _.extend(resource.toJSON(), helpers);
+}

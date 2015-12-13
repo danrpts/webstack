@@ -1,1 +1,0 @@
-Instantiaed resources are stored here so that any module can use them at any time without the need for dependency injection.

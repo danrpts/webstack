@@ -1,47 +1,65 @@
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('Backbone');
-var list = require('../instances/tasks_collection_instance.js');
+var Backbone = require('backbone'); // Event system
+var layout = require('../helpers/layout_helpers.js');
+var list = require('../models/tasks_model.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
 
-// Parent DOM node
-var $container = $('#app');
-var currentview;
+// Router API
+var API = {
 
-// Private
-var fetchAndRenderList = function (listCollection) {
-  (!!currentview) && currentview.remove();
-  currentview = new ListView({collection: listCollection});
-  $container.html(currentview.render());
-  listCollection.fetch();
-}
+  list: function () {
 
-var fetchAndRenderCard = function (itemModel) {
-  (!!currentview) && currentview.remove();
-  currentview = new CardView({model: itemModel});
-  $container.html(currentview.render());
-  itemModel.fetch();
-}
+    // Create its preliminary view
+    var view = new ListView({collection: list});
 
-// Public API
-module.exports = {
+    // Then swap the view into the default region
+    layout.swap(view, {
 
-  showListView: function () {
-    fetchAndRenderList(list);
+      // And show the loader if necessary
+      loading: list.promise()
+
+    });
+
   },
 
-  showCardView: function(itemId) {
+  card: function (itemid) {
 
-    // Look for model in local collection
-    var cached = list.get(itemId);
+    // Check if model is cached
+    var item = list.get(itemid);
 
-    // If model isn't cached, try to make it locally
-    if (!cached) {
-      cached = list.add({id: itemId});
-    }
+    // If not build it
+    if (!item) item = list.add({id: itemid});
 
-    // Render view and fetch fresh data
-    fetchAndRenderCard(cached);
+    // Now create its preliminary view
+    var view = new CardView({model: item});
+
+    // Then swap the view into the default region
+    layout.swap(view, {
+
+      // And show loader if necessary
+      loading: item.promise()
+
+    });
+
   }
+
 }
+
+var Router = Backbone.Router.extend({
+
+  routes: {
+    '': API.list,
+    'tasks/:id': API.card
+  },
+
+  initialize: function () {
+    this.listenTo(Backbone, 'router:goto', this.goto);
+  },
+
+  goto: function (fragment) {
+    this.navigate(fragment, {trigger: true});
+  }
+
+});
+
+new Router();
