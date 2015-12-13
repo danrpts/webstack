@@ -16,7 +16,10 @@ var API = {
     layout.swap(view, {
 
       // And show the loader if necessary
-      loading: list.promise()
+      loading: list.promise(),
+
+      // Artificial delay
+      delay: 1000 + Math.random() * 3000
 
     });
 

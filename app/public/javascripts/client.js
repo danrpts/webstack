@@ -50,7 +50,10 @@ var API = {
     layout.swap(view, {
 
       // And show the loader if necessary
-      loading: list.promise()
+      loading: list.promise(),
+
+      // Artificial delay
+      delay: 1000 + Math.random() * 3000
 
     });
 
@@ -118,6 +121,7 @@ module.exports = {
 
     _.defaults(options, {
       loading: false,
+      delay: 0,
       region: 'content'
     });
 
@@ -137,7 +141,7 @@ module.exports = {
         setTimeout(function () {
           console.log('Resoloved!');
           region.html(view.render());
-        }, 1500);
+        }, Math.ceil(options.delay));
       });
     }
 

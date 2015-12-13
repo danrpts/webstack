@@ -17,6 +17,7 @@ module.exports = {
 
     _.defaults(options, {
       loading: false,
+      delay: 0,
       region: 'content'
     });
 
@@ -36,7 +37,7 @@ module.exports = {
         setTimeout(function () {
           console.log('Resoloved!');
           region.html(view.render());
-        }, 1500);
+        }, Math.ceil(options.delay));
       });
     }
 
