@@ -15,7 +15,7 @@ Collection.extend = Backbone.Collection.extend;
 
 module.exports = Collection;
 
-},{"../helpers/model_helpers.js":8,"backbone":"backbone","underscore":"underscore"}],2:[function(require,module,exports){
+},{"../helpers/model_helpers.js":9,"backbone":"backbone","underscore":"underscore"}],2:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
@@ -31,7 +31,7 @@ _.extend(Model.prototype, helpers);
 Model.extend = Backbone.Model.extend;
 
 module.exports = Model;
-},{"../helpers/model_helpers.js":8,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../helpers/model_helpers.js":9,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -67,45 +67,21 @@ module.exports = {
   debug: true
 }
 },{}],6:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone'); // Event system
-var Router = require('../classes/Router.js');
-var layout = require('../helpers/layout_helpers.js');
-var list = require('../models/tasks_model.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
+var list = require('../entities/tasks_entity.js');
+var layout = require('../helpers/layout_helpers.js');
 var config = require('../config/tasks_config.js');
 
-// Router API
-var API = {
-
-  list: function () {
-
-    // Create its view
-    var view = new ListView({ collection: list });
-
-    // Then swap the view into the default region
-    layout.swap(view, {
-
-      debug: config.debug,
-
-      // And show the loader if necessary
-      loading: list.promise(),
-
-      // Artificial delay
-      delay: 1000 + Math.random() * 2000
-
-    });
-
-  },
+module.exports = {
 
   card: function (itemid) {
 
     // Check if model is cached
-    var item = list.get(itemid);
+    var item = list.entity.get(itemid);
 
     // If not build it
-    if (!item) item = list.add({id: itemid});
+    if (!item) item = list.entity.add({id: itemid});
 
     // Now create its view
     var view = new CardView({ model: item });
@@ -119,31 +95,40 @@ var API = {
       loading: item.promise(),
 
     });
+    
+  },
+
+  list: function () {
+
+    // Create its view
+    var view = new ListView({ collection: list.entity });
+
+    // Then swap the view into the default region
+    layout.swap(view, {
+
+      debug: config.debug,
+
+      // And show the loader if necessary
+      loading: list.entity.promise(),
+
+      // Artificial delay
+      delay: 1000 + Math.random() * 2000
+
+    });
 
   }
 
 }
 
-var Router = Router.extend({
+},{"../config/tasks_config.js":5,"../entities/tasks_entity.js":7,"../helpers/layout_helpers.js":8,"../views/tasks_CardView.js":15,"../views/tasks_ListView.js":17}],7:[function(require,module,exports){
+var _ = require('underscore');
+var List = require('../models/tasks_Collection.js');
 
-  routes: {
-    '': API.list,
-    'tasks/:id': API.card
-  },
+module.exports = _.extend({
+  entity: new List.Collection()
+}, List);
 
-  initialize: function () {
-    this.listenTo(Backbone, config.name + ':goto', this.goto);
-  },
-
-  goto: function (fragment) {
-    this.navigate(fragment, {trigger: true});
-  }
-
-});
-
-new Router();
-
-},{"../classes/Router.js":3,"../config/tasks_config.js":5,"../helpers/layout_helpers.js":7,"../models/tasks_model.js":10,"../views/tasks_CardView.js":13,"../views/tasks_ListView.js":15,"backbone":"backbone","underscore":"underscore"}],7:[function(require,module,exports){
+},{"../models/tasks_Collection.js":11,"underscore":"underscore"}],8:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -203,7 +188,7 @@ module.exports = {
 
 }
 
-},{"jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
+},{"jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
 module.exports = {
   
   promise: function(options) {
@@ -215,28 +200,28 @@ module.exports = {
   
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.LocalStorage = require('backbone.localstorage');
+var Tasks = require('./routers/tasks_Router.js');
 
 $(function() {
 
-  require('./controllers/tasks_controller.js');
+  new Tasks();
 
   // TODO: {pushState: true} requires thought out server mods
   Backbone.history.start(); 
 
 });
 
-},{"./controllers/tasks_controller.js":6,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],10:[function(require,module,exports){
+},{"./routers/tasks_Router.js":14,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],11:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
 var Collection = require('../classes/Collection.js');
 
-// Private data representations
 var ItemModel = Model.extend({
 
   defaults: {
@@ -263,10 +248,14 @@ var ListCollection = Collection.extend({
 
 });
 
-// Public
-module.exports =  new ListCollection();
+module.exports = {
 
-},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],11:[function(require,module,exports){
+  Model: ItemModel,
+
+  Collection: ListCollection
+
+}
+},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],12:[function(require,module,exports){
 var _ = require('underscore');
 
 var helpers = {
@@ -285,7 +274,7 @@ module.exports = function (resource) {
   return _.extend(resource.toJSON(), helpers);
 }
 
-},{"underscore":"underscore"}],12:[function(require,module,exports){
+},{"underscore":"underscore"}],13:[function(require,module,exports){
 var _ = require('underscore');
 
 var helpers = {
@@ -300,7 +289,31 @@ module.exports = function (resource) {
   return _.extend(resource.toJSON(), helpers);
 }
 
-},{"underscore":"underscore"}],13:[function(require,module,exports){
+},{"underscore":"underscore"}],14:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Router = require('../classes/Router.js');
+var controller = require('../controllers/tasks_controller.js');
+var config = require('../config/tasks_config.js');
+
+module.exports = Router.extend({
+
+  routes: {
+    '': controller.list,
+    'tasks/:id': controller.card
+  },
+
+  initialize: function () {
+    this.listenTo(Backbone, config.name + ':goto', this.goto);
+  },
+
+  goto: function (fragment) {
+    this.navigate(fragment, {trigger: true});
+  }
+
+});
+
+},{"../classes/Router.js":3,"../config/tasks_config.js":5,"../controllers/tasks_controller.js":6,"backbone":"backbone","underscore":"underscore"}],15:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -390,7 +403,7 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/tasks_CardTemplate.html":16,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],14:[function(require,module,exports){
+},{"../../templates/tasks_CardTemplate.html":18,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],16:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -457,7 +470,7 @@ var ItemView = View.extend({
 
 module.exports = ItemView;
 
-},{"../../templates/tasks_ItemTemplate.html":17,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],15:[function(require,module,exports){
+},{"../../templates/tasks_ItemTemplate.html":19,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],17:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -521,13 +534,13 @@ var ListView = View.extend({
 
 module.exports = ListView;
 
-},{"../../templates/tasks_ListTemplate.html":18,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_listPresenter.js":12,"./tasks_ItemView.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],16:[function(require,module,exports){
+},{"../../templates/tasks_ListTemplate.html":20,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_listPresenter.js":13,"./tasks_ItemView.js":16,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],18:[function(require,module,exports){
 module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-card mdl-shadow--2dp custom-card\">\n\n    <button id=\"toggle\" class=\"mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored\">\n      <i class=\"material-icons\">check</i>\n    </button>\n\n    <div class=\"mdl-card__title custom-card__title\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <input id=\"title-input\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" value=\"<%- title %>\"/>\n          <label class=\"mdl-textfield__label\" for=\"title-input\" id=\"title-label\"><%- title %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__supporting-text custom-card__supporting-text\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <textarea id=\"details-input\" class=\"mdl-textfield__input\" type=\"text\" rows=\"1\"><% hasDetails() && print(details) %></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\" id=\"details-label\"><% !hasDetails() && print(\"Add details...\") %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__actions mdl-card--border\">\n      <button id=\"back\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons grey\">arrow_back</i>\n      </button>\n      <button id=\"delete\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons grey\">delete</i>\n      </button>\n    </div>\n\n  </div>\n</div>\n";
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp custom-card-item\">\n\n      <div class=\"flexbox\">\n        <div class=\"raw48x64\">\n          <div class=\"checkbox\">\n            <label id=\"toggle\" class=\"mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect\">\n              <input type=\"checkbox\" class=\"mdl-checkbox__input\" />\n            </label>\n          </div>\n        </div>\n\n        <div class=\"flexible\">\n          <div class=\"text\">\n            <label id=\"title\" class=\"mdl-checkbox__label\"><%- title %></label>\n          </div>\n        </div>\n\n        <div class=\"raw64\">\n          <div class=\"icon\">\n            <button id=\"delete\" class=\"mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect\">\n              <i class=\"material-icons grey\">delete</i>\n            </button>\n          </div>\n        </div>\n      </div>\n\n  </div>\n</li>\n";
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-textfield\">\n    <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" maxlength=\"23\">\n    <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n  </div>\n  <ul></ul>\n</div>\n\n";
 
-},{}]},{},[9]);
+},{}]},{},[10]);

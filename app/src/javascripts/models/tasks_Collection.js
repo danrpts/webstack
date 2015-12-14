@@ -3,7 +3,6 @@ var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
 var Collection = require('../classes/Collection.js');
 
-// Private data representations
 var ItemModel = Model.extend({
 
   defaults: {
@@ -30,5 +29,10 @@ var ListCollection = Collection.extend({
 
 });
 
-// Public
-module.exports =  new ListCollection();
+module.exports = {
+
+  Model: ItemModel,
+
+  Collection: ListCollection
+
+}
