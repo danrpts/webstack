@@ -22,5 +22,5 @@ The project is now being watched for changes
 The application is now hosted at http://localhost:3000
 
 ## Client Screenshots
-![List](https://raw.github.com/danrpts/raymarch/master/screenshots/ScreenShotList.png)
-![Card](https://raw.github.com/danrpts/raymarch/master/screenshots/ScreenShotCard.png)
+![List](https://raw.github.com/danrpts/webstack/master/screenshots/ScreenShotList.png)
+![Card](https://raw.github.com/danrpts/webstack/master/screenshots/ScreenShotCard.png)
