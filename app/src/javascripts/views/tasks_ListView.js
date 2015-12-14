@@ -1,10 +1,12 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
 var listPresenter = require('../presenters/tasks_listPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var ListView = Backbone.View.extend({
+var ListView = View.extend({
 
   template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
@@ -33,13 +35,13 @@ var ListView = Backbone.View.extend({
       this.setElement($compiled);
       this.$el.hide().fadeIn( "slow");
       this.rendered = true;
-      console.log('Initial render list.');
+      (config.debug) && console.log('Initial render list.');
     }
 
     // When it's a re-render
     else {
       this.$el.html($compiled.html());
-      console.log('Re-render list.');
+      (config.debug) && console.log('Re-render list.');
     }
 
     var $list = this.$('ul');

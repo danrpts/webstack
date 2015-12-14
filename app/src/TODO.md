@@ -1,3 +1,5 @@
 - [ ] Persist task list changes across all open clients in the same browser
 - [ ] Pushstate
-- [ ] Change Presenter from a class to something else
+- [ ] Dry up views
+- [ ] Push more responsibility onto controller. Controller class
+- [ ] Root app/controller instance

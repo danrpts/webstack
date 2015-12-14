@@ -1,9 +1,11 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var itemPresenter = require('../presenters/tasks_itemPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var CardView = Backbone.View.extend({
+var CardView = View.extend({
 
   events: {
     'keyup': 'onEscape',
@@ -25,7 +27,7 @@ var CardView = Backbone.View.extend({
   },
 
   back: function () {
-    Backbone.trigger('router:goto', '');
+    Backbone.trigger(config.name + ':goto', '');
   },
 
   onEscape: function (event) {
@@ -39,7 +41,7 @@ var CardView = Backbone.View.extend({
     var that = this;
     this.$el.fadeOut('fast', function () {
       that.remove();
-      Backbone.trigger('router:goto', '');
+      Backbone.trigger(config.name + ':goto', '');
     });  
   },
 
@@ -63,13 +65,13 @@ var CardView = Backbone.View.extend({
       this.setElement($compiled);
       this.$el.hide().fadeIn( "slow");
       this.rendered = true;
-      console.log('Initial render card.');
+      (config.debug) && console.log('Initial render card.');
     }
 
     // When it's a re-render
     else {
       this.$el.html($compiled.html());
-      console.log('Re-render card.');
+      (config.debug) && console.log('Re-render card.');
     }
     
     if (helpers.isComplete()) {

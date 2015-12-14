@@ -1,9 +1,11 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var itemPresenter = require('../presenters/tasks_itemPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var ItemView = Backbone.View.extend({
+var ItemView = View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
@@ -22,7 +24,7 @@ var ItemView = Backbone.View.extend({
   },
 
   open: function () {
-    Backbone.trigger('router:goto', 'tasks/' + this.model.id);
+    Backbone.trigger(config.name + ':goto', 'tasks/' + this.model.id);
   },
 
   delete: function () {
@@ -48,12 +50,14 @@ var ItemView = Backbone.View.extend({
     else {
       this.$el.html($compiled.html());
     }
-    
+
+    // MDL
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
       this.$('#title').addClass('complete');
       this.el.querySelector('#toggle').MaterialCheckbox.check();
     }
+
     return this.$el;
   }
 });

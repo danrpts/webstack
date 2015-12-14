@@ -15,7 +15,7 @@ Collection.extend = Backbone.Collection.extend;
 
 module.exports = Collection;
 
-},{"../helpers/model_helpers.js":5,"backbone":"backbone","underscore":"underscore"}],2:[function(require,module,exports){
+},{"../helpers/model_helpers.js":8,"backbone":"backbone","underscore":"underscore"}],2:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
@@ -31,12 +31,50 @@ _.extend(Model.prototype, helpers);
 Model.extend = Backbone.Model.extend;
 
 module.exports = Model;
-},{"../helpers/model_helpers.js":5,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../helpers/model_helpers.js":8,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+var Router = function (options) {
+  Backbone.Router.call(this, options);
+}
+
+Router.prototype = Object.create(Backbone.Router.prototype);
+
+_.extend(Router.prototype, {});
+
+Router.extend = Backbone.Router.extend;
+
+module.exports = Router;
+},{"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+var View = function (options) {
+  Backbone.View.call(this, options);
+}
+
+View.prototype = Object.create(Backbone.View.prototype);
+
+_.extend(View.prototype, {});
+
+View.extend = Backbone.View.extend;
+
+module.exports = View;
+},{"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
+module.exports = {
+  name: 'tasks',
+  debug: true
+}
+},{}],6:[function(require,module,exports){
+var _ = require('underscore');
 var Backbone = require('backbone'); // Event system
+var Router = require('../classes/Router.js');
 var layout = require('../helpers/layout_helpers.js');
 var list = require('../models/tasks_model.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
+var config = require('../config/tasks_config.js');
 
 // Router API
 var API = {
@@ -44,16 +82,18 @@ var API = {
   list: function () {
 
     // Create its view
-    var view = new ListView({collection: list});
+    var view = new ListView({ collection: list });
 
     // Then swap the view into the default region
     layout.swap(view, {
+
+      debug: config.debug,
 
       // And show the loader if necessary
       loading: list.promise(),
 
       // Artificial delay
-      delay: 1000 + Math.random() * 3000
+      delay: 1000 + Math.random() * 2000
 
     });
 
@@ -68,13 +108,15 @@ var API = {
     if (!item) item = list.add({id: itemid});
 
     // Now create its view
-    var view = new CardView({model: item});
+    var view = new CardView({ model: item });
 
     // Then swap the view into the default region
     layout.swap(view, {
 
+      debug: config.debug,
+
       // And show loader if necessary
-      loading: item.promise()
+      loading: item.promise(),
 
     });
 
@@ -82,7 +124,7 @@ var API = {
 
 }
 
-var Router = Backbone.Router.extend({
+var Router = Router.extend({
 
   routes: {
     '': API.list,
@@ -90,7 +132,7 @@ var Router = Backbone.Router.extend({
   },
 
   initialize: function () {
-    this.listenTo(Backbone, 'router:goto', this.goto);
+    this.listenTo(Backbone, config.name + ':goto', this.goto);
   },
 
   goto: function (fragment) {
@@ -101,7 +143,7 @@ var Router = Backbone.Router.extend({
 
 new Router();
 
-},{"../helpers/layout_helpers.js":4,"../models/tasks_model.js":7,"../views/tasks_CardView.js":10,"../views/tasks_ListView.js":12,"backbone":"backbone"}],4:[function(require,module,exports){
+},{"../classes/Router.js":3,"../config/tasks_config.js":5,"../helpers/layout_helpers.js":7,"../models/tasks_model.js":10,"../views/tasks_CardView.js":13,"../views/tasks_ListView.js":15,"backbone":"backbone","underscore":"underscore"}],7:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -128,20 +170,28 @@ module.exports = {
     var region = regions[options.region];
 
     if (!!region.view) {
+      region.view.off();
+      (!!region.view.model) && region.view.model.off();
       region.view.remove();
+      delete region.view.$el;
+      delete region.view.el;
     }
 
     region.view = view;
     
     if (!!options.loading) {
-      console.log('Loading...');
+      (options.debug) && console.log('Loading...');
       region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>');
       componentHandler.upgradeElements(region[0]);
       options.loading.done(function () {
         setTimeout(function () {
-          console.log('Resoloved!');
-          region.html(view.render());
-        }, Math.ceil(options.delay));
+
+
+          (options.debug) && console.log('Resoloved!'); 
+
+          // If view has not changed since the promise was made, render it
+          (region.view === view) && region.html(view.render());
+        }, Math.round(options.delay));
       });
     }
 
@@ -153,7 +203,7 @@ module.exports = {
 
 }
 
-},{"jquery":"jquery","underscore":"underscore"}],5:[function(require,module,exports){
+},{"jquery":"jquery","underscore":"underscore"}],8:[function(require,module,exports){
 module.exports = {
   
   promise: function(options) {
@@ -165,7 +215,7 @@ module.exports = {
   
 }
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -180,7 +230,7 @@ $(function() {
 
 });
 
-},{"./controllers/tasks_controller.js":3,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],7:[function(require,module,exports){
+},{"./controllers/tasks_controller.js":6,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],10:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
@@ -216,7 +266,7 @@ var ListCollection = Collection.extend({
 // Public
 module.exports =  new ListCollection();
 
-},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],8:[function(require,module,exports){
+},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],11:[function(require,module,exports){
 var _ = require('underscore');
 
 var helpers = {
@@ -235,7 +285,7 @@ module.exports = function (resource) {
   return _.extend(resource.toJSON(), helpers);
 }
 
-},{"underscore":"underscore"}],9:[function(require,module,exports){
+},{"underscore":"underscore"}],12:[function(require,module,exports){
 var _ = require('underscore');
 
 var helpers = {
@@ -250,13 +300,15 @@ module.exports = function (resource) {
   return _.extend(resource.toJSON(), helpers);
 }
 
-},{"underscore":"underscore"}],10:[function(require,module,exports){
+},{"underscore":"underscore"}],13:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var itemPresenter = require('../presenters/tasks_itemPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var CardView = Backbone.View.extend({
+var CardView = View.extend({
 
   events: {
     'keyup': 'onEscape',
@@ -278,7 +330,7 @@ var CardView = Backbone.View.extend({
   },
 
   back: function () {
-    Backbone.trigger('router:goto', '');
+    Backbone.trigger(config.name + ':goto', '');
   },
 
   onEscape: function (event) {
@@ -292,7 +344,7 @@ var CardView = Backbone.View.extend({
     var that = this;
     this.$el.fadeOut('fast', function () {
       that.remove();
-      Backbone.trigger('router:goto', '');
+      Backbone.trigger(config.name + ':goto', '');
     });  
   },
 
@@ -316,13 +368,13 @@ var CardView = Backbone.View.extend({
       this.setElement($compiled);
       this.$el.hide().fadeIn( "slow");
       this.rendered = true;
-      console.log('Initial render card.');
+      (config.debug) && console.log('Initial render card.');
     }
 
     // When it's a re-render
     else {
       this.$el.html($compiled.html());
-      console.log('Re-render card.');
+      (config.debug) && console.log('Re-render card.');
     }
     
     if (helpers.isComplete()) {
@@ -338,13 +390,15 @@ var CardView = Backbone.View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/tasks_CardTemplate.html":13,"../presenters/tasks_itemPresenter.js":8,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],11:[function(require,module,exports){
+},{"../../templates/tasks_CardTemplate.html":16,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],14:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var itemPresenter = require('../presenters/tasks_itemPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var ItemView = Backbone.View.extend({
+var ItemView = View.extend({
 
   events: {
     'mouseup #toggle': 'toggle',
@@ -363,7 +417,7 @@ var ItemView = Backbone.View.extend({
   },
 
   open: function () {
-    Backbone.trigger('router:goto', 'tasks/' + this.model.id);
+    Backbone.trigger(config.name + ':goto', 'tasks/' + this.model.id);
   },
 
   delete: function () {
@@ -389,26 +443,30 @@ var ItemView = Backbone.View.extend({
     else {
       this.$el.html($compiled.html());
     }
-    
+
+    // MDL
     componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
       this.$('#title').addClass('complete');
       this.el.querySelector('#toggle').MaterialCheckbox.check();
     }
+
     return this.$el;
   }
 });
 
 module.exports = ItemView;
 
-},{"../../templates/tasks_ItemTemplate.html":14,"../presenters/tasks_itemPresenter.js":8,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],12:[function(require,module,exports){
+},{"../../templates/tasks_ItemTemplate.html":17,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_itemPresenter.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],15:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
 var listPresenter = require('../presenters/tasks_listPresenter.js');
+var config = require('../config/tasks_config.js');
 
-var ListView = Backbone.View.extend({
+var ListView = View.extend({
 
   template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
@@ -437,13 +495,13 @@ var ListView = Backbone.View.extend({
       this.setElement($compiled);
       this.$el.hide().fadeIn( "slow");
       this.rendered = true;
-      console.log('Initial render list.');
+      (config.debug) && console.log('Initial render list.');
     }
 
     // When it's a re-render
     else {
       this.$el.html($compiled.html());
-      console.log('Re-render list.');
+      (config.debug) && console.log('Re-render list.');
     }
 
     var $list = this.$('ul');
@@ -463,13 +521,13 @@ var ListView = Backbone.View.extend({
 
 module.exports = ListView;
 
-},{"../../templates/tasks_ListTemplate.html":15,"../presenters/tasks_listPresenter.js":9,"./tasks_ItemView.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],13:[function(require,module,exports){
+},{"../../templates/tasks_ListTemplate.html":18,"../classes/View.js":4,"../config/tasks_config.js":5,"../presenters/tasks_listPresenter.js":12,"./tasks_ItemView.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],16:[function(require,module,exports){
 module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-card mdl-shadow--2dp custom-card\">\n\n    <button id=\"toggle\" class=\"mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored\">\n      <i class=\"material-icons\">check</i>\n    </button>\n\n    <div class=\"mdl-card__title custom-card__title\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <input id=\"title-input\" class=\"mdl-textfield__input\" type=\"text\" maxlength=\"23\" value=\"<%- title %>\"/>\n          <label class=\"mdl-textfield__label\" for=\"title-input\" id=\"title-label\"><%- title %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__supporting-text custom-card__supporting-text\">\n      <div class=\"mdl-card__subtitle-text\">\n        <div class=\"mdl-textfield mdl-js-textfield\">\n          <textarea id=\"details-input\" class=\"mdl-textfield__input\" type=\"text\" rows=\"1\"><% hasDetails() && print(details) %></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\" id=\"details-label\"><% !hasDetails() && print(\"Add details...\") %></label>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"mdl-card__actions mdl-card--border\">\n      <button id=\"back\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons grey\">arrow_back</i>\n      </button>\n      <button id=\"delete\" class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n        <i class=\"material-icons grey\">delete</i>\n      </button>\n    </div>\n\n  </div>\n</div>\n";
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp custom-card-item\">\n\n      <div class=\"flexbox\">\n        <div class=\"raw48x64\">\n          <div class=\"checkbox\">\n            <label id=\"toggle\" class=\"mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect\">\n              <input type=\"checkbox\" class=\"mdl-checkbox__input\" />\n            </label>\n          </div>\n        </div>\n\n        <div class=\"flexible\">\n          <div class=\"text\">\n            <label id=\"title\" class=\"mdl-checkbox__label\"><%- title %></label>\n          </div>\n        </div>\n\n        <div class=\"raw64\">\n          <div class=\"icon\">\n            <button id=\"delete\" class=\"mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect\">\n              <i class=\"material-icons grey\">delete</i>\n            </button>\n          </div>\n        </div>\n      </div>\n\n  </div>\n</li>\n";
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = "<div style=\"width: 330px; margin:0 auto; padding-top: 3%\">\n  <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-textfield\">\n    <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" maxlength=\"23\">\n    <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n  </div>\n  <ul></ul>\n</div>\n\n";
 
-},{}]},{},[6]);
+},{}]},{},[9]);
