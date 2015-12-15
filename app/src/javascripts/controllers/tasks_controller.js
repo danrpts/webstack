@@ -6,29 +6,6 @@ var config = require('../config/tasks_config.js');
 
 module.exports = {
 
-  card: function (itemid) {
-
-    // Check if model is cached
-    var item = list.entity.get(itemid);
-
-    // If not build it
-    if (!item) item = list.entity.add({id: itemid});
-
-    // Now create its view
-    var view = new CardView({ model: item });
-
-    // Then swap the view into the default region
-    layout.swap(view, {
-
-      debug: config.debug,
-
-      // And show loader if necessary
-      loading: item.promise(),
-
-    });
-    
-  },
-
   list: function () {
 
     // Create its view
@@ -43,9 +20,32 @@ module.exports = {
       loading: list.entity.promise(),
 
       // Artificial delay
-      delay: 1000 + Math.random() * 2000
+      delay: Math.random() * 2000
 
     });
+
+  },
+
+  card: function (itemid) {
+
+    var item = list.entity.get(itemid);
+
+    if (!item) item = list.entity.add({id: itemid});
+
+    var view = new CardView({ model: item });
+
+    // Then swap the view into the default region
+    layout.swap(view, {
+
+      debug: config.debug,
+
+      // And show the loader if necessary
+      loading: item.promise(),
+
+      // Artificial delay
+      delay: Math.random() * 200
+
+    }); 
 
   }
 

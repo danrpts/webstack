@@ -3,16 +3,17 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
-var listPresenter = require('../presenters/tasks_listPresenter.js');
 var config = require('../config/tasks_config.js');
 
 var ListView = View.extend({
 
-  template: _.template(require('../../templates/tasks_ListTemplate.html')),
-
   events: {
     'keyup #input-title': 'onEnter'
   },
+
+  presenter: require('../presenters/tasks_listPresenter.js'),
+
+  template: _.template(require('../../templates/tasks_ListTemplate.html')),
 
   onEnter: function (event) {
     if (event.which === 13) {
@@ -23,26 +24,12 @@ var ListView = View.extend({
     }
   },
 
-  // Bug causing render per model due to add event on collection fetch
   render: function () {
 
     // Build template
-    var helpers = listPresenter(this.collection);
-    var $compiled = $(this.template(helpers));
-
-    // When it's the initial render
-    if (!this.rendered) {
-      this.setElement($compiled);
-      this.$el.hide().fadeIn( "slow");
-      this.rendered = true;
-      (config.debug) && console.log('Initial render list.');
-    }
-
-    // When it's a re-render
-    else {
-      this.$el.html($compiled.html());
-      (config.debug) && console.log('Re-render list.');
-    }
+    var helpers = _.isFunction(this.presenter) ? this.presenter(this.collection) : this.collection.toJSON();
+    var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
+    this.prepare($compiled);
 
     var $list = this.$('ul');
     var $listfragment = $(document.createDocumentFragment());

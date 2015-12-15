@@ -13,10 +13,6 @@ module.exports = Router.extend({
 
   initialize: function () {
     this.listenTo(Backbone, config.name + ':goto', this.goto);
-  },
-
-  goto: function (fragment) {
-    this.navigate(fragment, {trigger: true});
   }
 
 });

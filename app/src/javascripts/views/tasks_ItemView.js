@@ -2,7 +2,6 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var itemPresenter = require('../presenters/tasks_itemPresenter.js');
 var config = require('../config/tasks_config.js');
 
 var ItemView = View.extend({
@@ -12,6 +11,8 @@ var ItemView = View.extend({
     'dblclick .text': 'open',
     'mouseup #delete': 'delete'
   },
+
+  presenter: require('../presenters/tasks_itemPresenter.js'),
 
   template: _.template(require('../../templates/tasks_ItemTemplate.html')),
 
@@ -37,19 +38,10 @@ var ItemView = View.extend({
 
   render: function () {
 
-    var helpers = itemPresenter(this.model);
-    var $compiled = $(this.template(helpers));
-
-    // When it's the initial render
-    if (!this.rendered) {
-      this.setElement($compiled);
-      this.rendered = true;
-    }
-
-    // When it's a re-render
-    else {
-      this.$el.html($compiled.html());
-    }
+    // Build template
+    var helpers = _.isFunction(this.presenter) ? this.presenter(this.model) : this.model.toJSON();
+    var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
+    this.prepare($compiled);
 
     // MDL
     componentHandler.upgradeElements(this.el);

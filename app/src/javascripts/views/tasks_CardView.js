@@ -2,7 +2,6 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var itemPresenter = require('../presenters/tasks_itemPresenter.js');
 var config = require('../config/tasks_config.js');
 
 var CardView = View.extend({
@@ -19,6 +18,8 @@ var CardView = View.extend({
   initialize: function () {
     this.listenTo(this.model, 'change', this.render);
   },
+
+  presenter: require('../presenters/tasks_itemPresenter.js'),
 
   template: _.template(require('../../templates/tasks_CardTemplate.html')),
 
@@ -57,22 +58,9 @@ var CardView = View.extend({
   render: function () {
 
     // Build template
-    var helpers = itemPresenter(this.model);
-    var $compiled = $(this.template(helpers));
-
-    // When it's the initial render
-    if (!this.rendered) {
-      this.setElement($compiled);
-      this.$el.hide().fadeIn( "slow");
-      this.rendered = true;
-      (config.debug) && console.log('Initial render card.');
-    }
-
-    // When it's a re-render
-    else {
-      this.$el.html($compiled.html());
-      (config.debug) && console.log('Re-render card.');
-    }
+    var helpers = _.isFunction(this.presenter) ? this.presenter(this.model) : this.model.toJSON();
+    var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
+    this.prepare($compiled);
     
     if (helpers.isComplete()) {
       this.$('#toggle').toggleClass('mdl-color--green');
