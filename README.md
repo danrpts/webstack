@@ -1,6 +1,6 @@
 # webstack
 
-A lightweight webstack for Javascript SPAs. Built on top of Node, Gulp, Express, Backbone and Materialize with selected best patterns. This is a project for experimental and educational purposes. Feedback, tests and pull requests are welcomed.
+A lightweight webstack for Javascript SPAs. Built on top of Node, Gulp, Express, Backbone and Materialize with selected patterns. This is a project for experimental and educational purposes. Feedback, tests and pull requests are welcomed.
 
 ## Install
 	  
