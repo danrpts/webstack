@@ -31,7 +31,7 @@ var ListView = View.extend({
     var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
     this.prepare($compiled);
 
-    var $list = this.$('ul');
+    var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
     this.collection.each(function (itemModel, index) {
       new ItemView({model: itemModel}).render().appendTo($listfragment);

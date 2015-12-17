@@ -1,34 +1,32 @@
 <div class="row">
   <div class="col m3 l4">&nbsp;</div>
   <div class="col s12 m6 l4">
-    <div class="card grey lighten-5 z-depth-1">
 
-      <div class="row card-content">
-        <div class="input-field col s12 m12 l12">
-          <input id="title-input" type="text" length="23" />
-          <label for="title-input"><%- title %></label>
-        </div>
+    <div class="card-panel white row">
+      <div class="input-field col s12 m12 l12">
+        <input id="title-input" type="text" length="23" />
+        <label for="title-input"><%- title %></label>
       </div>
+    </div>
 
-      <div class="row card-content">
-        <div class="input-field col s12 m12 l12">
-          <textarea id="details-input" class="materialize-textarea" rows="1"><% hasDetails() && print(details) %></textarea>
-          <label for="details-input" id="details-label"><% !hasDetails() && print("Add details...") %></label>
-        </div>
+    <div class="card-panel white row">
+      <div class="input-field col s12 m12 l12">
+        <textarea id="details-input" class="materialize-textarea" rows="1"><% hasDetails() && print(details) %></textarea>
+        <label for="details-input" id="details-label"><% !hasDetails() && print("Add details...") %></label>
       </div>
-
-      <div class="card-action">
-        <div class="row valign-wrapper custom-row">
-          <div class="circle back grey-text text-darken-5" id="back">
-            <i class="material-icons left">arrow_back</i>
-          </div>
-          <div class="circle delete grey-text text-darken-5" id="delete">
-            <i class="material-icons left">delete</i>
-          </div>
-        </div>
-      </div>
+    </div>
       
+  </div>
+  <div class="col m3 l4">
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+      <a class="btn-floating btn-large">
+        <i class="large mdi-navigation-menu"></i>
+      </a>
+      <ul>
+        <li><a class="btn-floating green" id="togg<le"><i class="material-icons">done</i></a></li>
+        <li><a class="btn-floating red" id="delete"><i class="material-icons">delete</i></a></li>
+        <li><a class="btn-floating blue" id="back"><i class="material-icons">arrow_back</i></a></li>
+      </ul>
     </div>
   </div>
-  <div class="col m3 l4">&nbsp;</div>
 </div>

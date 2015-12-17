@@ -9,33 +9,6 @@ var glob = require('glob');
 var passport = require('passport');
 var app = express();
 
-/* Configure a Google Passport */
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-app.use(passport.initialize());
-passport.use(new GoogleStrategy({
-    clientID: "980383434827-m165b51rpsk2o2tlc5c6efgr3iepf0mr.apps.googleusercontent.com",
-    clientSecret: "EWgOFPh1-I7278chZ30tzj3W",
-    callbackURL: "http://localhost:3000/auth/google/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      // To keep the example simple, the user's Google profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Google account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
-  }
-));
-/**/
-
 var helpers = require('./helpers/error_helpers.js');
 
 // Load all routes synchronously

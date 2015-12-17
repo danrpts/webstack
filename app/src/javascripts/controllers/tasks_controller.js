@@ -56,6 +56,7 @@ module.exports = {
 
   start: function () {
     new Router({ controller: api });
+    return this;
   }
   
 }

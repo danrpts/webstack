@@ -200,6 +200,7 @@ module.exports = {
 
   start: function () {
     new Router({ controller: api });
+    return this;
   }
   
 }
@@ -631,7 +632,7 @@ var ListView = View.extend({
     var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
     this.prepare($compiled);
 
-    var $list = this.$('ul');
+    var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
     this.collection.each(function (itemModel, index) {
       new ItemView({model: itemModel}).render().appendTo($listfragment);
@@ -649,12 +650,12 @@ module.exports = ListView;
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"card grey lighten-5 z-depth-1\">\n\n      <div class=\"row card-content\">\n        <div class=\"input-field col s12 m12 l12\">\n          <input id=\"title-input\" type=\"text\" length=\"23\" />\n          <label for=\"title-input\"><%- title %></label>\n        </div>\n      </div>\n\n      <div class=\"row card-content\">\n        <div class=\"input-field col s12 m12 l12\">\n          <textarea id=\"details-input\" class=\"materialize-textarea\" rows=\"1\"><% hasDetails() && print(details) %></textarea>\n          <label for=\"details-input\" id=\"details-label\"><% !hasDetails() && print(\"Add details...\") %></label>\n        </div>\n      </div>\n\n      <div class=\"card-action\">\n        <div class=\"row valign-wrapper custom-row\">\n          <div class=\"circle back grey-text text-darken-5\" id=\"back\">\n            <i class=\"material-icons left\">arrow_back</i>\n          </div>\n          <div class=\"circle delete grey-text text-darken-5\" id=\"delete\">\n            <i class=\"material-icons left\">delete</i>\n          </div>\n        </div>\n      </div>\n      \n    </div>\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>";
+module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n\n    <div class=\"card-panel white row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"title-input\" type=\"text\" length=\"23\" />\n        <label for=\"title-input\"><%- title %></label>\n      </div>\n    </div>\n\n    <div class=\"card-panel white row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <textarea id=\"details-input\" class=\"materialize-textarea\" rows=\"1\"><% hasDetails() && print(details) %></textarea>\n        <label for=\"details-input\" id=\"details-label\"><% !hasDetails() && print(\"Add details...\") %></label>\n      </div>\n    </div>\n      \n  </div>\n  <div class=\"col m3 l4\">\n    <div class=\"fixed-action-btn\" style=\"bottom: 45px; right: 24px;\">\n      <a class=\"btn-floating btn-large\">\n        <i class=\"large mdi-navigation-menu\"></i>\n      </a>\n      <ul>\n        <li><a class=\"btn-floating green\" id=\"togg<le\"><i class=\"material-icons\">done</i></a></li>\n        <li><a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a></li>\n        <li><a class=\"btn-floating blue\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a></li>\n      </ul>\n    </div>\n  </div>\n</div>";
 
 },{}],26:[function(require,module,exports){
-module.exports = "<li>\n\n  <div class=\"card-panel grey lighten-5 z-depth-1\">\n    <div class=\"row valign-wrapper custom-row\">\n      \n      <div class=\"col s2 valign-wrapper\">\n        <input type=\"checkbox\" id=\"checkbox-<%= id %>\" <% isComplete() && print('checked') %> />\n        <label for=\"checkbox-<%= id %>\" class=\"toggle\"></label>\n      </div>\n\n      <div class=\"col s7\">\n        <span class=\"black-text open\" id=\"text-<%= id %>\">\n          <%- title%>\n        </span>\n      </div>\n\n      <div class=\"col s3\">\n        <div class=\"circle delete grey-text text-darken-5\" id=\"delete-<%= id %>\">\n          <i class=\"material-icons right\">delete</i>\n        </div>\n      </div>\n    \n    </div>\n  </div>\n\n</li>\n";
+module.exports = "<li>\n  <div class=\"card\">\n    <div class=\"card-content\">\n\n      <span class=\"toggle\">\n        <i class=\"left\">\n          <input type=\"checkbox\" id=\"checkbox-<%= id %>\" <% isComplete() && print('checked') %> />\n          <label for=\"checkbox-<%= id %>\"></label>\n        </i>\n      </span>\n    \n      <span class=\"card-title grey-text text-darken-4 open\" id=\"text-<%= id %>\">\n        <%- title%>\n      </span>\n\n      <span class=\"grey-text text-darken-4 delete\">\n        <i class=\"material-icons right\">delete</i>\n      </span>\n      \n    </div>\n  </div>\n</li>\n";
 
 },{}],27:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n\n    <div class=\"row custom-row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"input-title\" type=\"text\" length=\"23\">\n        <label for=\"input-title\">What needs to be done?</label>\n      </div>\n    </div>\n\n    <div class=\"row custom-row\">\n      <ul class=\"col s12 m12 l12\"></ul>\n    </div>\n\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>";
+module.exports = "<div class=\"row\">\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n\n    <div class=\"row custom-row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"input-title\" type=\"text\" length=\"23\">\n        <label for=\"input-title\">What needs to be done?</label>\n      </div>\n    </div>\n\n    <div class=\"row custom-row\">\n      <ul id=\"task-items\" class=\"col s12 m12 l12\" class=\"collection\"></ul>\n    </div>\n\n  </div>\n  <div class=\"col s0 m3 l4\">\n    <div class=\"fixed-action-btn\" style=\"bottom: 45px; right: 24px;\">\n      <a class=\"btn-floating btn-large\">\n        <i class=\"large mdi-navigation-menu\"></i>\n      </a>\n      <ul>\n        <li><a class=\"btn-floating green\" id=\"done\"><i class=\"material-icons\">done_all</i></a></li>\n        <li><a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a></li>\n        <li><a class=\"btn-floating blue\" id=\"settings\"><i class=\"material-icons\">settings</i></a></li>\n      </ul>\n    </div>\n  </div>\n</div>\n";
 
 },{}]},{},[14]);
