@@ -6,7 +6,8 @@ var Collection = require('../classes/Collection.js');
 var ItemModel = Model.extend({
 
   defaults: {
-    'complete': false
+    'complete': false,
+    'creation': new Date()
   },
 
   toggle: function () {

@@ -1,25 +1,11 @@
-<li>
-  <div class="card">
-    <div class="card-content">
-
-      <span class="toggle">
-        <i class="left">
-          <input type="checkbox" id="checkbox-<%= id %>" <% isComplete() && print('checked') %> />
-          <label for="checkbox-<%= id %>"></label>
-        </i>
-      </span>
-    
-      <span class="card-title grey-text text-darken-4 open" id="text-<%= id %>">
-        <%- title%>
-      </span>
-      <p>First Line <br>
-         Second Line
-      </p>
-
-      <span class="grey-text text-darken-4 delete">
-        <i class="material-icons right">delete</i>
-      </span>
-      
-    </div>
-  </div>
+<li class="collection-item custom-avatar">
+    <span class="avatar-content">
+      <input type="checkbox" id="toggle-<%- id %>" <% isComplete() && print('checked') %>/>
+      <label for="toggle-<%- id %>" class="toggle">&nbsp;</label>
+    </span>
+    <span class="title open"><%- title %></span>
+    <% hasDetails() && print('<p class="grey-text truncate">' + details + '</p>') %>
+    <a class="custom-secondary-content delete">
+      <i class="material-icons">delete</i>
+    </a>
 </li>

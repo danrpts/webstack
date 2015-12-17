@@ -22,3 +22,31 @@ li:hover .delete {
 .custom-row {
   margin-bottom: 0px;
 }
+
+.collection .collection-item.custom-avatar {
+    min-height: 0px;
+    padding-left: 72px;
+    position: relative;
+}
+
+.collection .collection-item.custom-avatar .avatar-content {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  left: 15px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.collection .collection-item.custom-avatar .custom-secondary-content {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    float: right;
+    color: #26a69a;
+}
+
+.collection .collection-item.custom-avatar p {
+    margin: 0;
+}
