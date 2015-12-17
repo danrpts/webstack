@@ -4,7 +4,11 @@
       <label for="toggle-<%- id %>" class="toggle">&nbsp;</label>
     </span>
     <span class="title open"><%- title %></span>
-    <% hasDetails() && print('<p class="grey-text truncate">' + details + '</p>') %>
+    <p class="grey-text truncate">
+      <% has('details') && print(details) %>
+      <% has('due') && print('<br>Due', format('due')) %>
+      <% isComplete() && print('<br>Completed', format('completion')) %>
+    </p>
     <a class="custom-secondary-content delete">
       <i class="material-icons">delete</i>
     </a>

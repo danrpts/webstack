@@ -2,12 +2,20 @@ var _ = require('underscore');
 
 var helpers = {
 
-  isComplete: function () {
-    return !!this.complete;
+  has: function (key) {
+    return (key in this && this[key].length > 0);
   },
 
-  hasDetails: function () {
-    return ("details" in this && this.details.length > 0);
+  isComplete: function () {
+    return !!this.completion;
+  },
+
+  format: function (key) {
+    var goal = new Date(this[key]);
+    var today = new Date();
+    var time = ' @ ' + goal.getHours() % 12 + ':' + goal.getMinutes();
+    var date = ' on ' + goal.toDateString();
+    return (goal.getDay() === today.getDay()) ? time : date;
   }
 
 }

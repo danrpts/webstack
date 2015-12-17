@@ -6,12 +6,13 @@ var Collection = require('../classes/Collection.js');
 var ItemModel = Model.extend({
 
   defaults: {
-    'complete': false,
-    'creation': new Date()
+    'due': false,
+    'completion': false,
+    'creation': Date.now()
   },
 
   toggle: function () {
-    this.save({complete: !this.get('complete')}, {wait: true});
+    this.save({completion: !this.get('completion') ? Date.now() : false}, {wait: true});
   },
 
   validate: function (attributes) {
