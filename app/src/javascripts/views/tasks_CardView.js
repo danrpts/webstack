@@ -54,7 +54,6 @@ var CardView = View.extend({
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
-  // Bugged
   render: function () {
 
     // Build template
@@ -65,9 +64,6 @@ var CardView = View.extend({
     if (helpers.isComplete()) {
       this.$('#toggle').toggleClass('mdl-color--green');
     }
-
-    // MDL
-    componentHandler.upgradeElements(this.el);
 
     return this.$el;
   }

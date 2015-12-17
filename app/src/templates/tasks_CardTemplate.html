@@ -1,36 +1,36 @@
-<div style="width: 330px; margin:0 auto; padding-top: 3%">
-  <div class="mdl-card mdl-shadow--2dp custom-card">
+<div class="container">
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <div class="card grey lighten-5 z-depth-1">
 
-    <button id="toggle" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-      <i class="material-icons">check</i>
-    </button>
-
-    <div class="mdl-card__title custom-card__title">
-      <div class="mdl-card__subtitle-text">
-        <div class="mdl-textfield mdl-js-textfield">
-          <input id="title-input" class="mdl-textfield__input" type="text" maxlength="23" value="<%- title %>"/>
-          <label class="mdl-textfield__label" for="title-input" id="title-label"><%- title %></label>
+        <div class="row card-content">
+          <div class="input-field col s12 m12 l12">
+            <input id="title-input" type="text" length="23" />
+            <label for="title-input"><%- title %></label>
+          </div>
         </div>
+
+        <div class="row card-content">
+          <div class="input-field col s12 m12 l12">
+            <textarea id="details-input" class="materialize-textarea"><% hasDetails() && print(details) %></textarea>
+            <label for="details-input" id="details-label"><% !hasDetails() && print("Add details...") %></label>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <div class="row valign-wrapper custom-row">
+            <div class="circle back grey-text text-darken-5" id="back">
+              <i class="material-icons left">arrow_back</i>
+            </div>
+            <div class="circle delete grey-text text-darken-5" id="delete">
+              <i class="material-icons left">delete</i>
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
-
-    <div class="mdl-card__supporting-text custom-card__supporting-text">
-      <div class="mdl-card__subtitle-text">
-        <div class="mdl-textfield mdl-js-textfield">
-          <textarea id="details-input" class="mdl-textfield__input" type="text" rows="1"><% hasDetails() && print(details) %></textarea>
-          <label class="mdl-textfield__label" for="details-input" id="details-label"><% !hasDetails() && print("Add details...") %></label>
-        </div>
-      </div>
-    </div>
-
-    <div class="mdl-card__actions mdl-card--border">
-      <button id="back" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-        <i class="material-icons grey">arrow_back</i>
-      </button>
-      <button id="delete" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-        <i class="material-icons grey">delete</i>
-      </button>
-    </div>
-
   </div>
 </div>
+
+      

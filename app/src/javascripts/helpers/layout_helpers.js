@@ -3,7 +3,7 @@ var _ = require('underscore');
 
 // Private
 var regions = {
-
+  header: $('[data-js-region="header"'),
   content: $('[data-js-region="content"')
 
 }
@@ -35,8 +35,7 @@ module.exports = {
     
     if (!!options.loading) {
       (options.debug) && console.log('Loading...');
-      region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>');
-      componentHandler.upgradeElements(region[0]);
+      region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%">  <div class="preloader-wrapper small active"><div class="spinner-layer spinner-green-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
       options.loading.done(function () {
         setTimeout(function () {
 

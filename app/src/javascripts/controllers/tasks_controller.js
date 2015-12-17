@@ -1,10 +1,11 @@
+var Router = require('../routers/tasks_Router.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
 var list = require('../entities/tasks_entity.js');
 var layout = require('../helpers/layout_helpers.js');
 var config = require('../config/tasks_config.js');
 
-module.exports = {
+var api = {
 
   list: function () {
 
@@ -20,7 +21,7 @@ module.exports = {
       loading: list.entity.promise(),
 
       // Artificial delay
-      delay: Math.random() * 2000
+      //delay: Math.random() * 2000
 
     });
 
@@ -43,10 +44,19 @@ module.exports = {
       loading: item.promise(),
 
       // Artificial delay
-      delay: Math.random() * 200
+      //delay: Math.random() * 200
 
     }); 
 
   }
 
 }
+
+module.exports = {
+
+  start: function () {
+    new Router({ controller: api });
+  }
+  
+}
+

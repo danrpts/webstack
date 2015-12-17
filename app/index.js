@@ -4,8 +4,39 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 var glob = require('glob');
+var passport = require('passport');
 var app = express();
+
+/* Configure a Google Passport */
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+app.use(passport.initialize());
+passport.use(new GoogleStrategy({
+    clientID: "980383434827-m165b51rpsk2o2tlc5c6efgr3iepf0mr.apps.googleusercontent.com",
+    clientSecret: "EWgOFPh1-I7278chZ30tzj3W",
+    callbackURL: "http://localhost:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      // To keep the example simple, the user's Google profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Google account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+/**/
+
+var helpers = require('./helpers/error_helpers.js');
 
 // Load all routes synchronously
 var routes = glob.sync('./routes/*.js', {cwd: path.join(process.cwd(), '/app')});
@@ -22,38 +53,19 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+app.disable('x-powered-by');
 
-// Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+
+// Catch all routes
+app.get('*', function (req, res, next) {
+  next(helpers.httpError(404));
 });
 
-// Development error handler; will print stacktrace
-if (app.get('env') === 'development') {
-
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      status: err.status,
-      error: err
-    });
-  });
-
-} else {
-
-  // Production error handler; no stacktraces leaked to user
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      status: err.status,
-      error: {}
-    });
-  });
-}
+// Error handler
+app.use(helpers.logger);
+app.use(helpers.basic);
 
 module.exports = app;

@@ -7,9 +7,9 @@ var config = require('../config/tasks_config.js');
 var ItemView = View.extend({
 
   events: {
-    'mouseup #toggle': 'toggle',
-    'dblclick .text': 'open',
-    'mouseup #delete': 'delete'
+    'mouseup  .toggle' : 'toggle',
+    'dblclick .open'   : 'open',
+    'mouseup  .delete' : 'delete'
   },
 
   presenter: require('../presenters/tasks_itemPresenter.js'),
@@ -43,11 +43,8 @@ var ItemView = View.extend({
     var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
     this.prepare($compiled);
 
-    // MDL
-    componentHandler.upgradeElements(this.el);
     if (helpers.isComplete()) {
-      this.$('#title').addClass('complete');
-      this.el.querySelector('#toggle').MaterialCheckbox.check();
+      this.$('.open').addClass('complete');
     }
 
     return this.$el;

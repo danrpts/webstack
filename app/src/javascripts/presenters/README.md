@@ -1,1 +1,0 @@
-Intermediate layer between the model and view. These wrappers are useful for extracting information out of the model and presenting it as useful helpers to the view.

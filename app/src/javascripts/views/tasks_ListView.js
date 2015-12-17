@@ -38,9 +38,6 @@ var ListView = View.extend({
     });
     $listfragment.appendTo($list);
 
-    // MDL
-    componentHandler.upgradeElements(this.el);
-
     // Returning $el instead
     return this.$el;
   }
