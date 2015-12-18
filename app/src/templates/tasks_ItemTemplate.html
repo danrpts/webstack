@@ -5,9 +5,10 @@
     </span>
     <span class="title open"><%- title %></span>
     <p class="grey-text truncate">
-      <% has('details') && print(details) %>
-      <% has('due') && print('<br>Due', format('due')) %>
-      <% isComplete() && print('<br>Completed', format('completion')) %>
+      <% has('details') && print(details, '<br>') %>
+      <% print(format('created'), '<br>') %>
+      <% has('due') && print(format('due'), '<br>') %>
+      <% isComplete() && print(format('completed')) %>
     </p>
     <a class="custom-secondary-content delete">
       <i class="material-icons">delete</i>

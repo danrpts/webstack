@@ -7,14 +7,14 @@ var helpers = {
   },
 
   isComplete: function () {
-    return !!this.completion;
+    return !!this.completed;
   },
 
   format: function (key) {
     var goal = new Date(this[key]);
     var today = new Date();
-    var time = ' @ ' + goal.getHours() % 12 + ':' + goal.getMinutes();
-    var date = ' on ' + goal.toDateString();
+    var time = key + ' @ ' + goal.toLocaleTimeString()
+    var date = key + ' on ' + goal.toDateString();
     return (goal.getDay() === today.getDay()) ? time : date;
   }
 

@@ -7,12 +7,12 @@ var ItemModel = Model.extend({
 
   defaults: {
     'due': false,
-    'completion': false,
-    'creation': Date.now()
+    'completed': false,
+    'created': Date.now()
   },
 
   toggle: function () {
-    this.save({completion: !this.get('completion') ? Date.now() : false}, {wait: true});
+    this.save({completed: !this.get('completed') ? Date.now() : false}, {wait: true});
   },
 
   validate: function (attributes) {

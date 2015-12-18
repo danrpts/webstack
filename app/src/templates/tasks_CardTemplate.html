@@ -2,17 +2,33 @@
   <div class="col m3 l4">&nbsp;</div>
   <div class="col s12 m6 l4">
 
-    <div class="card-panel white row">
-      <div class="input-field col s12 m12 l12">
-        <input id="title-input" type="text" length="23" value="<%- title %>" />
-        <label for="title-input"></label>
-      </div>
-    </div>
+    <div class="row">
+      <div class="col s12 m12 s12">
+        <div class="card medium">
 
-    <div class="card-panel white row">
-      <div class="input-field col s12 m12 l12">
-        <textarea id="details-input" class="materialize-textarea" rows="1"><% hasDetails() && print(details) %></textarea>
-        <label for="details-input" id="details-label"><% !hasDetails() && print("Add details...") %></label>
+        <div class="card-image">
+          <img src="http://demo.geekslabs.com/materialize/v2.1/layout01/images/user-profile-bg.jpg">
+          <span class="card-title">
+            <div class="input-field">
+              <input id="title-input" type="text" length="23" value="<%- title %>" />
+              <label for="title-input"></label>
+            </div>
+          </span>
+        </div>
+
+          <div class="card-content row">
+            <div class="input-field col s12 m12 s12">
+              <textarea id="details-input" class="materialize-textarea" rows="1"><% has('details') && print(details) %></textarea>
+              <label for="details-input" id="details-label"><% !has('details') && print("Add details...") %></label>
+            </div>
+
+          </div>
+          
+          <div class="card-action">
+            <a href="#">This is a link</a>
+          </div>
+
+        </div>
       </div>
     </div>
       
