@@ -4,7 +4,7 @@ var helpers = {
 
   randomImage: function () {
     console.log('Random Image Loading...');
-    return 'https://unsplash.it/500/250/?random';
+    return 'http://thecatapi.com/api/images/get?format=src&type=gif';//'https://unsplash.it/500/250/?random';
   },
 
   has: function (key) {

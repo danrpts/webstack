@@ -1,4 +1,4 @@
-<li class="collection-item custom-avatar">
+<li class="card-panel custom-avatar">
     <span class="avatar-content">
       <input type="checkbox" id="toggle-<%- id %>" <% isComplete() && print('checked') %>/>
       <label for="toggle-<%- id %>" class="toggle">&nbsp;</label>
@@ -10,7 +10,7 @@
       <% has('due') && print(format('due'), '<br>') %>
       <% isComplete() && print(format('completed')) %>
     </p>
-    <a class="custom-secondary-content delete">
-      <i class="material-icons">delete</i>
-    </a>
+
+    <a class="custom-secondary-content btn-flat delete"><i class="material-icons grey-text">delete</i></a>
+
 </li>

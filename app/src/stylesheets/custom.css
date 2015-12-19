@@ -1,3 +1,6 @@
+body {
+  background-color: #F9F9F9;
+}
 
 .back, .delete, .open {
   cursor: pointer;
@@ -23,13 +26,13 @@ li:hover .delete {
   margin-bottom: 0px;
 }
 
-.collection .collection-item.custom-avatar {
+.custom-avatar {
   min-height: 0px;
   padding-left: 72px;
   position: relative;
 }
 
-.collection .collection-item.custom-avatar .avatar-content {
+.custom-avatar .avatar-content {
   position: absolute;
   width: 42px;
   height: 42px;
@@ -39,20 +42,19 @@ li:hover .delete {
   vertical-align: middle;
 }
 
-.collection .collection-item.custom-avatar .avatar-content [type="checkbox"]:checked+label:before {
+.custom-avatar .avatar-content [type="checkbox"]:checked+label:before {
   border-right: 2px solid #4caf50;
   border-bottom: 2px solid #4caf50;
 }
 
-.collection .collection-item.custom-avatar .custom-secondary-content {
+.custom-avatar .custom-secondary-content {
   position: absolute;
   top: 8px;
   right: 8px;
   float: right;
-  color: #e0e0e0;
 }
 
-.collection .collection-item.custom-avatar p {
+.custom-avatar p {
   margin: 0;
 }
 
