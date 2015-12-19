@@ -2,10 +2,17 @@ var $ = require('jquery');
 var _ = require('underscore');
 
 module.exports = {
+
+  style: function () {
+
+    // Default for chaining
+    return this;
+
+  },
   
   compile: function () {
 
-      var resource, template, templater, presenter, compiled, $compiled;
+      var resource, template, templater, presenter, compiled;
 
       // Reference model, collection or nonsuch
       resource = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
@@ -23,16 +30,7 @@ module.exports = {
       compiled = (!!presenter) ? template(presenter) : template();
 
       // Jquery this sucker
-      $compiled = $(compiled);
-
-      // When it's the initial render
-      if (!this.rendered) {
-        this.setElement($compiled);
-        this.rendered = true;
-      }
-
-      // When it's a re-render
-      else this.$el.html($compiled.html());
+      this.$compiled = $(compiled);
 
       // Store the helpers on the object for later use
       (!!presenter) && (this.helpers = presenter);
@@ -40,6 +38,28 @@ module.exports = {
       // Chaining
       return this;
 
+    },
+
+    render: function () {
+
+      // Compile the $el
+      this.compile();
+
+      // When it's the initial render
+      if (!this.rendered) {
+        this.setElement(this.$compiled);
+        this.rendered = true;
+      }
+
+      // When it's a re-render
+      else this.$el.html(this.$compiled.html());
+
+      // Style the $el
+      this.style();
+
+      // Chaining
+      return this;
+      
     }
 
 }

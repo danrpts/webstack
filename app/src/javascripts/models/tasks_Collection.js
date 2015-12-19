@@ -11,14 +11,21 @@ var ItemModel = Model.extend({
     'created': Date.now()
   },
 
-  toggle: function () {
-    this.save({completed: !this.get('completed') ? Date.now() : false}, {wait: true});
+  toggle: function (options) {
+    
+    _.defaults(options, {
+      wait: true
+    });
+    this.save({completed: !this.get('completed') ? Date.now() : false}, options);
+
   },
 
   validate: function (attributes) {
+
     if ("title" in attributes && attributes.title.length === 0) {
       return "Title cannot be empty.";
     }
+    
   }
 
 });

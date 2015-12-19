@@ -71,25 +71,18 @@ li:hover .delete {
   transition: opacity 2s;
 }
 
-.card .card-image .card-title .input-field label {
-  color: black;
+.card .custom-card-action {
+  padding: 4px;
 }
 
-.card .card-image .card-title .input-field input[type=text] {
-  border-bottom: 1px solid black;
+.custom-avatar a.custom-secondary-content,
+.card .custom-card-action a {
+  margin-right: 0px;
+  color: #9e9e9e;
 }
 
-.card .card-image .card-title .input-field textarea {
-  border-bottom: 1px solid black;
-}
-
-.card .card-image .card-title .input-field input[type=text]:focus {
-  border-bottom: 1px solid #eeeeee;
-  box-shadow: 0 1px 0 0 #eeeeee;
-}
-
-.card .card-image .card-title .input-field textarea:focus {
-  border-bottom: 1px solid #eeeeee;
-  box-shadow: 0 1px 0 0 #eeeeee;
+.custom-avatar a.custom-secondary-content:hover,
+.card .custom-card-action a:hover {
+  color: #bdbdbd;
 }
 

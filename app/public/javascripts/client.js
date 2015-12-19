@@ -310,10 +310,17 @@ var $ = require('jquery');
 var _ = require('underscore');
 
 module.exports = {
+
+  style: function () {
+
+    // Default for chaining
+    return this;
+
+  },
   
   compile: function () {
 
-      var resource, template, templater, presenter, compiled, $compiled;
+      var resource, template, templater, presenter, compiled;
 
       // Reference model, collection or nonsuch
       resource = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
@@ -331,16 +338,7 @@ module.exports = {
       compiled = (!!presenter) ? template(presenter) : template();
 
       // Jquery this sucker
-      $compiled = $(compiled);
-
-      // When it's the initial render
-      if (!this.rendered) {
-        this.setElement($compiled);
-        this.rendered = true;
-      }
-
-      // When it's a re-render
-      else this.$el.html($compiled.html());
+      this.$compiled = $(compiled);
 
       // Store the helpers on the object for later use
       (!!presenter) && (this.helpers = presenter);
@@ -348,6 +346,28 @@ module.exports = {
       // Chaining
       return this;
 
+    },
+
+    render: function () {
+
+      // Compile the $el
+      this.compile();
+
+      // When it's the initial render
+      if (!this.rendered) {
+        this.setElement(this.$compiled);
+        this.rendered = true;
+      }
+
+      // When it's a re-render
+      else this.$el.html(this.$compiled.html());
+
+      // Style the $el
+      this.style();
+
+      // Chaining
+      return this;
+      
     }
 
 }
@@ -384,14 +404,21 @@ var ItemModel = Model.extend({
     'created': Date.now()
   },
 
-  toggle: function () {
-    this.save({completed: !this.get('completed') ? Date.now() : false}, {wait: true});
+  toggle: function (options) {
+    
+    _.defaults(options, {
+      wait: true
+    });
+    this.save({completed: !this.get('completed') ? Date.now() : false}, options);
+
   },
 
   validate: function (attributes) {
+
     if ("title" in attributes && attributes.title.length === 0) {
       return "Title cannot be empty.";
     }
+    
   }
 
 });
@@ -539,7 +566,7 @@ var CardView = View.extend({
 
   toggle: function () {
     this.model.toggle();
-    this.back()
+    this.compile().style();
   },
 
   delete: function () {
@@ -556,11 +583,18 @@ var CardView = View.extend({
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
-  render: function () {
+  style: function () {
 
-    // Compile allows chaining
-    return this.compile();
-    
+    if ('helpers' in this && this.helpers.isComplete()) {
+      this.$('#toggle').removeClass('red');
+      this.$('#toggle').addClass('green');
+    } else {
+      this.$('#toggle').removeClass('green');
+      this.$('#toggle').addClass('red');
+    }
+
+    return this;
+
   }
   
 });
@@ -587,6 +621,9 @@ var ItemView = View.extend({
   presenter: require('../presenters/tasks_itemPresenter.js'),
 
   initialize: function () {
+
+
+    // TODO: maybe partial render
     this.listenTo(this.model, 'change', this.render);
   },
 
@@ -605,19 +642,11 @@ var ItemView = View.extend({
 
   style: function () {
 
-    if (this.helpers.isComplete()) {
+    if ('helpers' in this && this.helpers.isComplete()) {
       this.$('.open').addClass('complete');
     }
 
-    // Chaining
     return this;
-
-  },
-
-  render: function () {
-
-    // Compile allows chaining
-    return this.compile();
 
   }
   
@@ -656,18 +685,30 @@ var ListView = View.extend({
 
   render: function () {
 
+    // Compile the $el
     this.compile();
 
+    // When it's the initial render
+    if (!this.rendered) {
+      this.setElement(this.$compiled);
+      this.rendered = true;
+    }
+
+    // When it's a re-render
+    else this.$el.html(this.$compiled.html());
+
+    // Build the list
     var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
-
     this.collection.each(function (itemModel, index) {
-      new ItemView({model: itemModel}).render().style().$el.appendTo($listfragment);
+      new ItemView({model: itemModel}).render().$el.appendTo($listfragment);
     });
-
     $listfragment.appendTo($list);
 
-    // Chaining
+    // Style the $el
+    this.style();
+
+    // Compile allows chaining
     return this;
 
   }
@@ -680,10 +721,10 @@ module.exports = ListView;
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card\">\n          <div class=\"card-image\">\n            <img src=\"<% print(randomImage()) %>\" onload=\"this.style.opacity='0.5';\">\n            <div class=\"card-title row custom-row\">\n\n              <div class=\"input-field col s12 m12 s12\">\n                <input id=\"title-input\" type=\"text\" length=\"23\" />\n                <label class=\"display1\" for=\"title-input\"><%- title %></label>\n              </div>\n\n              <div class=\"input-field col s12\">\n                <textarea id=\"details-input\" class=\"materialize-textarea\"></textarea>\n                <label for=\"details-input\" id=\"details-label\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n              </div>\n\n            </div>\n\n          </div>\n          <div class=\"card-action\">\n            <a class=\"btn-flat left grey-text\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a>\n            <a class=\"btn-flat grey-text\" id=\"delete\"><i class=\"material-icons\">delete</i></a>\n            <a class=\"btn-flat right grey-text\" id=\"toggle\"><i class=\"material-icons\">done</i></a>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>\n";
+module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card\">\n\n          <a class=\"btn-floating btn-large waves-effect waves-light\" id=\"toggle\"><i class=\"material-icons\">done</i></a>\n\n\n          <div class=\"card-title row custom-row\">\n            <div class=\" col s8 m8 l8\">\n                <div class=\"input-field col s12 m12 l12\">\n                  <input id=\"title-input\" type=\"text\" length=\"23\" />\n                  <label class=\"display1\" for=\"title-input\"><%- title %></label>\n                </div>\n                <div class=\"input-field col s12 m12 l12\">\n                  <textarea id=\"details-input\" class=\"materialize-textarea\"></textarea>\n                  <label for=\"details-input\" id=\"details-label\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n                </div>\n            </div>\n            <div class=\"col s4 m4 l4\">&nbsp;</div>\n          </div>\n            \n          <div class=\"card-action custom-card-action\">\n            <a class=\"btn-flat\" id=\"back\">Back<i class=\"material-icons left\">arrow_back</i></a>\n            <a class=\"btn-flat\" id=\"delete\">Delete<i class=\"material-icons left\">delete</i></a>\n            <a class=\"btn-flat\" id=\"edit\">Settings<i class=\"material-icons left\">settings</i></a>\n          </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>\n";
 
 },{}],26:[function(require,module,exports){
-module.exports = "<li class=\"card-panel custom-avatar\">\n    <span class=\"avatar-content\">\n      <input type=\"checkbox\" id=\"toggle-<%- id %>\" <% isComplete() && print('checked') %>/>\n      <label for=\"toggle-<%- id %>\" class=\"toggle\">&nbsp;</label>\n    </span>\n    <span class=\"title open\"><%- title %></span>\n    <p class=\"grey-text truncate\">\n      <% has('details') && print(details, '<br>') %>\n      <% print(format('created'), '<br>') %>\n      <% has('due') && print(format('due'), '<br>') %>\n      <% isComplete() && print(format('completed')) %>\n    </p>\n\n    <a class=\"custom-secondary-content btn-flat delete\"><i class=\"material-icons grey-text\">delete</i></a>\n\n</li>\n";
+module.exports = "<li class=\"card-panel avatar custom-avatar\">\n    <span class=\"avatar-content\">\n      <input type=\"checkbox\" id=\"toggle-<%- id %>\" <% isComplete() && print('checked') %>/>\n      <label for=\"toggle-<%- id %>\" class=\"toggle\">&nbsp;</label>\n    </span>\n    <span class=\"title open\"><%- title %></span>\n    <p class=\"grey-text truncate\">\n      <% has('details') && print(details, '<br>') %>\n      <% print(format('created'), '<br>') %>\n      <% has('due') && print(format('due'), '<br>') %>\n      <% isComplete() && print(format('completed')) %>\n    </p>\n\n    <a class=\"custom-secondary-content btn-flat delete\"><i class=\"material-icons\">delete</i></a>\n\n</li>\n";
 
 },{}],27:[function(require,module,exports){
 module.exports = "<div class=\"row\">\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"input-title\" type=\"text\" length=\"23\">\n        <label for=\"input-title\">What needs to be done?</label>\n      </div>\n      <div class=\"col s12 m12 l12\">\n        <ul id=\"task-items\"></ul>\n      </div>\n    </div>\n  </div>\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  </div>\n</div>\n";

@@ -24,7 +24,7 @@ var CardView = View.extend({
 
   toggle: function () {
     this.model.toggle();
-    this.back()
+    this.compile().style();
   },
 
   delete: function () {
@@ -41,11 +41,18 @@ var CardView = View.extend({
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
   },
 
-  render: function () {
+  style: function () {
 
-    // Compile allows chaining
-    return this.compile();
-    
+    if ('helpers' in this && this.helpers.isComplete()) {
+      this.$('#toggle').removeClass('red');
+      this.$('#toggle').addClass('green');
+    } else {
+      this.$('#toggle').removeClass('green');
+      this.$('#toggle').addClass('red');
+    }
+
+    return this;
+
   }
   
 });

@@ -28,18 +28,30 @@ var ListView = View.extend({
 
   render: function () {
 
+    // Compile the $el
     this.compile();
 
+    // When it's the initial render
+    if (!this.rendered) {
+      this.setElement(this.$compiled);
+      this.rendered = true;
+    }
+
+    // When it's a re-render
+    else this.$el.html(this.$compiled.html());
+
+    // Build the list
     var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
-
     this.collection.each(function (itemModel, index) {
-      new ItemView({model: itemModel}).render().style().$el.appendTo($listfragment);
+      new ItemView({model: itemModel}).render().$el.appendTo($listfragment);
     });
-
     $listfragment.appendTo($list);
 
-    // Chaining
+    // Style the $el
+    this.style();
+
+    // Compile allows chaining
     return this;
 
   }
