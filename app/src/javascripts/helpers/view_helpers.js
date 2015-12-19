@@ -10,7 +10,7 @@ module.exports = {
       // Reference model, collection or nonsuch
       resource = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
 
-      // Allow overridinf of underscore's templater
+      // Allow overriding of underscore's templater
       templater = _.isFunction(this.templater) ? this.templater : _.template;
 
       // First run the markup through the templater
