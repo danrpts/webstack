@@ -18,13 +18,23 @@ var CardView = View.extend({
 
   presenter: require('../presenters/tasks_itemPresenter.js'),
 
+  initialize: function () {
+
+    // this is bugged
+    // change is fired on sync due to localstorage, promise and events combo
+    // causes premature render
+    // need to rethink
+    // may be an edge case
+    // mixing promises and backbones event system is difficult...
+    this.listenTo(this.model, 'change', this.render);
+  },
+
   back: function () {
     Backbone.trigger(config.name + ':goto', '');
   },
 
   toggle: function () {
     this.model.toggle();
-    this.compile().style();
   },
 
   delete: function () {
@@ -39,20 +49,6 @@ var CardView = View.extend({
 
   updateDetails: function () {
     this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
-  },
-
-  style: function () {
-
-    if ('helpers' in this && this.helpers.isComplete()) {
-      this.$('#toggle').removeClass('red');
-      this.$('#toggle').addClass('green');
-    } else {
-      this.$('#toggle').removeClass('green');
-      this.$('#toggle').addClass('red');
-    }
-
-    return this;
-
   }
   
 });

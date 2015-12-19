@@ -5,7 +5,7 @@
       <div class="col s12 m12 s12">
         <div class="card">
 
-          <a class="btn-floating btn-large waves-effect waves-light" id="toggle"><i class="material-icons">done</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">done</i></a>
 
 
           <div class="card-title row custom-row">

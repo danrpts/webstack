@@ -1,16 +1,14 @@
-<li class="card-panel avatar custom-avatar">
+<li class="card-panel custom-avatar">
     <span class="avatar-content">
-      <input type="checkbox" id="toggle-<%- id %>" <% isComplete() && print('checked') %>/>
+      <input type="checkbox" id="toggle-<%- id %>" <% isComplete() && print('checked') %> />
       <label for="toggle-<%- id %>" class="toggle">&nbsp;</label>
     </span>
-    <span class="title open"><%- title %></span>
+    <span class="title open <% isComplete() && print('complete') %>"><%- title %></span>
     <p class="grey-text truncate">
       <% has('details') && print(details, '<br>') %>
       <% print(format('created'), '<br>') %>
       <% has('due') && print(format('due'), '<br>') %>
       <% isComplete() && print(format('completed')) %>
     </p>
-
     <a class="custom-secondary-content btn-flat delete"><i class="material-icons">delete</i></a>
-
 </li>

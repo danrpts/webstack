@@ -17,9 +17,6 @@ var ItemView = View.extend({
   presenter: require('../presenters/tasks_itemPresenter.js'),
 
   initialize: function () {
-
-
-    // TODO: maybe partial render
     this.listenTo(this.model, 'change', this.render);
   },
 
@@ -34,16 +31,6 @@ var ItemView = View.extend({
   delete: function () {
     this.model.destroy();
     this.remove();
-  },
-
-  style: function () {
-
-    if ('helpers' in this && this.helpers.isComplete()) {
-      this.$('.open').addClass('complete');
-    }
-
-    return this;
-
   }
   
 });

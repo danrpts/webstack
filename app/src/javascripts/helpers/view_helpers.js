@@ -3,13 +3,6 @@ var _ = require('underscore');
 
 module.exports = {
 
-  style: function () {
-
-    // Default for chaining
-    return this;
-
-  },
-  
   compile: function () {
 
       var resource, template, templater, presenter, compiled;
@@ -40,7 +33,7 @@ module.exports = {
 
     },
 
-    render: function () {
+    render: function (callback) {
 
       // Compile the $el
       this.compile();
@@ -54,11 +47,8 @@ module.exports = {
       // When it's a re-render
       else this.$el.html(this.$compiled.html());
 
-      // Style the $el
-      this.style();
-
-      // Chaining
-      return this;
+      // Allow injection of async code
+      return _.isFunction(callback) ? callback.call(this) : this;
       
     }
 
