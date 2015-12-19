@@ -19,9 +19,9 @@ var CardView = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  presenter: require('../presenters/tasks_itemPresenter.js'),
+  template: require('../../templates/tasks_CardTemplate.html'),
 
-  template: _.template(require('../../templates/tasks_CardTemplate.html')),
+  presenter: require('../presenters/tasks_itemPresenter.js'),
 
   toggle: function () {
     this.model.toggle();
@@ -56,16 +56,9 @@ var CardView = View.extend({
 
   render: function () {
 
-    // Build template
-    var helpers = _.isFunction(this.presenter) ? this.presenter(this.model) : this.model.toJSON();
-    var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
-    this.prepare($compiled);
-    
-    if (helpers.isComplete()) {
-      this.$('#toggle').toggleClass('mdl-color--green');
-    }
-
+    this.compile();
     return this.$el;
+    
   }
 });
 

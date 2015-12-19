@@ -12,9 +12,9 @@ var ItemView = View.extend({
     'mouseup  .delete' : 'delete'
   },
 
-  presenter: require('../presenters/tasks_itemPresenter.js'),
+  template: require('../../templates/tasks_ItemTemplate.html'),
 
-  template: _.template(require('../../templates/tasks_ItemTemplate.html')),
+  presenter: require('../presenters/tasks_itemPresenter.js'),
 
   initialize: function () {
     this.listenTo(this.model, 'change', this.render);
@@ -30,25 +30,21 @@ var ItemView = View.extend({
 
   delete: function () {
     this.model.destroy();
-    var that = this;
-    this.$el.fadeOut('slow', function () {
-      that.remove();
-    });
+    this.remove();
   },
 
   render: function () {
 
-    // Build template
-    var helpers = _.isFunction(this.presenter) ? this.presenter(this.model) : this.model.toJSON();
-    var $compiled = _.isFunction(this.template) ? $(this.template(helpers)) : $(template);
-    this.prepare($compiled);
+    this.compile();
 
-    if (helpers.isComplete()) {
-      this.$('.open').addClass('complete');
-    }
+   // if (this.presenter.isComplete()) {
+   //   this.$('.open').addClass('complete');
+   // }
 
     return this.$el;
+
   }
+  
 });
 
 module.exports = ItemView;
