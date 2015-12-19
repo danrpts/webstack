@@ -34,8 +34,11 @@ module.exports = {
       // When it's a re-render
       else this.$el.html($compiled.html());
 
-      // Return the helpers for later use
-      return presenter;
+      // Store the helpers on the object for later use
+      (!!presenter) && (this.helpers = presenter);
+
+      // Chaining
+      return this;
 
     }
 

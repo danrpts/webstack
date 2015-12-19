@@ -33,15 +33,21 @@ var ItemView = View.extend({
     this.remove();
   },
 
-  render: function () {
+  style: function () {
 
-    var helpers = ;
-
-    if (helpers.isComplete()) {
+    if (this.helpers.isComplete()) {
       this.$('.open').addClass('complete');
     }
 
-    return this.$el;
+    // Chaining
+    return this;
+
+  },
+
+  render: function () {
+
+    // Compile allows chaining
+    return this.compile();
 
   }
   

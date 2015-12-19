@@ -56,10 +56,11 @@ var CardView = View.extend({
 
   render: function () {
 
-    this.compile();
-    return this.$el;
+    // Compile allows chaining
+    return this.compile();
     
   }
+  
 });
 
 module.exports = CardView;

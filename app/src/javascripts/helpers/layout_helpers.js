@@ -34,22 +34,33 @@ module.exports = {
     region.view = view;
     
     if (!!options.loading) {
+
+      // Notify when promise has started
       (options.debug) && console.log('Loading...');
+
+      // Show Spinner; TODO
       region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%">  <div class="preloader-wrapper small active"><div class="spinner-layer spinner-green-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
+      
+      // Promise callbacks
       options.loading.done(function () {
+
+        // Allow artificial delays for perceived performance
         setTimeout(function () {
 
-
+          // Notify when the promise has resolved
           (options.debug) && console.log('Resoloved!'); 
 
           // If view has not changed since the promise was made, render it
-          (region.view === view) && region.html(view.render());
+          (region.view === view) && region.html(view.render().$el);
+
         }, Math.round(options.delay));
+
       });
+
     }
 
     else {
-      region.html(view.render());
+      region.html(view.render().$el);
     }
 
   }

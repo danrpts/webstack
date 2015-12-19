@@ -35,12 +35,13 @@ var ListView = View.extend({
     var $listfragment = $(document.createDocumentFragment());
 
     this.collection.each(function (itemModel, index) {
-      new ItemView({model: itemModel}).render().appendTo($listfragment);
+      new ItemView({model: itemModel}).render().style().$el.appendTo($listfragment);
     });
 
     $listfragment.appendTo($list);
 
-    return this.$el;
+    // Chaining
+    return this;
 
   }
 
