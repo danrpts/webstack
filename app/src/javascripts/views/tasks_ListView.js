@@ -3,7 +3,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
-var EmptyView = require('./tasks_EmptyView.js');
 var config = require('../config/tasks_config.js');
 
 var ListView = View.extend({
@@ -11,7 +10,7 @@ var ListView = View.extend({
   events: {
     'keyup #input-title': 'onEnter'
   },
-
+  
   template: require('../../templates/tasks_ListTemplate.html'),
 
   presenter: require('../presenters/tasks_listPresenter.js'),
@@ -31,7 +30,7 @@ var ListView = View.extend({
 
     this.compile();
 
-    var $list = this.$('ul#task-items').empty();
+    var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
 
     this.collection.each(function (itemModel, index) {

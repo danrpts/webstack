@@ -206,7 +206,7 @@ module.exports = {
 }
 
 
-},{"../config/tasks_config.js":6,"../entities/tasks_entity.js":9,"../helpers/layout_helpers.js":10,"../routers/tasks_Router.js":19,"../views/tasks_CardView.js":21,"../views/tasks_ListView.js":24}],9:[function(require,module,exports){
+},{"../config/tasks_config.js":6,"../entities/tasks_entity.js":9,"../helpers/layout_helpers.js":10,"../routers/tasks_Router.js":19,"../views/tasks_CardView.js":21,"../views/tasks_ListView.js":23}],9:[function(require,module,exports){
 var _ = require('underscore');
 var List = require('../models/tasks_Collection.js');
 
@@ -507,7 +507,7 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/account_CardTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.js":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
+},{"../../templates/account_CardTemplate.html":24,"../classes/View.js":4,"../config/tasks_config.js":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -575,29 +575,7 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/tasks_CardTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_itemPresenter.js":16,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var config = require('../config/tasks_config.js');
-
-var EmptyView = View.extend({
-
-  template: require('../../templates/tasks_EmptyTemplate.html'),
-
-  render: function () {
-
-    this.compile();
-    return this.$el;
-
-  }
-
-});
-
-module.exports = EmptyView;
-
-},{"../../templates/tasks_EmptyTemplate.html":27,"../classes/View.js":4,"../config/tasks_config.js":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
+},{"../../templates/tasks_CardTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_itemPresenter.js":16,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -655,13 +633,12 @@ var ItemView = View.extend({
 
 module.exports = ItemView;
 
-},{"../../templates/tasks_ItemTemplate.html":28,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_itemPresenter.js":16,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],24:[function(require,module,exports){
+},{"../../templates/tasks_ItemTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_itemPresenter.js":16,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
-var EmptyView = require('./tasks_EmptyView.js');
 var config = require('../config/tasks_config.js');
 
 var ListView = View.extend({
@@ -669,7 +646,7 @@ var ListView = View.extend({
   events: {
     'keyup #input-title': 'onEnter'
   },
-
+  
   template: require('../../templates/tasks_ListTemplate.html'),
 
   presenter: require('../presenters/tasks_listPresenter.js'),
@@ -689,7 +666,7 @@ var ListView = View.extend({
 
     this.compile();
 
-    var $list = this.$('ul#task-items').empty();
+    var $list = this.$('ul#task-items');
     var $listfragment = $(document.createDocumentFragment());
 
     this.collection.each(function (itemModel, index) {
@@ -707,19 +684,16 @@ var ListView = View.extend({
 
 module.exports = ListView;
 
-},{"../../templates/tasks_ListTemplate.html":29,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_listPresenter.js":17,"./tasks_EmptyView.js":22,"./tasks_ItemView.js":23,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],25:[function(require,module,exports){
+},{"../../templates/tasks_ListTemplate.html":27,"../classes/View.js":4,"../config/tasks_config.js":6,"../presenters/tasks_listPresenter.js":17,"./tasks_ItemView.js":22,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],24:[function(require,module,exports){
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
+},{}],25:[function(require,module,exports){
+module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card\">\n          <div class=\"card-image\">\n            <img src=\"http://thecatapi.com/api/images/get?format=src&type=gif\">\n          </div>\n          <div class=\"card-content row\">\n            <div class=\"input-field col s12 m12 s12\">\n              <input id=\"title-input\" type=\"text\" length=\"23\" value=\"<%- title %>\" />\n              <label for=\"title-input\"></label>\n            </div>\n            <div class=\"input-field col s12 m12 s12\">\n              <textarea id=\"details-input\" class=\"materialize-textarea\" rows=\"1\"><% has('details') && print(details) %></textarea>\n              <label for=\"details-input\" id=\"details-label\"><% !has('details') && print(\"Add details...\") %></label>\n            </div>\n          </div>\n          <div class=\"card-action\">\n            <a class=\"btn-floating green\" id=\"togg<le\"><i class=\"material-icons\">done</i></a>\n            <a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a>\n            <a class=\"btn-floating blue\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a>\n          </div>\n        </div>\n      </div>\n    </div>\n      \n  </div>\n  <div class=\"col m3 l4\"></div>\n</div>\n";
+
 },{}],26:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card medium\">\n\n        <div class=\"card-image\">\n          <img src=\"https://lh3.googleusercontent.com/oYTDhdPslCz2blZxLGFpQrxOzmmDnwp_9IlS_me6iXfP_TpludEg6koA5ISY4ewr9lBmrg=w1920-h1200-rw-no\">\n          <span class=\"card-title\">\n            <div class=\"input-field\">\n              <input id=\"title-input\" type=\"text\" length=\"23\" value=\"<%- title %>\" />\n              <label for=\"title-input\"></label>\n            </div>\n          </span>\n        </div>\n\n          <div class=\"card-content row\">\n            <div class=\"input-field col s12 m12 s12\">\n              <textarea id=\"details-input\" class=\"materialize-textarea\" rows=\"1\"><% has('details') && print(details) %></textarea>\n              <label for=\"details-input\" id=\"details-label\"><% !has('details') && print(\"Add details...\") %></label>\n            </div>\n\n          </div>\n          \n          <div class=\"card-action\">\n            <a href=\"#\">This is a link</a>\n          </div>\n\n        </div>\n      </div>\n    </div>\n      \n  </div>\n  <div class=\"col m3 l4\">\n    <div class=\"fixed-action-btn\" style=\"bottom: 45px; right: 24px;\">\n      <a class=\"btn-floating btn-large\">\n        <i class=\"large mdi-navigation-menu\"></i>\n      </a>\n      <ul>\n        <li><a class=\"btn-floating green\" id=\"togg<le\"><i class=\"material-icons\">done</i></a></li>\n        <li><a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a></li>\n        <li><a class=\"btn-floating blue\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a></li>\n      </ul>\n    </div>\n  </div>\n</div>\n";
-
-},{}],27:[function(require,module,exports){
-module.exports = "<li class=\"collection-item\">\n  <span class=\"title\">Empty</span>\n</li>\n";
-
-},{}],28:[function(require,module,exports){
 module.exports = "<li class=\"collection-item custom-avatar\">\n    <span class=\"avatar-content\">\n      <input type=\"checkbox\" id=\"toggle-<%- id %>\" <% isComplete() && print('checked') %>/>\n      <label for=\"toggle-<%- id %>\" class=\"toggle\">&nbsp;</label>\n    </span>\n    <span class=\"title open\"><%- title %></span>\n    <p class=\"grey-text truncate\">\n      <% has('details') && print(details, '<br>') %>\n      <% print(format('created'), '<br>') %>\n      <% has('due') && print(format('due'), '<br>') %>\n      <% isComplete() && print(format('completed')) %>\n    </p>\n    <a class=\"custom-secondary-content delete\">\n      <i class=\"material-icons\">delete</i>\n    </a>\n</li>\n";
 
-},{}],29:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"input-title\" type=\"text\" length=\"23\">\n        <label for=\"input-title\">What needs to be done?</label>\n      </div>\n      <div class=\"col s12 m12 l12\">\n        <ul id=\"task-items\" class=\"collection\">No tasks for today.</ul>\n      </div>\n    </div>\n  </div>\n  <div class=\"col s0 m3 l4\">\n    <div class=\"fixed-action-btn\" style=\"bottom: 45px; right: 24px;\">\n      <a class=\"btn-floating btn-large\">\n        <i class=\"large mdi-navigation-menu\"></i>\n      </a>\n      <ul>\n        <li><a class=\"btn-floating green\" id=\"done\"><i class=\"material-icons\">done_all</i></a></li>\n        <li><a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a></li>\n        <li><a class=\"btn-floating blue\" id=\"settings\"><i class=\"material-icons\">settings</i></a></li>\n      </ul>\n    </div>\n  </div>\n</div>\n";
+},{}],27:[function(require,module,exports){
+module.exports = "<div class=\"row\">\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"input-field col s12 m12 l12\">\n        <input id=\"input-title\" type=\"text\" length=\"23\">\n        <label for=\"input-title\">What needs to be done?</label>\n      </div>\n      <div class=\"col s12 m12 l12\">\n        <ul id=\"task-items\" class=\"collection\"></ul>\n      </div>\n    </div>\n  </div>\n  <div class=\"col s0 m3 l4\">&nbsp;</div>\n  </div>\n</div>\n";
 
 },{}]},{},[14]);

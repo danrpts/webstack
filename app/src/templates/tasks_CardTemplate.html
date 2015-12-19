@@ -4,45 +4,29 @@
 
     <div class="row">
       <div class="col s12 m12 s12">
-        <div class="card medium">
-
-        <div class="card-image">
-          <img src="https://lh3.googleusercontent.com/oYTDhdPslCz2blZxLGFpQrxOzmmDnwp_9IlS_me6iXfP_TpludEg6koA5ISY4ewr9lBmrg=w1920-h1200-rw-no">
-          <span class="card-title">
-            <div class="input-field">
+        <div class="card">
+          <div class="card-image">
+            <img src="http://thecatapi.com/api/images/get?format=src&type=gif">
+          </div>
+          <div class="card-content row">
+            <div class="input-field col s12 m12 s12">
               <input id="title-input" type="text" length="23" value="<%- title %>" />
               <label for="title-input"></label>
             </div>
-          </span>
-        </div>
-
-          <div class="card-content row">
             <div class="input-field col s12 m12 s12">
               <textarea id="details-input" class="materialize-textarea" rows="1"><% has('details') && print(details) %></textarea>
               <label for="details-input" id="details-label"><% !has('details') && print("Add details...") %></label>
             </div>
-
           </div>
-          
           <div class="card-action">
-            <a href="#">This is a link</a>
+            <a class="btn-floating green" id="togg<le"><i class="material-icons">done</i></a>
+            <a class="btn-floating red" id="delete"><i class="material-icons">delete</i></a>
+            <a class="btn-floating blue" id="back"><i class="material-icons">arrow_back</i></a>
           </div>
-
         </div>
       </div>
     </div>
       
   </div>
-  <div class="col m3 l4">
-    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-      <a class="btn-floating btn-large">
-        <i class="large mdi-navigation-menu"></i>
-      </a>
-      <ul>
-        <li><a class="btn-floating green" id="togg<le"><i class="material-icons">done</i></a></li>
-        <li><a class="btn-floating red" id="delete"><i class="material-icons">delete</i></a></li>
-        <li><a class="btn-floating blue" id="back"><i class="material-icons">arrow_back</i></a></li>
-      </ul>
-    </div>
-  </div>
+  <div class="col m3 l4"></div>
 </div>
