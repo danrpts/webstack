@@ -620,11 +620,11 @@ var ItemView = View.extend({
 
   render: function () {
 
-    this.compile();
+    var helpers = this.compile();
 
-   // if (this.presenter.isComplete()) {
-   //   this.$('.open').addClass('complete');
-   // }
+   if (helpers.isComplete()) {
+     this.$('.open').addClass('complete');
+   }
 
     return this.$el;
 
