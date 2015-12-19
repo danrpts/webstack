@@ -35,11 +35,11 @@ var ItemView = View.extend({
 
   render: function () {
 
-    var helpers = this.compile();
+    var helpers = ;
 
-   if (helpers.isComplete()) {
-     this.$('.open').addClass('complete');
-   }
+    if (helpers.isComplete()) {
+      this.$('.open').addClass('complete');
+    }
 
     return this.$el;
 
