@@ -23,27 +23,25 @@ var CardView = View.extend({
 
   presenter: require('../presenters/tasks_itemPresenter.js'),
 
-  toggle: function () {
-    this.model.toggle();
-  },
-
   back: function () {
     Backbone.trigger(config.name + ':goto', '');
+  },
+
+  toggle: function () {
+    this.model.toggle();
+    this.back()
+  },
+
+  delete: function () {
+    this.model.destroy();
+    this.remove();
+    this.back();
   },
 
   onEscape: function (event) {
     if (event.which === 27) {
       this.back();
     }
-  },
-
-  delete: function () {
-    this.model.destroy();
-    var that = this;
-    this.$el.fadeOut('fast', function () {
-      that.remove();
-      Backbone.trigger(config.name + ':goto', '');
-    });  
   },
 
   updateTitle: function () {
