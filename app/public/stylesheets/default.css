@@ -40,12 +40,17 @@ li:hover .delete {
   vertical-align: middle;
 }
 
+.collection .collection-item.custom-avatar .avatar-content [type="checkbox"]:checked+label:before {
+  border-right: 2px solid #4caf50;
+  border-bottom: 2px solid #4caf50;
+}
+
 .collection .collection-item.custom-avatar .custom-secondary-content {
   position: absolute;
   top: 8px;
   right: 8px;
   float: right;
-  color: #26a69a;
+  color: #e0e0e0;
 }
 
 .collection .collection-item.custom-avatar p {
@@ -55,6 +60,8 @@ li:hover .delete {
 .card .card-image img {
   height: 249px;
   opacity: 0;
+  -webkit-filter: sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8);
+  filter: sepia(0.5) hue-rotate(-30deg) saturate(1.2) contrast(0.8);
   -moz-transition: opacity 2s;
   /* Firefox 4 */
   -webkit-transition: opacity 2s;
