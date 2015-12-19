@@ -5,9 +5,6 @@
       <div class="col s12 m12 s12">
         <div class="card">
 
-          <a class="btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">done</i></a>
-
-
           <div class="card-title row custom-row">
             <div class=" col s8 m8 l8">
                 <div class="input-field col s12 m12 l12">
@@ -15,11 +12,13 @@
                   <label class="display1" for="title-input"><%- title %></label>
                 </div>
                 <div class="input-field col s12 m12 l12">
-                  <textarea id="details-input" class="materialize-textarea"></textarea>
+                  <textarea id="details-input" class="materialize-textarea custom-materialize-textarea"></textarea>
                   <label for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details") %></label>
                 </div>
             </div>
-            <div class="col s4 m4 l4">&nbsp;</div>
+            <div class="col s4 m4 l4">
+              <a class="btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">done</i></a>
+            </div>
           </div>
             
           <div class="card-action custom-card-action">

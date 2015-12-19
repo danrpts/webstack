@@ -58,6 +58,10 @@ li:hover .delete {
   margin: 0;
 }
 
+textarea.custom-materialize-textarea {
+  resize: vertical;
+}
+
 .card .card-image img {
   height: 249px;
   opacity: 0;
