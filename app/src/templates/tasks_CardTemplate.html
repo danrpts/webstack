@@ -1,22 +1,22 @@
 <div class="row">
   <div class="col m3 l4">&nbsp;</div>
   <div class="col s12 m6 l4">
-
     <div class="row">
       <div class="col s12 m12 s12">
         <div class="card">
           <div class="card-image">
-            <img src="http://thecatapi.com/api/images/get?format=src&type=gif">
-          </div>
-          <div class="card-content row">
-            <div class="input-field col s12 m12 s12">
-              <input id="title-input" type="text" length="23" value="<%- title %>" />
-              <label for="title-input"></label>
+            <img src="<% print(randomImage())%>">
+            <div class="card-title row">
+              <div class="input-field col s12 m12 s12">
+                <input id="title-input" type="text" length="23" />
+                <label class="flow-text" for="title-input"><%- title %></label>
+              </div>
+              <div class="input-field col s12">
+                <textarea id="details-input" class="materialize-textarea"></textarea>
+                <label class="flow-text" for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details...") %></label>
+              </div>
             </div>
-            <div class="input-field col s12 m12 s12">
-              <textarea id="details-input" class="materialize-textarea" rows="1"><% has('details') && print(details) %></textarea>
-              <label for="details-input" id="details-label"><% !has('details') && print("Add details...") %></label>
-            </div>
+
           </div>
           <div class="card-action">
             <a class="btn-floating green" id="toggle"><i class="material-icons">done</i></a>
@@ -26,7 +26,6 @@
         </div>
       </div>
     </div>
-      
   </div>
-  <div class="col m3 l4"></div>
+  <div class="col m3 l4">&nbsp;</div>
 </div>

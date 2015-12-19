@@ -7,7 +7,6 @@ var config = require('../config/tasks_config.js');
 var CardView = View.extend({
 
   events: {
-    'keyup': 'onEscape',
     'mouseup #toggle': 'toggle',
     'mouseup #back': 'back',
     'mouseup #delete': 'delete',
@@ -36,12 +35,6 @@ var CardView = View.extend({
     this.model.destroy();
     this.remove();
     this.back();
-  },
-
-  onEscape: function (event) {
-    if (event.which === 27) {
-      this.back();
-    }
   },
 
   updateTitle: function () {

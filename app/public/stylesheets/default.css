@@ -51,3 +51,8 @@ li:hover .delete {
 .collection .collection-item.custom-avatar p {
   margin: 0;
 }
+
+img.blur {
+  -webkit-filter: blur(1px);
+  filter: blur(1px);
+}
