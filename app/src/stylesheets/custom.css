@@ -24,9 +24,9 @@ li:hover .delete {
 }
 
 .collection .collection-item.custom-avatar {
-    min-height: 0px;
-    padding-left: 72px;
-    position: relative;
+  min-height: 0px;
+  padding-left: 72px;
+  position: relative;
 }
 
 .collection .collection-item.custom-avatar .avatar-content {
@@ -40,18 +40,45 @@ li:hover .delete {
 }
 
 .collection .collection-item.custom-avatar .custom-secondary-content {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    float: right;
-    color: #26a69a;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  float: right;
+  color: #26a69a;
 }
 
 .collection .collection-item.custom-avatar p {
-    margin: 0;
+  margin: 0;
 }
 
-img.blur {
-  -webkit-filter: blur(6px);
-  filter: blur(6px);
+.card .card-image img {
+  height: 249px;
+  opacity: 0;
+  -moz-transition: opacity 2s; /* Firefox 4 */
+  -webkit-transition: opacity 2s; /* Safari and Chrome */
+  -o-transition: opacity 2s;
+  transition: opacity 2s;
 }
+
+.card .card-image .card-title .input-field label {
+  color: black;
+}
+
+.card .card-image .card-title .input-field input[type=text] {
+  border-bottom: 1px solid black;
+}
+
+.card .card-image .card-title .input-field textarea {
+  border-bottom: 1px solid black;
+}
+
+.card .card-image .card-title .input-field input[type=text]:focus {
+  border-bottom: 1px solid #eeeeee;
+  box-shadow: 0 1px 0 0 #eeeeee;
+}
+
+.card .card-image .card-title .input-field textarea:focus {
+  border-bottom: 1px solid #eeeeee;
+  box-shadow: 0 1px 0 0 #eeeeee;
+}
+

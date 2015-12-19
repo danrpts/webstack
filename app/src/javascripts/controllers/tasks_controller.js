@@ -44,7 +44,7 @@ var api = {
       loading: item.promise(),
 
       // Artificial delay
-      //delay: Math.random() * 200
+      //delay: Math.random() * 1000
 
     }); 
 

@@ -3,7 +3,8 @@ var _ = require('underscore');
 var helpers = {
 
   randomImage: function () {
-    return 'http://thecatapi.com/api/images/get?format=src&type=gif';
+    console.log('Random Image Loading...');
+    return 'https://unsplash.it/500/250/?random';
   },
 
   has: function (key) {

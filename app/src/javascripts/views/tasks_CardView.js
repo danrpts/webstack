@@ -14,10 +14,6 @@ var CardView = View.extend({
     'blur #details-input': 'updateDetails'
   },
 
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
-
   template: require('../../templates/tasks_CardTemplate.html'),
 
   presenter: require('../presenters/tasks_itemPresenter.js'),

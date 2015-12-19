@@ -5,16 +5,19 @@
       <div class="col s12 m12 s12">
         <div class="card">
           <div class="card-image">
-            <img src="<% print(randomImage())%>">
-            <div class="card-title row">
+            <img src="<% print(randomImage()) %>" onload="this.style.opacity='0.5';">
+            <div class="card-title row custom-row">
+
               <div class="input-field col s12 m12 s12">
                 <input id="title-input" type="text" length="23" />
-                <label class="flow-text" for="title-input"><%- title %></label>
+                <label class="display1" for="title-input"><%- title %></label>
               </div>
+
               <div class="input-field col s12">
                 <textarea id="details-input" class="materialize-textarea"></textarea>
-                <label class="flow-text" for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details...") %></label>
+                <label for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details") %></label>
               </div>
+
             </div>
 
           </div>

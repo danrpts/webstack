@@ -188,7 +188,7 @@ var api = {
       loading: item.promise(),
 
       // Artificial delay
-      //delay: Math.random() * 200
+      //delay: Math.random() * 1000
 
     }); 
 
@@ -417,7 +417,8 @@ var _ = require('underscore');
 var helpers = {
 
   randomImage: function () {
-    return 'http://thecatapi.com/api/images/get?format=src&type=gif';
+    console.log('Random Image Loading...');
+    return 'https://unsplash.it/500/250/?random';
   },
 
   has: function (key) {
@@ -526,10 +527,6 @@ var CardView = View.extend({
     'mouseup #delete': 'delete',
     'blur #title-input': 'updateTitle',
     'blur #details-input': 'updateDetails'
-  },
-
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
   },
 
   template: require('../../templates/tasks_CardTemplate.html'),
@@ -683,7 +680,7 @@ module.exports = ListView;
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card\">\n          <div class=\"card-image\">\n            <img src=\"<% print(randomImage())%>\">\n            <div class=\"card-title row\">\n              <div class=\"input-field col s12 m12 s12\">\n                <input id=\"title-input\" type=\"text\" length=\"23\" />\n                <label class=\"flow-text\" for=\"title-input\"><%- title %></label>\n              </div>\n              <div class=\"input-field col s12\">\n                <textarea id=\"details-input\" class=\"materialize-textarea\"></textarea>\n                <label class=\"flow-text\" for=\"details-input\" id=\"details-label\"><% has('details') ? print(details) : print(\"Add details...\") %></label>\n              </div>\n            </div>\n\n          </div>\n          <div class=\"card-action\">\n            <a class=\"btn-floating green\" id=\"toggle\"><i class=\"material-icons\">done</i></a>\n            <a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a>\n            <a class=\"btn-floating blue\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>\n";
+module.exports = "<div class=\"row\">\n  <div class=\"col m3 l4\">&nbsp;</div>\n  <div class=\"col s12 m6 l4\">\n    <div class=\"row\">\n      <div class=\"col s12 m12 s12\">\n        <div class=\"card\">\n          <div class=\"card-image\">\n            <img src=\"<% print(randomImage()) %>\" onload=\"this.style.opacity='0.5';\">\n            <div class=\"card-title row custom-row\">\n\n              <div class=\"input-field col s12 m12 s12\">\n                <input id=\"title-input\" type=\"text\" length=\"23\" />\n                <label class=\"display1\" for=\"title-input\"><%- title %></label>\n              </div>\n\n              <div class=\"input-field col s12\">\n                <textarea id=\"details-input\" class=\"materialize-textarea\"></textarea>\n                <label for=\"details-input\" id=\"details-label\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n              </div>\n\n            </div>\n\n          </div>\n          <div class=\"card-action\">\n            <a class=\"btn-floating green\" id=\"toggle\"><i class=\"material-icons\">done</i></a>\n            <a class=\"btn-floating red\" id=\"delete\"><i class=\"material-icons\">delete</i></a>\n            <a class=\"btn-floating blue\" id=\"back\"><i class=\"material-icons\">arrow_back</i></a>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col m3 l4\">&nbsp;</div>\n</div>\n";
 
 },{}],26:[function(require,module,exports){
 module.exports = "<li class=\"collection-item custom-avatar\">\n    <span class=\"avatar-content\">\n      <input type=\"checkbox\" id=\"toggle-<%- id %>\" <% isComplete() && print('checked') %>/>\n      <label for=\"toggle-<%- id %>\" class=\"toggle\">&nbsp;</label>\n    </span>\n    <span class=\"title open\"><%- title %></span>\n    <p class=\"grey-text truncate\">\n      <% has('details') && print(details, '<br>') %>\n      <% print(format('created'), '<br>') %>\n      <% has('due') && print(format('due'), '<br>') %>\n      <% isComplete() && print(format('completed')) %>\n    </p>\n    <a class=\"custom-secondary-content delete\">\n      <i class=\"material-icons\">delete</i>\n    </a>\n</li>\n";
