@@ -91,3 +91,13 @@ textarea.custom-materialize-textarea {
 .card .custom-card-action a:hover {
   color: #bdbdbd;
 }
+
+.app {
+  padding-top: 3%;
+}
+
+.absolute-btn {
+  position: absolute;
+  top: -20px;
+  right: 55px;
+}

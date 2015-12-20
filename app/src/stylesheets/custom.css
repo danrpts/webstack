@@ -90,3 +90,12 @@ textarea.custom-materialize-textarea {
   color: #bdbdbd;
 }
 
+.app {
+  padding-top: 3%;
+}
+
+.absolute-btn {
+  position: absolute;
+  top: -20px;
+  right: 55px;
+}

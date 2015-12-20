@@ -1,35 +1,38 @@
-<div class="row">
-  <div class="col m3 l4">&nbsp;</div>
+
+<div class="row app">
+
+  <div class="col s0 m3 l4">&nbsp;</div>
+
   <div class="col s12 m6 l4">
-    <div class="row">
-      <div class="col s12 m12 s12">
-        <div class="card">
+      
+    <div class="card">
+      <a class="absolute-btn btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">check</i></a>
+    </div>
 
-          <div class="card-title row custom-row">
-            <div class=" col s8 m8 l8">
-                <div class="input-field col s12 m12 l12">
-                  <input id="title-input" type="text" length="23" />
-                  <label class="display1" for="title-input"><%- title %></label>
-                </div>
-                <div class="input-field col s12 m12 l12">
-                  <textarea id="details-input" class="materialize-textarea custom-materialize-textarea"></textarea>
-                  <label for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details") %></label>
-                </div>
-            </div>
-            <div class="col s4 m4 l4">
-              <a class="btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">done</i></a>
-            </div>
+    <div class="card">  
+      <div class="card-title">
+        <div class="row custom-row">
+          <div class="input-field col s12 m12 l12">
+            <input id="title-input" type="text" length="23" />
+            <label class="display1" for="title-input"><%- title %></label>
           </div>
-            
-          <div class="card-action custom-card-action">
-            <a class="btn-flat" id="back">Back<i class="material-icons left">arrow_back</i></a>
-            <a class="btn-flat" id="delete">Delete<i class="material-icons left">delete</i></a>
-            <a class="btn-flat" id="edit">Settings<i class="material-icons left">settings</i></a>
+        </div>
+        <div class="row custom-row">
+          <div class="input-field col s12 m12 l12">
+            <textarea id="details-input" class="materialize-textarea custom-materialize-textarea"></textarea>
+            <label for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details") %></label>
           </div>
-
         </div>
       </div>
+      <div class="card-action custom-card-action">
+        <a class="btn-flat" id="back">Back<i class="material-icons left">arrow_back</i></a>
+        <a class="btn-flat" id="delete">Delete<i class="material-icons left">delete</i></a>
+        <a class="btn-flat" id="edit">Settings<i class="material-icons left">settings</i></a>
+      </div>
     </div>
-  </div>
-  <div class="col m3 l4">&nbsp;</div>
+
+    </div>
+
+  <div class="col s0 m3 l4">&nbsp;</div>
+
 </div>
