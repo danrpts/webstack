@@ -95,3 +95,13 @@ li:hover .delete {
   top: 0px;
   right: 0px;
 }
+
+.green,
+.green:hover {
+  background: #4caf50;
+}
+
+.red,
+.red:hover {
+  background: #f44336;
+}
