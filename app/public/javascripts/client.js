@@ -255,8 +255,9 @@ module.exports = {
       // Notify when promise has started
       (options.debug) && console.log('Loading...');
 
-      // Show Spinner; TODO
-      region.html('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
+      // TODO
+      var loader = '<div class="loader">Loading...</div>';
+      region.html(loader);
       
       // Promise callbacks
       options.loading.done(function () {
