@@ -21,7 +21,7 @@ var api = {
       loading: list.entity.promise(),
 
       // Artificial delay
-      //delay: Math.random() * 2000
+      delay: Math.random() * 2000
 
     });
 

@@ -23,6 +23,13 @@ p {
   margin: 0 auto;
 }
 
+.loader {
+  position: relative;
+  width: 512px;
+  margin: 0 50%;
+  padding-top: 15%;
+}
+
 .complete {
   text-decoration: line-through;
 }

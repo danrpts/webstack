@@ -165,7 +165,7 @@ var api = {
       loading: list.entity.promise(),
 
       // Artificial delay
-      //delay: Math.random() * 2000
+      delay: Math.random() * 2000
 
     });
 
@@ -256,7 +256,7 @@ module.exports = {
       (options.debug) && console.log('Loading...');
 
       // Show Spinner; TODO
-      region.html('<div style="width: 330px; margin:0 50%; padding-top: 15%">  <div class="preloader-wrapper small active"><div class="spinner-layer spinner-green-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
+      region.html('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
       
       // Promise callbacks
       options.loading.done(function () {
