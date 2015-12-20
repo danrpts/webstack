@@ -1,14 +1,32 @@
-<li class="card-panel avatar">
-  <span class="circle">
-    <input type="checkbox" id="toggle-<%- id %>" <% isComplete() && print('checked') %> />
-    <label for="toggle-<%- id %>" class="toggle">&nbsp;</label>
-  </span>
-  <span class="title open <% isComplete() && print('complete') %>"><%- title %></span>
-  <p class="grey-text truncate">
-    <% has('details') && print(details, '<br>') %>
-    <% print(format('created'), '<br>') %>
-    <% has('due') && print(format('due'), '<br>') %>
-    <% isComplete() && print(format('completed')) %>
-  </p>
-  <a class="secondary-content btn-flat delete"><i class="material-icons">delete</i></a>
+<li>
+  <div class="mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__supporting-text">
+
+    <div class="avatar-wrapper">
+
+      <div class="avatar">
+        <label class="mdl-checkbox mdl-js-checkbox" for="checkbox-<%- id %>">
+          <input type="checkbox" id="checkbox-<%- id %>" class="mdl-checkbox__input toggle" <% isComplete() && print('checked') %>>
+        </label>
+      </div>
+
+      <span class="title open <% isComplete() && print('complete') %>"><%- title %></span>
+
+      <p>
+        <% has('details') && print(details, '<br>') %>
+        <% print(format('created'), '<br>') %>
+        <% has('due') && print(format('due'), '<br>') %>
+        <% isComplete() && print(format('completed')) %>
+      </p>
+
+      <div class="menu">
+      <button class="mdl-button mdl-js-button mdl-button--icon delete">
+          <i class="material-icons">delete</i>
+        </button>
+      </div>
+
+    </div>
+
+    </div>
+  </div>
 </li>

@@ -6,14 +6,7 @@ var config = require('../config/tasks_config.js');
 
 var CardView = View.extend({
 
-  template: require('../../templates/account_CardTemplate.html'),
-
-  render: function () {
-
-    this.compile();
-    return this.$el;
-
-  }
+  template: require('../../templates/account_CardTemplate.html')
 
 });
 

@@ -29,14 +29,13 @@ var ListView = View.extend({
   render: function () {
 
     // List building function
-    var list = function () {
+    function list () {
       var $list = this.$('ul#task-items');
       var $listfragment = $(document.createDocumentFragment());
       this.collection.each(function (itemModel, index) {
         new ItemView({model: itemModel}).render().$el.appendTo($listfragment);
       });
       $listfragment.appendTo($list);
-      return this;
     }
 
     // Call the base renderer

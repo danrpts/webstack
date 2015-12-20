@@ -48,7 +48,13 @@ module.exports = {
       else this.$el.html(this.$compiled.html());
 
       // Allow injection of async code
-      return _.isFunction(callback) ? callback.call(this) : this;
+      _.isFunction(callback) && callback.call(this);
+
+      // Material Design Lite (MDL)
+      componentHandler.upgradeElements(this.el);
+
+      // Force chaining on this
+      return this;
       
     }
 

@@ -1,27 +1,39 @@
 <div class="app">
 
-    <a class="absolute btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%> toggle"><i class="material-icons">check</i></a>
+    <div class="mdl-card mdl-shadow--2dp">
 
-    <div class="card">
+      <div class="mdl-card__menu">
+        <button class="mdl-button mdl-js-button mdl-button--fab toggle">
+          <i class="material-icons">check</i>
+        </button>
+      </div>
 
-      <div class="card-title">
-        <div class="row">
-          <div class="input-field col s12 m12 l12">
-            <input id="title-input" type="text" length="23" />
-            <label for="title-input"><%- title %></label>
-          </div>
+      <div class="mdl-card__supporting-text">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="title-input" length="23">
+          <label class="mdl-textfield__label" for="title-input"><%- title %></label>
         </div>
-        <div class="row">
-          <div class="input-field col s12 m12 l12">
-            <textarea id="details-input" class="materialize-textarea"></textarea>
-            <label for="details-input"><% has('details') ? print(details) : print("Add details") %></label>
-          </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <textarea class="mdl-textfield__input" type="text" rows= "1" id="details-input" ></textarea>
+          <label class="mdl-textfield__label" for="details-input"><% has('details') ? print(details) : print("Add details") %></label>
         </div>
       </div>
 
-      <div class="card-action card-action">
-        <a class="btn-flat back">Back<i class="material-icons left">arrow_back</i></a>
-        <a class="btn-flat delete right">Delete<i class="material-icons left">delete</i></a>
+      <div class="mdl-card__actions mdl-card--border">
+
+        <button class="mdl-button mdl-js-button mdl-button--icon back">
+          <i class="material-icons">arrow_back</i>
+        </button>
+
+        <button class="mdl-button mdl-js-button mdl-button--icon delete">
+          <i class="material-icons">delete</i>
+        </button>
+
+        <button class="mdl-button mdl-js-button mdl-button--icon mood">
+          <i class="material-icons">mood</i>
+        </button>
+
       </div>
 
     </div>

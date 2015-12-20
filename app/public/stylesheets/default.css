@@ -1,33 +1,34 @@
 body {
   background-color: #F9F9F9;
+  font-family: 'Roboto';
+}
+
+ul {
+  padding: 0px;
+}
+
+li {
+  list-style-type: none;
+  padding-bottom: 6px;
+}
+
+p {
+  margin: 0;
 }
 
 .app {
   position: relative;
   padding-top: 3%;
-  width: 500px;
+  width: 512px;
   margin: 0 auto;
-}
-
-.row {
-  margin-bottom: 0px;
-}
-
-.open {
-  cursor: pointer;
 }
 
 .complete {
   text-decoration: line-through;
 }
 
-.btn-flat {
-  margin-right: 0px !important;
-  color: #9e9e9e !important;
-}
-
-.btn-flat:hover {
-  color: #bdbdbd !important;
+.open {
+  cursor: pointer;
 }
 
 li .delete {
@@ -42,19 +43,35 @@ li:hover .delete {
   opacity: 1;
 }
 
-.absolute {
-  position: absolute;
-  top: 35px;
-  right: 55px;
+.mdl-card {
+  min-height: 50px;
+  width: 100%;
 }
 
-.avatar {
-  min-height: 0px;
+.mdl-button--fab {
+  color: #F9F9F9;
+}
+
+.mdl-card__menu {
+  color: white;
+}
+
+.mdl-card__actions {
+  color: grey;
+}
+
+.mdl-card__title {
+  color: white;
+  height: 176px;
+  background: url("http://thecatapi.com/api/images/get?format=src&type=gif") center / cover;
+}
+
+.avatar-wrapper {
   padding-left: 72px;
   position: relative;
 }
 
-.avatar .circle {
+.avatar-wrapper .avatar {
   position: absolute;
   width: 42px;
   height: 42px;
@@ -65,21 +82,11 @@ li:hover .delete {
   border-radius: 0px;
 }
 
-.avatar .secondary-content {
+.avatar-wrapper .menu {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  float: right;
-}
-
-.avatar p {
-  margin: 0;
-}
-
-textarea.materialize-textarea {
-  resize: vertical;
-}
-
-.card .card-action {
-  padding: 4px;
+  width: 42px;
+  height: 42px;
+  color: grey;
+  top: 0px;
+  right: 0px;
 }
