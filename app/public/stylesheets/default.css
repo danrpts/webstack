@@ -77,6 +77,10 @@ li:hover .delete {
   transition: height 0.8s;
 }
 
+.mdl-card__supporting-text {
+  width: auto;
+}
+
 .cats {
   height: 200px;
 }
