@@ -43,6 +43,10 @@ li:hover .delete {
   opacity: 1;
 }
 
+.mdl-textfield {
+  width: 100%;
+}
+
 .mdl-card {
   min-height: 50px;
   width: 100%;
@@ -54,6 +58,7 @@ li:hover .delete {
 
 .mdl-card__menu {
   color: white;
+  z-index: 2;
 }
 
 .mdl-card__actions {
