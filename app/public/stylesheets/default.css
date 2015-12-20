@@ -62,7 +62,7 @@ li:hover .delete {
 }
 
 .mdl-card__actions {
-  color: grey;
+  color: gray;
 }
 
 .mdl-card__title {
@@ -70,7 +70,7 @@ li:hover .delete {
   color: white;
   height: 0px;
   overflow: hidden;
-  background: url("http://thecatapi.com/api/images/get?format=src&type=gif") center / cover;
+  background: url("http://thecatapi.com/api/images/get?format=src&type=gif&size=med") center / cover;
   -webkit-transition: height 0.8s;
   -moz-transition: height 0.8s;
   -o-transition: height 2s;
@@ -82,7 +82,7 @@ li:hover .delete {
 }
 
 .cats {
-  height: 200px;
+  height: 500px;
 }
 
 .avatar-wrapper {
