@@ -7,9 +7,9 @@ var config = require('../config/tasks_config.js');
 var CardView = View.extend({
 
   events: {
-    'mouseup #toggle': 'toggle',
-    'mouseup #back': 'back',
-    'mouseup #delete': 'delete',
+    'mouseup .toggle': 'toggle',
+    'mouseup .back': 'back',
+    'mouseup .delete': 'delete',
     'blur #title-input': 'updateTitle',
     'blur #details-input': 'updateDetails'
   },

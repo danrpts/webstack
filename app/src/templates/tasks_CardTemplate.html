@@ -1,38 +1,29 @@
+<div class="app">
 
-<div class="row app">
+    <a class="absolute btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%> toggle"><i class="material-icons">check</i></a>
 
-  <div class="col s0 m3 l4">&nbsp;</div>
-
-  <div class="col s12 m6 l4">
-      
     <div class="card">
-      <a class="absolute-btn btn-floating btn-large waves-effect waves-light <% isComplete() ? print('green') : print('red')%>" id="toggle"><i class="material-icons">check</i></a>
-    </div>
 
-    <div class="card">  
       <div class="card-title">
-        <div class="row custom-row">
+        <div class="row">
           <div class="input-field col s12 m12 l12">
             <input id="title-input" type="text" length="23" />
-            <label class="display1" for="title-input"><%- title %></label>
+            <label for="title-input"><%- title %></label>
           </div>
         </div>
-        <div class="row custom-row">
+        <div class="row">
           <div class="input-field col s12 m12 l12">
-            <textarea id="details-input" class="materialize-textarea custom-materialize-textarea"></textarea>
-            <label for="details-input" id="details-label"><% has('details') ? print(details) : print("Add details") %></label>
+            <textarea id="details-input" class="materialize-textarea"></textarea>
+            <label for="details-input"><% has('details') ? print(details) : print("Add details") %></label>
           </div>
         </div>
       </div>
-      <div class="card-action custom-card-action">
-        <a class="btn-flat" id="back">Back<i class="material-icons left">arrow_back</i></a>
-        <a class="btn-flat" id="delete">Delete<i class="material-icons left">delete</i></a>
-        <a class="btn-flat" id="edit">Settings<i class="material-icons left">settings</i></a>
+
+      <div class="card-action card-action">
+        <a class="btn-flat back">Back<i class="material-icons left">arrow_back</i></a>
+        <a class="btn-flat delete">Delete<i class="material-icons left">delete</i></a>
       </div>
-    </div>
 
     </div>
-
-  <div class="col s0 m3 l4">&nbsp;</div>
 
 </div>
