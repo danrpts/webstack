@@ -536,6 +536,7 @@ var CardView = View.extend({
     'mouseup .toggle': 'toggle',
     'mouseup .back': 'back',
     'mouseup .delete': 'delete',
+    'mouseup .mood': 'easterEgg',
     'blur #title-input': 'updateTitle',
     'blur #details-input': 'updateDetails'
   },
@@ -555,18 +556,22 @@ var CardView = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  back: function () {
-    Backbone.trigger(config.name + ':goto', '');
-  },
-
   toggle: function () {
     this.model.toggle();
+  },
+
+  back: function () {
+    Backbone.trigger(config.name + ':goto', '');
   },
 
   delete: function () {
     this.model.destroy();
     this.remove();
     this.back();
+  },
+
+  easterEgg: function () {
+    this.$('.mdl-card__title').toggleClass('cats');
   },
 
   updateTitle: function () {
@@ -675,7 +680,7 @@ module.exports = ListView;
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% isComplete() ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">check</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- title %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
+module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% isComplete() ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">check</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- title %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
 },{}],26:[function(require,module,exports){
 module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper\">\n\n      <div class=\"avatar\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- id %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- id %>\" class=\"mdl-checkbox__input\" <% isComplete() && print('checked') %>>\n        </label>\n      </div>\n\n      <span class=\"title open <% isComplete() && print('complete') %>\"><%- title %></span>\n\n      <p>\n        <% has('details') && print(details, '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% isComplete() && print(format('completed')) %>\n      </p>\n\n      <div class=\"menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";

@@ -10,6 +10,7 @@ var CardView = View.extend({
     'mouseup .toggle': 'toggle',
     'mouseup .back': 'back',
     'mouseup .delete': 'delete',
+    'mouseup .mood': 'easterEgg',
     'blur #title-input': 'updateTitle',
     'blur #details-input': 'updateDetails'
   },
@@ -29,18 +30,22 @@ var CardView = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  back: function () {
-    Backbone.trigger(config.name + ':goto', '');
-  },
-
   toggle: function () {
     this.model.toggle();
+  },
+
+  back: function () {
+    Backbone.trigger(config.name + ':goto', '');
   },
 
   delete: function () {
     this.model.destroy();
     this.remove();
     this.back();
+  },
+
+  easterEgg: function () {
+    this.$('.mdl-card__title').toggleClass('cats');
   },
 
   updateTitle: function () {
