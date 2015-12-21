@@ -7,7 +7,7 @@ function Collection (models, options) {
   Backbone.Collection.apply(this, arguments);
 }
 
-Collection.prototype = Object.create(Backbone.Collection.prototype);
+Collection.prototype = create(Backbone.Collection.prototype);
 
 _.extend(Collection.prototype, helpers, {
 
