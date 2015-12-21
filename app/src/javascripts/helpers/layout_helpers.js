@@ -39,8 +39,9 @@ module.exports = {
       (options.debug) && console.log('Loading...');
 
       // TODO
-      var loader = '<div class="loader">Loading...</div>';
-      region.html(loader);
+      var loader = $('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
+      componentHandler.upgradeElements(loader[0]);
+      loader.appendTo(region);
       
       // Promise callbacks
       options.loading.done(function () {
