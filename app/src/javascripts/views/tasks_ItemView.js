@@ -7,9 +7,9 @@ var config = require('../config/tasks_config.js');
 var ItemView = View.extend({
 
   events: {
-    'mouseup  .toggle' : 'toggle',
-    'dblclick .open'   : 'open',
-    'mouseup  .delete' : 'delete'
+    'mouseup .toggle' : 'toggle',
+    'mouseup .open'   : 'open',
+    'mouseup .delete' : 'delete'
   },
 
   template: require('../../templates/tasks_ItemTemplate.html'),
