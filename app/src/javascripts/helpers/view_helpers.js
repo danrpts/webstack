@@ -3,6 +3,14 @@ var _ = require('underscore');
 
 module.exports = {
 
+  repeat: function (View) {
+    var $fragment = $(document.createDocumentFragment());
+    this.collection.each(function (model) {
+      new View({model: model}).render().$el.appendTo($fragment);
+    });
+    return $fragment;
+  },
+
   compile: function () {
 
       var resource, template, templater, presenter, compiled;

@@ -1,14 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-var Collection = function (models, options) {
+function Collection (models, options) {
   Backbone.Collection.apply(this, arguments);
 }
 
-Collection.prototype = Object.create(Backbone.Collection.prototype);
+Collection.prototype = create(Backbone.Collection.prototype);
 
 _.extend(Collection.prototype, helpers, {
 
@@ -22,7 +22,7 @@ _.extend(Collection.prototype, helpers, {
     if (model = this.get(id)) {
 
       // Return as a resolved promise
-      model = $.Deferred().resolveWith(this, [model]);
+      model = require('jquery').Deferred().resolveWith(this, [model]);
 
     }
 
@@ -49,12 +49,13 @@ module.exports = Collection;
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-var Model = function (attributes, options) {
-  Backbone.Model.call(this, attributes, options);
+function Model (attributes, options) {
+  Backbone.Model.apply(this, arguments);
 }
 
-Model.prototype = Object.create(Backbone.Model.prototype);
+Model.prototype = create(Backbone.Model.prototype);
 
 _.extend(Model.prototype, helpers);
 
@@ -66,14 +67,15 @@ module.exports = Model;
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/router_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-var Router = function (options) {
+function Router (options) {
   options = options || {};
   options['controller'] && _.extend(this, _.pick(options.controller, _.functions(options.controller)));
-  Backbone.Router.call(this, options);
+  Backbone.Router.apply(this, arguments);
 }
 
-Router.prototype = Object.create(Backbone.Router.prototype);
+Router.prototype = create(Backbone.Router.prototype);
 
 _.extend(Router.prototype, helpers);
 
@@ -85,12 +87,13 @@ module.exports = Router;
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/view_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-var View = function (options) {
-  Backbone.View.call(this, options);
+function View (options) {
+  Backbone.View.apply(this, arguments);
 }
 
-View.prototype = Object.create(Backbone.View.prototype);
+View.prototype = create(Backbone.View.prototype);
 
 _.extend(View.prototype, helpers);
 
@@ -311,6 +314,14 @@ var $ = require('jquery');
 var _ = require('underscore');
 
 module.exports = {
+
+  repeat: function (View) {
+    var $fragment = $(document.createDocumentFragment());
+    this.collection.each(function (model) {
+      new View({model: model}).render().$el.appendTo($fragment);
+    });
+    return $fragment;
+  },
 
   compile: function () {
 
@@ -597,9 +608,9 @@ var config = require('../config/tasks_config.js');
 var ItemView = View.extend({
 
   events: {
-    'mouseup  .toggle' : 'toggle',
-    'dblclick .open'   : 'open',
-    'mouseup  .delete' : 'delete'
+    'mouseup .toggle' : 'toggle',
+    'mouseup .open'   : 'open',
+    'mouseup .delete' : 'delete'
   },
 
   template: require('../../templates/tasks_ItemTemplate.html'),
@@ -660,12 +671,7 @@ var ListView = View.extend({
 
     // List building function
     function list () {
-      var $list = this.$('ul#task-items');
-      var $listfragment = $(document.createDocumentFragment());
-      this.collection.each(function (itemModel, index) {
-        new ItemView({model: itemModel}).render().$el.appendTo($listfragment);
-      });
-      $listfragment.appendTo($list);
+      this.repeat(ItemView).appendTo(this.$('ul#task-items'));
     }
 
     // Call the base renderer
