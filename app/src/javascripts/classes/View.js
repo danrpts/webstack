@@ -4,8 +4,7 @@ var helpers = require('../helpers/view_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 function View (options) {
-  var self = (this instanceof View) ? this : create(View.prototype);
-  Backbone.View.apply(self, arguments);
+  Backbone.View.apply(this, arguments);
 }
 
 View.prototype = create(Backbone.View.prototype);

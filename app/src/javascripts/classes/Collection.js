@@ -4,8 +4,7 @@ var helpers = require('../helpers/model_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 function Collection (models, options) {
-  var self = (this instanceof Collection) ? this : create(Collection.prototype);
-  Backbone.Collection.apply(self, arguments);
+  Backbone.Collection.apply(this, arguments);
 }
 
 Collection.prototype = Object.create(Backbone.Collection.prototype);
