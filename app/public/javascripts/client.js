@@ -325,6 +325,7 @@ module.exports = {
 
   compile: function () {
 
+      // Hoist 'em
       var resource, template, templater, presenter, compiled;
 
       // Reference model, collection or nonsuch
