@@ -1,10 +1,11 @@
-var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-var Collection = function (models, options) {
-  Backbone.Collection.apply(this, arguments);
+function Collection (models, options) {
+  var self = (this instanceof Collection) ? this : create(Collection.prototype);
+  Backbone.Collection.apply(self, arguments);
 }
 
 Collection.prototype = Object.create(Backbone.Collection.prototype);
@@ -21,7 +22,7 @@ _.extend(Collection.prototype, helpers, {
     if (model = this.get(id)) {
 
       // Return as a resolved promise
-      model = $.Deferred().resolveWith(this, [model]);
+      model = require('jquery').Deferred().resolveWith(this, [model]);
 
     }
 
