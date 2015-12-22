@@ -20,7 +20,7 @@ module.exports = {
       // Reference model, collection or nonsuch
       entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
 
-      // When it the intitial render, build the presenter
+      // When it's the intitial render, build the presenter
       (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
 
       // Allow overriding of underscore's templater

@@ -3,13 +3,7 @@ var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-function Collection (models, options) {
-  Backbone.Collection.apply(this, arguments);
-}
-
-Collection.prototype = create(Backbone.Collection.prototype);
-
-_.extend(Collection.prototype, helpers, {
+var specials =  {
 
   // TODO: integrate with controllers
   // REF: https://youtu.be/P0YIdsJqKV4
@@ -38,7 +32,15 @@ _.extend(Collection.prototype, helpers, {
 
   }
 
-});
+}
+
+function Collection (models, options) {
+  Backbone.Collection.apply(this, arguments);
+}
+
+Collection.prototype = create(Backbone.Collection.prototype);
+
+_.extend(Collection.prototype, specials, helpers);
 
 Collection.extend = Backbone.Collection.extend;
 
