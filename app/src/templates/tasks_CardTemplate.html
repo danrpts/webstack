@@ -1,7 +1,7 @@
 <div class="app">
 
     <div class="mdl-card__menu">
-      <button class="mdl-button mdl-js-button mdl-button--fab toggle <% is('completed') ? print('green') : print('red') %>">
+      <button class="mdl-button mdl-js-button mdl-button--fab toggle <% has('completed') ? print('green') : print('red') %>">
         <i class="material-icons">check</i>
       </button>
     </div>
@@ -15,7 +15,7 @@
       <div class="mdl-card__supporting-text">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" id="title-input" length="23">
-          <label class="mdl-textfield__label" for="title-input"><%- entity.title %></label>
+          <label class="mdl-textfield__label" for="title-input"><%- get('title') %></label>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

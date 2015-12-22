@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var _ = require('underscore');
+var closure = require('./presenter_helpers.js');
 
 module.exports = {
 
@@ -14,10 +15,13 @@ module.exports = {
   compile: function () {
 
       // Hoist 'em
-      var entity, template, templater, presenter, compiled;
+      var entity, template, templater, compiled;
 
       // Reference model, collection or nonsuch
       entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
+
+      // When it the intitial render, build the presenter
+      (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
 
       // Allow overriding of underscore's templater
       templater = _.isFunction(this.templater) ? this.templater : _.template;
@@ -25,17 +29,11 @@ module.exports = {
       // First run the markup through the templater
       template = templater(this.template);
 
-      // Next mixin the presenter's helpers, return just as data or nothing at all
-      presenter = _.isFunction(this.presenter) && (!!entity) ? this.presenter(entity) : (!!entity) ? entity.toJSON() : false;
-
-      // Then run the data through the templater
-      compiled = (!!presenter) ? template(presenter) : template();
+      // Then run the presenter through the templater
+      compiled = (!!this.presenter) ? template(this.presenter) : template();
 
       // Jquery this sucker
       this.$compiled = $(compiled);
-
-      // Store the helpers on the object for later use
-      (!!presenter) && (this.helpers = presenter);
 
       // Chaining
       return this;

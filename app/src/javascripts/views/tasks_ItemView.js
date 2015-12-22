@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var config = require('../config/tasks_config.js');
+var closure = require('../helpers/presenter_helpers.js');
 
 var ItemView = View.extend({
 
@@ -13,8 +14,6 @@ var ItemView = View.extend({
   },
 
   template: require('../../templates/tasks_ItemTemplate.html'),
-
-  presenter: require('../presenters/tasks_itemPresenter.js'),
 
   initialize: function () {
     this.listenTo(this.model, 'change', this.render);

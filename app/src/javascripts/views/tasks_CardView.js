@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var config = require('../config/tasks_config.js');
+var closure = require('../helpers/presenter_helpers.js');
 
 var CardView = View.extend({
 
@@ -16,11 +17,8 @@ var CardView = View.extend({
   },
 
   template: require('../../templates/tasks_CardTemplate.html'),
-
-  presenter: require('../presenters/tasks_itemPresenter.js'),
-
+  
   initialize: function () {
-
     // this is bugged
     // change is fired on sync due to localstorage, promise and events combo
     // causes premature render

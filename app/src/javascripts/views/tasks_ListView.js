@@ -13,8 +13,6 @@ var ListView = View.extend({
   
   template: require('../../templates/tasks_ListTemplate.html'),
 
-  presenter: require('../presenters/tasks_listPresenter.js'),
-
   onEnter: function (event) {
 
     if (event.which === 13) {

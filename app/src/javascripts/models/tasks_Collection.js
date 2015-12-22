@@ -6,8 +6,9 @@ var Collection = require('../classes/Collection.js');
 var ItemModel = Model.extend({
 
   defaults: {
-    'due': false,
-    'completed': false,
+    'due': null,
+    'completed': null,
+    'details': null,
     'created': Date.now()
   },
 
@@ -17,13 +18,13 @@ var ItemModel = Model.extend({
       wait: true
     });
     
-    this.save({completed: !this.get('completed') ? Date.now() : false}, options);
+    this.save({completed: !this.get('completed') ? Date.now() : null}, options);
 
   },
 
   validate: function (attributes) {
 
-    if ("title" in attributes && attributes.title.length === 0) {
+    if ('title' in attributes && attributes.title.length === 0) {
       return "Title cannot be empty.";
     }
     
