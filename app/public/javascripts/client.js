@@ -327,10 +327,10 @@ module.exports = {
   compile: function () {
 
       // Hoist 'em
-      var resource, template, templater, presenter, compiled;
+      var entity, template, templater, presenter, compiled;
 
       // Reference model, collection or nonsuch
-      resource = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
+      entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
 
       // Allow overriding of underscore's templater
       templater = _.isFunction(this.templater) ? this.templater : _.template;
@@ -339,7 +339,7 @@ module.exports = {
       template = templater(this.template);
 
       // Next mixin the presenter's helpers, return just as data or nothing at all
-      presenter = _.isFunction(this.presenter) && (!!resource) ? this.presenter(resource) : (!!resource) ? resource.toJSON() : false;
+      presenter = _.isFunction(this.presenter) && (!!entity) ? this.presenter(entity) : (!!entity) ? entity.toJSON() : false;
 
       // Then run the data through the templater
       compiled = (!!presenter) ? template(presenter) : template();
@@ -419,6 +419,7 @@ var ItemModel = Model.extend({
     _.defaults(options, {
       wait: true
     });
+    
     this.save({completed: !this.get('completed') ? Date.now() : false}, options);
 
   },
@@ -450,44 +451,50 @@ module.exports = {
 }
 },{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],16:[function(require,module,exports){
 var _ = require('underscore');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 var helpers = {
 
   has: function (key) {
-    return (key in this && this[key].length > 0);
+    return (key in this.entity && this.entity[key].length > 0);
   },
 
   is: function (key) {
-    return (key in this && !!this[key]);
+    return (key in this.entity && !!this.entity[key]);
   },
 
   format: function (key) {
-    var goal = new Date(this[key]);
+    var timestamp = new Date(this[key]);
     var today = new Date();
-    var time = key + ' @ ' + goal.toLocaleTimeString()
-    var date = key + ' on ' + goal.toDateString();
-    return (goal.getDay() === today.getDay()) ? time : date;
+    var time = key + ' @ ' + timestamp.toLocaleTimeString()
+    var date = key + ' on ' + timestamp.toDateString();
+    return (timestamp.getDay() === today.getDay()) ? time : date;
   }
 
 }
 
-module.exports = function (resource) {
-  return _.extend(resource.toJSON(), helpers);
+module.exports = function (entity) {
+  var presenter = create(helpers);
+  presenter.entity = entity.toJSON();
+  return presenter;
 }
 
 },{"underscore":"underscore"}],17:[function(require,module,exports){
 var _ = require('underscore');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 var helpers = {
 
-  totalComplete: function () {
-    return _.where(this, {'complete': true}).length;
+  total: function (key) {
+    return this.entity.length - _.where(this.entity, {key: false}).length;
   }
 
 }
 
-module.exports = function (resource) {
-  return _.extend(resource.toJSON(), helpers);
+module.exports = function (entity) {
+  var presenter = create(helpers);
+  presenter.entity = entity.toJSON();
+  return presenter;
 }
 
 },{"underscore":"underscore"}],18:[function(require,module,exports){
@@ -689,10 +696,10 @@ module.exports = ListView;
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% is('completed') ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">check</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- title %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
+module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% is('completed') ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">check</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- entity.title %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(details) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
 },{}],26:[function(require,module,exports){
-module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper\">\n\n      <div class=\"avatar\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- id %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- id %>\" class=\"mdl-checkbox__input\" <% is('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <span class=\"title open <% is('completed') && print('completed') %>\"><%- title %></span>\n\n      <p>\n        <% has('details') && print(details, '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% is('completed') && print(format('completed')) %>\n      </p>\n\n      <div class=\"menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
+module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper\">\n\n      <div class=\"avatar\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- entity.id %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- entity.id %>\" class=\"mdl-checkbox__input\" <% is('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <span class=\"title open <% is('completed') && print('completed') %>\"><%- entity.title %></span>\n\n      <p>\n        <% has('details') && print(entity.details, '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% is('completed') && print(format('completed')) %>\n      </p>\n\n      <div class=\"menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
 
 },{}],27:[function(require,module,exports){
 module.exports = "<div class=\"app\">\n  <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n    <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" length=\"23\">\n    <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n  </div>\n  <ul id=\"task-items\"></ul>\n</div>\n";

@@ -16,6 +16,7 @@ var ItemModel = Model.extend({
     _.defaults(options, {
       wait: true
     });
+    
     this.save({completed: !this.get('completed') ? Date.now() : false}, options);
 
   },

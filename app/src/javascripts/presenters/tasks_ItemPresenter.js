@@ -1,25 +1,28 @@
 var _ = require('underscore');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 var helpers = {
 
   has: function (key) {
-    return (key in this && this[key].length > 0);
+    return (key in this.entity && this.entity[key].length > 0);
   },
 
   is: function (key) {
-    return (key in this && !!this[key]);
+    return (key in this.entity && !!this.entity[key]);
   },
 
   format: function (key) {
-    var goal = new Date(this[key]);
+    var timestamp = new Date(this[key]);
     var today = new Date();
-    var time = key + ' @ ' + goal.toLocaleTimeString()
-    var date = key + ' on ' + goal.toDateString();
-    return (goal.getDay() === today.getDay()) ? time : date;
+    var time = key + ' @ ' + timestamp.toLocaleTimeString()
+    var date = key + ' on ' + timestamp.toDateString();
+    return (timestamp.getDay() === today.getDay()) ? time : date;
   }
 
 }
 
-module.exports = function (resource) {
-  return _.extend(resource.toJSON(), helpers);
+module.exports = function (entity) {
+  var presenter = create(helpers);
+  presenter.entity = entity.toJSON();
+  return presenter;
 }

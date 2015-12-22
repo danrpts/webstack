@@ -14,10 +14,10 @@ module.exports = {
   compile: function () {
 
       // Hoist 'em
-      var resource, template, templater, presenter, compiled;
+      var entity, template, templater, presenter, compiled;
 
       // Reference model, collection or nonsuch
-      resource = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
+      entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
 
       // Allow overriding of underscore's templater
       templater = _.isFunction(this.templater) ? this.templater : _.template;
@@ -26,7 +26,7 @@ module.exports = {
       template = templater(this.template);
 
       // Next mixin the presenter's helpers, return just as data or nothing at all
-      presenter = _.isFunction(this.presenter) && (!!resource) ? this.presenter(resource) : (!!resource) ? resource.toJSON() : false;
+      presenter = _.isFunction(this.presenter) && (!!entity) ? this.presenter(entity) : (!!entity) ? entity.toJSON() : false;
 
       // Then run the data through the templater
       compiled = (!!presenter) ? template(presenter) : template();
