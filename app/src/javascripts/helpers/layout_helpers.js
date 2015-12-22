@@ -1,10 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 
-// Private
+// Private. TODO: move this to config
 var regions = {
-  header: $('[data-js-region="header"'),
-  content: $('[data-js-region="content"')
+  header: $('[data-region="header"]'),
+  content: $('[data-region="content"]')
 
 }
 
