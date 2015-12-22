@@ -6,8 +6,8 @@ var helpers = {
     return (key in this && this[key].length > 0);
   },
 
-  isComplete: function () {
-    return !!this.completed;
+  is: function (key) {
+    return (key in this && !!this[key]);
   },
 
   format: function (key) {

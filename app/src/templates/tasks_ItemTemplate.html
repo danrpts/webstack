@@ -6,17 +6,17 @@
 
       <div class="avatar">
         <label class="mdl-checkbox mdl-js-checkbox toggle" for="checkbox-<%- id %>">
-          <input type="checkbox" id="checkbox-<%- id %>" class="mdl-checkbox__input" <% isComplete() && print('checked') %>>
+          <input type="checkbox" id="checkbox-<%- id %>" class="mdl-checkbox__input" <% is('completed') && print('checked') %>>
         </label>
       </div>
 
-      <span class="title open <% isComplete() && print('complete') %>"><%- title %></span>
+      <span class="title open <% is('completed') && print('completed') %>"><%- title %></span>
 
       <p>
         <% has('details') && print(details, '<br>') %>
         <% print(format('created'), '<br>') %>
         <% has('due') && print(format('due'), '<br>') %>
-        <% isComplete() && print(format('completed')) %>
+        <% is('completed') && print(format('completed')) %>
       </p>
 
       <div class="menu">
