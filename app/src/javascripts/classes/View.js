@@ -6,7 +6,10 @@ var create = _.isFunction(Object.create) ? Object.create : _.create;
 var specials = {
 
   // TODO: move this back into presenter but use event listener
+  // Note: This may be unecessary, but just for good measure
   remove: function () {
+
+    // Release the context
     (!!this.presenter) && this.presenter.release();
     Backbone.View.prototype.remove.apply(this, arguments);
   }

@@ -10,14 +10,14 @@
         </label>
       </div>
 
-      <span class="title open <% has('completed') && print('completed') %>"><%- get('title') %></span>
+      <p class="open <% has('completed') && print('completed') %>"><%- get('title') %></p>
 
-      <p>
+      <span>
         <% has('details') && print(get('details'), '<br>') %>
         <% print(format('created'), '<br>') %>
         <% has('due') && print(format('due'), '<br>') %>
         <% has('completed') && print(format('completed')) %>
-      </p>
+      </span>
 
       <div class="menu">
       <button class="mdl-button mdl-js-button mdl-button--icon delete">

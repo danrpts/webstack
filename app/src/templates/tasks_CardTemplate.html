@@ -20,7 +20,7 @@
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <textarea class="mdl-textfield__input" type="text" rows= "1" id="details-input" ></textarea>
-          <label class="mdl-textfield__label" for="details-input"><% has('details') ? print(details) : print("Add details") %></label>
+          <label class="mdl-textfield__label" for="details-input"><% has('details') ? print(get('details')) : print("Add details") %></label>
         </div>
       </div>
 
