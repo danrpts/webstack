@@ -88,6 +88,7 @@ module.exports = Router;
 },{"../helpers/router_helpers.js":13,"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
+var layout = require('../helpers/layout_helpers.js');
 var helpers = require('../helpers/view_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
@@ -110,27 +111,29 @@ function View (options) {
 
 View.prototype = create(Backbone.View.prototype);
 
-_.extend(View.prototype, specials, helpers);
+_.extend(View.prototype, specials, layout, helpers);
 
 View.extend = Backbone.View.extend;
 
 module.exports = View;
 
-},{"../helpers/view_helpers.js":14,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
-module.exports = {
-  name: 'account',
-  debug: true
+},{"../helpers/layout_helpers.js":10,"../helpers/view_helpers.js":14,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
+module.exports={
+  "name": "account",
+  "debug": true
 }
+
 },{}],6:[function(require,module,exports){
-module.exports = {
-  name: 'tasks',
-  debug: true
+module.exports={
+  "name": "tasks",
+  "debug": true
 }
+
 },{}],7:[function(require,module,exports){
 var Router = require('../routers/account_Router.js');
 var CardView = require("../views/account_CardView.js");
 var layout = require('../helpers/layout_helpers.js');
-var config = require('../config/account_config.js');
+var config = require('../config/account_config.json');
 
 var api = {
 
@@ -139,7 +142,7 @@ var api = {
     var view = new CardView();
 
     // Then swap the view into the default region
-    layout.swap(view, {
+    view.swap({
 
       debug: config.debug,
 
@@ -159,31 +162,31 @@ module.exports = {
   
 }
 
-},{"../config/account_config.js":5,"../helpers/layout_helpers.js":10,"../routers/account_Router.js":17,"../views/account_CardView.js":19}],8:[function(require,module,exports){
+},{"../config/account_config.json":5,"../helpers/layout_helpers.js":10,"../routers/account_Router.js":17,"../views/account_CardView.js":19}],8:[function(require,module,exports){
 var Router = require('../routers/tasks_Router.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
 var list = require('../entities/tasks_entity.js');
-var layout = require('../helpers/layout_helpers.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 
 var api = {
 
   list: function () {
 
     // Create its view
-    var view = new ListView({ collection: list.entity });
+    var view = new ListView({ collection: list });
 
     // Then swap the view into the default region
-    layout.swap(view, {
+    view.swap({
 
+      // Inject debug settings, temp
       debug: config.debug,
 
-      // And show the loader if necessary
-      loading: list.entity.promise(),
-
       // Artificial delay
-      delay: Math.random() * 2000
+      delay: Math.random() * 2000,
+
+      // And show the loader if necessary
+      loading: list.promise()
 
     });
 
@@ -191,22 +194,23 @@ var api = {
 
   card: function (itemid) {
 
-    var item = list.entity.get(itemid);
+    // Get or create the model
+    var item = list.add({ id: itemid });
 
-    if (!item) item = list.entity.add({id: itemid});
-
+    // Create its view with model
     var view = new CardView({ model: item });
 
     // Then swap the view into the default region
-    layout.swap(view, {
+    view.swap({
 
+      // Inject debug settings, temp
       debug: config.debug,
 
-      // And show the loader if necessary
-      loading: item.promise(),
-
       // Artificial delay
-      //delay: Math.random() * 1000
+      delay: Math.random() * 1000,
+
+      // And show the loader if necessary
+      loading: item.promise()
 
     }); 
 
@@ -223,37 +227,36 @@ module.exports = {
   
 }
 
-
-},{"../config/tasks_config.js":6,"../entities/tasks_entity.js":9,"../helpers/layout_helpers.js":10,"../routers/tasks_Router.js":18,"../views/tasks_CardView.js":20,"../views/tasks_ListView.js":22}],9:[function(require,module,exports){
+},{"../config/tasks_config.json":6,"../entities/tasks_entity.js":9,"../routers/tasks_Router.js":18,"../views/tasks_CardView.js":20,"../views/tasks_ListView.js":22}],9:[function(require,module,exports){
 var _ = require('underscore');
 var List = require('../models/tasks_Collection.js');
 
-module.exports = _.extend({
-  entity: new List.Collection()
-}, List);
+module.exports = new List.Collection();
 
 },{"../models/tasks_Collection.js":16,"underscore":"underscore"}],10:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
+var Backbone = require('backbone');
 
 // Private. TODO: move this to config
 var regions = {
   header: $('[data-region="header"]'),
   content: $('[data-region="content"]')
-
 }
 
 // Public
 module.exports = {
 
-  swap: function (view, options) {
+  swap: function (options) {
 
     options = options || {};
 
     _.defaults(options, {
-      loading: false,
+      debug: undefined,
       delay: 0,
-      region: 'content'
+      loading: false,
+      region: 'content',
+      view: this
     });
 
     var region = regions[options.region];
@@ -262,12 +265,12 @@ module.exports = {
       region.view.off();
       (!!region.view.model) && region.view.model.off();
       region.view.remove();
-      delete region.view.$el;
-      delete region.view.el;
+      delete region.view;
     }
 
-    region.view = view;
+    region.view = options.view;
     
+    // If loading screen desired
     if (!!options.loading) {
 
       // Notify when promise has started
@@ -277,7 +280,7 @@ module.exports = {
       var loader = $('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
       componentHandler.upgradeElements(loader[0]);
       loader.appendTo(region);
-      
+
       // Promise callbacks
       options.loading.done(function () {
 
@@ -285,10 +288,10 @@ module.exports = {
         setTimeout(function () {
 
           // Notify when the promise has resolved
-          (options.debug) && console.log('Resoloved!'); 
+          (options.debug) && console.log('Resoloved!');
 
           // If view has not changed since the promise was made, render it
-          (region.view === view) && region.html(view.render().$el);
+          (region.view === options.view) && region.html(options.view.render().$el);
 
         }, Math.round(options.delay));
 
@@ -296,15 +299,16 @@ module.exports = {
 
     }
 
+    // Else just render it
     else {
-      region.html(view.render().$el);
+      region.html(options.view.render().$el);
     }
 
   }
 
 }
 
-},{"jquery":"jquery","underscore":"underscore"}],11:[function(require,module,exports){
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],11:[function(require,module,exports){
 module.exports = {
   
   promise: function(options) {
@@ -542,7 +546,7 @@ module.exports = Router.extend({
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Router = require('../classes/Router.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 
 module.exports = Router.extend({
 
@@ -557,12 +561,12 @@ module.exports = Router.extend({
 
 });
 
-},{"../classes/Router.js":3,"../config/tasks_config.js":6,"backbone":"backbone","underscore":"underscore"}],19:[function(require,module,exports){
+},{"../classes/Router.js":3,"../config/tasks_config.json":6,"backbone":"backbone","underscore":"underscore"}],19:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 
 var CardView = View.extend({
 
@@ -572,12 +576,12 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/account_CardTemplate.html":23,"../classes/View.js":4,"../config/tasks_config.js":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],20:[function(require,module,exports){
+},{"../../templates/account_CardTemplate.html":23,"../classes/View.js":4,"../config/tasks_config.json":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],20:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 var closure = require('../helpers/presenter_helpers.js');
 
 var CardView = View.extend({
@@ -633,12 +637,12 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/tasks_CardTemplate.html":24,"../classes/View.js":4,"../config/tasks_config.js":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
+},{"../../templates/tasks_CardTemplate.html":24,"../classes/View.js":4,"../config/tasks_config.json":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 var closure = require('../helpers/presenter_helpers.js');
 
 var ItemView = View.extend({
@@ -672,13 +676,13 @@ var ItemView = View.extend({
 
 module.exports = ItemView;
 
-},{"../../templates/tasks_ItemTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.js":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
+},{"../../templates/tasks_ItemTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.json":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 
 var ListView = View.extend({
 
@@ -715,7 +719,7 @@ var ListView = View.extend({
 
 module.exports = ListView;
 
-},{"../../templates/tasks_ListTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.js":6,"./tasks_ItemView.js":21,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
+},{"../../templates/tasks_ListTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.json":6,"./tasks_ItemView.js":21,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
 },{}],24:[function(require,module,exports){

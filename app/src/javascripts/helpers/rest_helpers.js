@@ -1,8 +1,5 @@
 var _ = require('underscore');
-
-var urls = {
-
-}
+var api = require('../config/rest_config.json');
 
 var api = function (type) {
   

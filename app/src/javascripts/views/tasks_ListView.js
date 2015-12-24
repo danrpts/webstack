@@ -3,7 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
-var config = require('../config/tasks_config.js');
+var config = require('../config/tasks_config.json');
 
 var ListView = View.extend({
 

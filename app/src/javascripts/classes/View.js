@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
+var layout = require('../helpers/layout_helpers.js');
 var helpers = require('../helpers/view_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
@@ -22,7 +23,7 @@ function View (options) {
 
 View.prototype = create(Backbone.View.prototype);
 
-_.extend(View.prototype, specials, helpers);
+_.extend(View.prototype, specials, layout, helpers);
 
 View.extend = Backbone.View.extend;
 

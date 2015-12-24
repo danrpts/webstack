@@ -1,7 +1,7 @@
 var Router = require('../routers/account_Router.js');
 var CardView = require("../views/account_CardView.js");
 var layout = require('../helpers/layout_helpers.js');
-var config = require('../config/account_config.js');
+var config = require('../config/account_config.json');
 
 var api = {
 
@@ -10,7 +10,7 @@ var api = {
     var view = new CardView();
 
     // Then swap the view into the default region
-    layout.swap(view, {
+    view.swap({
 
       debug: config.debug,
 

@@ -1,24 +1,26 @@
 var $ = require('jquery');
 var _ = require('underscore');
+var Backbone = require('backbone');
 
 // Private. TODO: move this to config
 var regions = {
   header: $('[data-region="header"]'),
   content: $('[data-region="content"]')
-
 }
 
 // Public
 module.exports = {
 
-  swap: function (view, options) {
+  swap: function (options) {
 
     options = options || {};
 
     _.defaults(options, {
-      loading: false,
+      debug: undefined,
       delay: 0,
-      region: 'content'
+      loading: false,
+      region: 'content',
+      view: this
     });
 
     var region = regions[options.region];
@@ -27,12 +29,12 @@ module.exports = {
       region.view.off();
       (!!region.view.model) && region.view.model.off();
       region.view.remove();
-      delete region.view.$el;
-      delete region.view.el;
+      delete region.view;
     }
 
-    region.view = view;
+    region.view = options.view;
     
+    // If loading screen desired
     if (!!options.loading) {
 
       // Notify when promise has started
@@ -42,7 +44,7 @@ module.exports = {
       var loader = $('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
       componentHandler.upgradeElements(loader[0]);
       loader.appendTo(region);
-      
+
       // Promise callbacks
       options.loading.done(function () {
 
@@ -50,10 +52,10 @@ module.exports = {
         setTimeout(function () {
 
           // Notify when the promise has resolved
-          (options.debug) && console.log('Resoloved!'); 
+          (options.debug) && console.log('Resoloved!');
 
           // If view has not changed since the promise was made, render it
-          (region.view === view) && region.html(view.render().$el);
+          (region.view === options.view) && region.html(options.view.render().$el);
 
         }, Math.round(options.delay));
 
@@ -61,8 +63,9 @@ module.exports = {
 
     }
 
+    // Else just render it
     else {
-      region.html(view.render().$el);
+      region.html(options.view.render().$el);
     }
 
   }
