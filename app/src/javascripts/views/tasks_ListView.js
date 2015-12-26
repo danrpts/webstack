@@ -4,18 +4,33 @@ var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
 var config = require('../config/tasks_config.json');
+var codes = require('../config/keycodes_config.json');
 
 var ListView = View.extend({
 
   events: {
-    'keyup #input-title': 'onEnter'
+    'mouseup .all' : 'all',
+    'mouseup .clear' : 'clear',
+    'keyup #input-title': 'enter'
   },
   
   template: require('../../templates/tasks_ListTemplate.html'),
 
-  onEnter: function (event) {
+  initialize: function () {
+    this.check = false;
+  },
 
-    if (event.which === 13) {
+  all: function () {
+
+  },
+
+  clear: function () {
+
+  },
+
+  enter: function (event) {
+
+    if (event.which === codes['ENTER']) {
       var input = this.$('#input-title');
       this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');

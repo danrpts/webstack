@@ -10,6 +10,10 @@ module.exports = function () {
 
   return {
 
+    id: function () {
+      return context.id;
+    },
+
     get: function (key) {
       return context.get(key);
     },
@@ -20,25 +24,6 @@ module.exports = function () {
 
     size: function () {
       return context.length;
-    },
-
-    // Returns an object with count values relative to key
-    totals: function (key) {
-
-      // Value names
-      var y = 'yep';
-      var n = 'nope';
-
-      // Build the totals object
-      var gathered = _.countBy(context.models, function (model) {
-        return (!!model.get(key)) ? y : n;
-      });
-
-      gathered[y] = gathered[y] || 0;
-      gathered[n] = gathered[n] || 0;
-
-      return gathered;
-
     },
 
     format: function (key) {

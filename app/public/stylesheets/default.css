@@ -108,6 +108,13 @@ li:hover .delete {
   border-radius: 0px;
 }
 
+.avatar-wrapper .avatar-icon {
+  position: absolute;
+  padding: 20px 0;
+  left: 24px;
+  color: grey;
+}
+
 .avatar-wrapper .menu {
   position: absolute;
   width: 42px;

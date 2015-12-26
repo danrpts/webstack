@@ -17,8 +17,8 @@ module.exports = {
       // Hoist 'em
       var entity, template, templater, compiled;
 
-      // Reference model, collection or nonsuch
-      entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
+      // Reference the model or collection or nonsuch
+      entity = this.model || this.collection || false;
 
       // When it's the intitial render, build the presenter
       (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
@@ -47,7 +47,11 @@ module.exports = {
 
       // When it's the initial render
       if (!this.rendered) {
+
+        // Place in DOM
         this.setElement(this.$compiled);
+
+        // Set render state
         this.rendered = true;
       }
 

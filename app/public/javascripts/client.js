@@ -47,7 +47,7 @@ Collection.extend = Backbone.Collection.extend;
 
 module.exports = Collection;
 
-},{"../helpers/model_helpers.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+},{"../helpers/model_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
@@ -65,7 +65,7 @@ Model.extend = Backbone.Model.extend;
 
 module.exports = Model;
 
-},{"../helpers/model_helpers.js":11,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../helpers/model_helpers.js":12,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/router_helpers.js');
@@ -85,7 +85,7 @@ Router.extend = Backbone.Router.extend;
 
 module.exports = Router;
 
-},{"../helpers/router_helpers.js":13,"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
+},{"../helpers/router_helpers.js":14,"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var layout = require('../helpers/layout_helpers.js');
@@ -117,7 +117,7 @@ View.extend = Backbone.View.extend;
 
 module.exports = View;
 
-},{"../helpers/layout_helpers.js":10,"../helpers/view_helpers.js":14,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
+},{"../helpers/layout_helpers.js":11,"../helpers/view_helpers.js":15,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
 module.exports={
   "name": "account",
   "debug": true
@@ -125,11 +125,15 @@ module.exports={
 
 },{}],6:[function(require,module,exports){
 module.exports={
+  "ENTER": 13
+}
+},{}],7:[function(require,module,exports){
+module.exports={
   "name": "tasks",
   "debug": true
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Router = require('../routers/account_Router.js');
 var CardView = require("../views/account_CardView.js");
 var layout = require('../helpers/layout_helpers.js');
@@ -162,7 +166,7 @@ module.exports = {
   
 }
 
-},{"../config/account_config.json":5,"../helpers/layout_helpers.js":10,"../routers/account_Router.js":17,"../views/account_CardView.js":19}],8:[function(require,module,exports){
+},{"../config/account_config.json":5,"../helpers/layout_helpers.js":11,"../routers/account_Router.js":18,"../views/account_CardView.js":20}],9:[function(require,module,exports){
 var Router = require('../routers/tasks_Router.js');
 var ListView = require('../views/tasks_ListView.js');
 var CardView = require('../views/tasks_CardView.js');
@@ -227,13 +231,13 @@ module.exports = {
   
 }
 
-},{"../config/tasks_config.json":6,"../entities/tasks_entity.js":9,"../routers/tasks_Router.js":18,"../views/tasks_CardView.js":20,"../views/tasks_ListView.js":22}],9:[function(require,module,exports){
+},{"../config/tasks_config.json":7,"../entities/tasks_entity.js":10,"../routers/tasks_Router.js":19,"../views/tasks_CardView.js":21,"../views/tasks_ListView.js":23}],10:[function(require,module,exports){
 var _ = require('underscore');
 var List = require('../models/tasks_Collection.js');
 
 module.exports = new List.Collection();
 
-},{"../models/tasks_Collection.js":16,"underscore":"underscore"}],10:[function(require,module,exports){
+},{"../models/tasks_Collection.js":17,"underscore":"underscore"}],11:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -308,7 +312,7 @@ module.exports = {
 
 }
 
-},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],11:[function(require,module,exports){
+},{"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],12:[function(require,module,exports){
 module.exports = {
   
   promise: function(options) {
@@ -317,7 +321,7 @@ module.exports = {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('Backbone');
 
@@ -330,6 +334,10 @@ module.exports = function () {
 
   return {
 
+    id: function () {
+      return context.id;
+    },
+
     get: function (key) {
       return context.get(key);
     },
@@ -340,25 +348,6 @@ module.exports = function () {
 
     size: function () {
       return context.length;
-    },
-
-    // Returns an object with count values relative to key
-    totals: function (key) {
-
-      // Value names
-      var y = 'yep';
-      var n = 'nope';
-
-      // Build the totals object
-      var gathered = _.countBy(context.models, function (model) {
-        return (!!model.get(key)) ? y : n;
-      });
-
-      gathered[y] = gathered[y] || 0;
-      gathered[n] = gathered[n] || 0;
-
-      return gathered;
-
     },
 
     format: function (key) {
@@ -379,7 +368,7 @@ module.exports = function () {
 
 }
 
-},{"Backbone":27,"underscore":"underscore"}],13:[function(require,module,exports){
+},{"Backbone":28,"underscore":"underscore"}],14:[function(require,module,exports){
 module.exports = {
   
   goto: function (fragment) {
@@ -391,7 +380,7 @@ module.exports = {
   }
 
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var closure = require('./presenter_helpers.js');
@@ -411,8 +400,8 @@ module.exports = {
       // Hoist 'em
       var entity, template, templater, compiled;
 
-      // Reference model, collection or nonsuch
-      entity = (!!this.model) ? this.model : (!!this.collection) ? this.collection : false;
+      // Reference the model or collection or nonsuch
+      entity = this.model || this.collection || false;
 
       // When it's the intitial render, build the presenter
       (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
@@ -441,7 +430,11 @@ module.exports = {
 
       // When it's the initial render
       if (!this.rendered) {
+
+        // Place in DOM
         this.setElement(this.$compiled);
+
+        // Set render state
         this.rendered = true;
       }
 
@@ -461,7 +454,7 @@ module.exports = {
 
 }
 
-},{"./presenter_helpers.js":12,"jquery":"jquery","underscore":"underscore"}],15:[function(require,module,exports){
+},{"./presenter_helpers.js":13,"jquery":"jquery","underscore":"underscore"}],16:[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -479,7 +472,7 @@ $(function() {
 
 });
 
-},{"./controllers/account_controller.js":7,"./controllers/tasks_controller.js":8,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],16:[function(require,module,exports){
+},{"./controllers/account_controller.js":8,"./controllers/tasks_controller.js":9,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],17:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
@@ -529,7 +522,7 @@ module.exports = {
   Collection: ListCollection
 
 }
-},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],17:[function(require,module,exports){
+},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],18:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Router = require('../classes/Router.js');
@@ -542,7 +535,7 @@ module.exports = Router.extend({
 
 });
 
-},{"../classes/Router.js":3,"backbone":"backbone","underscore":"underscore"}],18:[function(require,module,exports){
+},{"../classes/Router.js":3,"backbone":"backbone","underscore":"underscore"}],19:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Router = require('../classes/Router.js');
@@ -561,7 +554,7 @@ module.exports = Router.extend({
 
 });
 
-},{"../classes/Router.js":3,"../config/tasks_config.json":6,"backbone":"backbone","underscore":"underscore"}],19:[function(require,module,exports){
+},{"../classes/Router.js":3,"../config/tasks_config.json":7,"backbone":"backbone","underscore":"underscore"}],20:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -576,7 +569,7 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/account_CardTemplate.html":23,"../classes/View.js":4,"../config/tasks_config.json":6,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],20:[function(require,module,exports){
+},{"../../templates/account_CardTemplate.html":24,"../classes/View.js":4,"../config/tasks_config.json":7,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -637,7 +630,7 @@ var CardView = View.extend({
 
 module.exports = CardView;
 
-},{"../../templates/tasks_CardTemplate.html":24,"../classes/View.js":4,"../config/tasks_config.json":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
+},{"../../templates/tasks_CardTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.json":7,"../helpers/presenter_helpers.js":13,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -676,25 +669,40 @@ var ItemView = View.extend({
 
 module.exports = ItemView;
 
-},{"../../templates/tasks_ItemTemplate.html":25,"../classes/View.js":4,"../config/tasks_config.json":6,"../helpers/presenter_helpers.js":12,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
+},{"../../templates/tasks_ItemTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.json":7,"../helpers/presenter_helpers.js":13,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
 var ItemView = require('./tasks_ItemView.js');
 var config = require('../config/tasks_config.json');
+var codes = require('../config/keycodes_config.json');
 
 var ListView = View.extend({
 
   events: {
-    'keyup #input-title': 'onEnter'
+    'mouseup .all' : 'all',
+    'mouseup .clear' : 'clear',
+    'keyup #input-title': 'enter'
   },
   
   template: require('../../templates/tasks_ListTemplate.html'),
 
-  onEnter: function (event) {
+  initialize: function () {
+    this.check = false;
+  },
 
-    if (event.which === 13) {
+  all: function () {
+
+  },
+
+  clear: function () {
+
+  },
+
+  enter: function (event) {
+
+    if (event.which === codes['ENTER']) {
       var input = this.$('#input-title');
       this.collection.create({'title': input.val().trim()}, {wait: true});
       input.val('');
@@ -719,19 +727,19 @@ var ListView = View.extend({
 
 module.exports = ListView;
 
-},{"../../templates/tasks_ListTemplate.html":26,"../classes/View.js":4,"../config/tasks_config.json":6,"./tasks_ItemView.js":21,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
+},{"../../templates/tasks_ListTemplate.html":27,"../classes/View.js":4,"../config/keycodes_config.json":6,"../config/tasks_config.json":7,"./tasks_ItemView.js":22,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],24:[function(require,module,exports){
 module.exports = "<div class=\"chip\">\n    <i class=\"material-icons\">account_circle</i> John Doe\n</div>";
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% has('completed') ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">check</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
-},{}],25:[function(require,module,exports){
-module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper\">\n\n      <div class=\"avatar\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- get('id') %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- get('id') %>\" class=\"mdl-checkbox__input\" <% has('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <p class=\"open <% has('completed') && print('completed') %>\"><%- get('title') %></p>\n\n      <span>\n        <% has('details') && print(get('details'), '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% has('completed') && print(format('completed')) %>\n      </span>\n\n      <div class=\"menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
-
 },{}],26:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n  <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n    <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" length=\"23\">\n    <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n  </div>\n  <ul id=\"task-items\"></ul>\n</div>\n";
+module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper\">\n\n      <div class=\"avatar\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- get('id') %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- get('id') %>\" class=\"mdl-checkbox__input\" <% has('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <p class=\"open <% has('completed') && print('completed') %>\"><%- get('title') %></p>\n\n      <span>\n        <% has('details') && print(get('details'), '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% has('completed') && print(format('completed')) %>\n      </span>\n\n      <div class=\"menu\">\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
 
 },{}],27:[function(require,module,exports){
+module.exports = "<div class=\"app\">\n\n  <div class=\"avatar-wrapper\">\n    <div class=\"avatar-icon\">\n      <button class=\"mdl-button mdl-js-button mdl-button--icon all\">\n        <i class=\"material-icons\">done_all</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n      <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" length=\"23\">\n      <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n    </div>\n  </div>\n  \n  <ul id=\"task-items\"></ul>\n\n</div>\n";
+
+},{}],28:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2629,4 +2637,4 @@ module.exports = "<div class=\"app\">\n  <div class=\"mdl-textfield mdl-js-textf
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":"jquery","underscore":"underscore"}]},{},[15]);
+},{"jquery":"jquery","underscore":"underscore"}]},{},[16]);
