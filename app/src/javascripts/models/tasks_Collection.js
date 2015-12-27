@@ -9,7 +9,7 @@ var ItemModel = Model.extend({
     'due': null,
     'completed': null,
     'details': null,
-    'created': Date.now()
+    'created': null
   },
 
   toggle: function (options) {

@@ -32,7 +32,7 @@ var ListView = View.extend({
 
     if (event.which === codes['ENTER']) {
       var input = this.$('#input-title');
-      this.collection.create({'title': input.val().trim()}, {wait: true});
+      this.collection.create({'created': Date.now(), 'title': input.val().trim()}, {wait: true});
       input.val('');
       this.render();
     }
