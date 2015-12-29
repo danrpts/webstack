@@ -487,13 +487,17 @@ var ItemModel = Model.extend({
     'created': null
   },
 
-  toggle: function (options) {
+  check: function (bool) {
 
-    _.defaults(options, {
-      wait: true
-    });
+    var options = { wait : true }
 
-    this.save({ 'completed' : !this.get('completed') ? Date.now() : null }, options);
+    this.save({ 'completed' : bool ? Date.now() : null }, options);
+
+  },
+
+  toggle: function () {
+
+    !this.get('completed') ? this.check(true) : this.check(false);
 
   },
 
@@ -688,10 +692,6 @@ var ListView = View.extend({
   
   template: require('../../templates/tasks_ListTemplate.html'),
 
-  initialize: function () {
-    this.check = false;
-  },
-
   all: function () {
 
     // Detect value
@@ -699,14 +699,10 @@ var ListView = View.extend({
       return !!model.get('completed');
     });
 
-    // Iterate again and set appropriately
+    // Iterate and set appropriately
     this.collection.each(function (model) {
-      flag ? model.save('completed', null) : model.save('completed', Date.now());
+      model.check(!flag);
     });
-    
-  },
-
-  clear: function () {
 
   },
 
