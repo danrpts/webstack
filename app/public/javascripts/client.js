@@ -694,14 +694,18 @@ var ListView = View.extend({
 
   all: function () {
 
-    // Detect value
+    // Returns model if found
     var flag = this.collection.find(function (model) {
-      return !!model.get('completed');
+
+      // Detect a falsy value
+      return !model.get('completed');
     });
 
-    // Iterate and set appropriately
+    // Set all true if any flag otherwise set all false
     this.collection.each(function (model) {
-      model.check(!flag);
+
+      // Coax flag into boolean
+      model.check(!!flag);
     });
 
   },
