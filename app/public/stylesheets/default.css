@@ -60,11 +60,10 @@ li:hover .delete {
 }
 
 .mdl-button--fab {
-  color: #F9F9F9;
+  color: white;
 }
 
 .mdl-card__menu {
-  color: white;
   z-index: 2;
 }
 
@@ -93,8 +92,15 @@ li:hover .delete {
 }
 
 .avatar-wrapper {
-  padding-left: 72px;
   position: relative;
+}
+
+.avatar-wrapper.left {
+  padding-left: 72px;
+}
+
+.avatar-wrapper.right {
+  padding-right: 72px;
 }
 
 .avatar-wrapper .avatar {
@@ -102,26 +108,38 @@ li:hover .delete {
   width: 42px;
   height: 42px;
   overflow: hidden;
-  left: 15px;
   display: inline-block;
   vertical-align: middle;
   border-radius: 0px;
 }
 
-.avatar-wrapper .avatar-icon {
-  position: absolute;
-  padding: 20px 0;
-  left: 24px;
-  color: grey;
+.avatar-wrapper .avatar.left {
+  left: 15px;
 }
 
-.avatar-wrapper .menu {
-  position: absolute;
-  width: 42px;
-  height: 42px;
+.avatar-wrapper .avatar.right {
   color: grey;
+  right: -15px;
+  top: -5px;
+}
+
+.avatar-wrapper .avatar-fab {
+  position: absolute;
+  padding: 10px 0;
   top: 0px;
+}
+
+.avatar-wrapper .avatar-fab.left {
+  left: 10px;
+}
+
+.avatar-wrapper .avatar-fab.right {
   right: 0px;
+}
+
+.all,
+.all:hover {
+  background: rgb(33,150,243);
 }
 
 .green,

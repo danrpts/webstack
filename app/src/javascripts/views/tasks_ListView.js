@@ -22,6 +22,16 @@ var ListView = View.extend({
 
   all: function () {
 
+    // Detect value
+    var flag = this.collection.find(function (model) {
+      return !!model.get('completed');
+    });
+
+    // Iterate again and set appropriately
+    this.collection.each(function (model) {
+      flag ? model.save('completed', null) : model.save('completed', Date.now());
+    });
+    
   },
 
   clear: function () {

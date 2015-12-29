@@ -13,12 +13,12 @@ var ItemModel = Model.extend({
   },
 
   toggle: function (options) {
-    
+
     _.defaults(options, {
       wait: true
     });
-    
-    this.save({completed: !this.get('completed') ? Date.now() : null}, options);
+
+    this.save({ 'completed' : !this.get('completed') ? Date.now() : null }, options);
 
   },
 

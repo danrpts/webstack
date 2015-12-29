@@ -2,9 +2,9 @@
   <div class="mdl-card mdl-shadow--2dp">
     <div class="mdl-card__supporting-text">
 
-    <div class="avatar-wrapper">
+    <div class="avatar-wrapper left right">
 
-      <div class="avatar">
+      <div class="avatar left">
         <label class="mdl-checkbox mdl-js-checkbox toggle" for="checkbox-<%- get('id') %>">
           <input type="checkbox" id="checkbox-<%- get('id') %>" class="mdl-checkbox__input" <% has('completed') && print('checked') %>>
         </label>
@@ -19,7 +19,7 @@
         <% has('completed') && print(format('completed')) %>
       </span>
 
-      <div class="menu">
+      <div class="avatar right">
         <button class="mdl-button mdl-js-button mdl-button--icon delete">
           <i class="material-icons">delete</i>
         </button>
