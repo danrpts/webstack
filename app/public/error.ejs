@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   </head>
   <body>
-    <h1><%= error.code %></h1>
-    <p><%= error.message %></p>
+    <h1><%= code %>: <%= message %></h1>
+    <p><%= error || '&nbsp;' %></p>
   </body>
 </html>
