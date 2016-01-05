@@ -27,7 +27,11 @@ module.exports = {
 
     if (!!region.view) {
       region.view.off();
-      (!!region.view.model) && region.view.model.off();
+      
+      // Do not call model.off! 
+      // We may have other view displayed that use the same model
+      //(!!region.view.model) && region.view.model.off();
+      
       region.view.remove();
       delete region.view;
     }

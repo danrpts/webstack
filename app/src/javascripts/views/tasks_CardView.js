@@ -33,7 +33,7 @@ var CardView = View.extend({
   },
 
   back: function () {
-    Backbone.trigger(config.name + ':goto', '');
+    Backbone.trigger('goto:' + config.name, '');
   },
 
   delete: function () {

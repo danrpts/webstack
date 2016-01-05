@@ -8,7 +8,15 @@ module.exports = {
     return gapi.auth2.getAuthInstance();
   },
 
-  connect: function () {
+  user: function () {
+    return this.client().currentUser.get();
+  },
+
+  profile: function () {
+    return this.user().getBasicProfile();
+  },
+
+  start: function () {
 
     // First wrap Google's promise with our own
     var that = this;
@@ -25,7 +33,7 @@ module.exports = {
     
     }
 
-    // Otherwise
+    // Otherwise, initialize
     else {
 
       // Load the auth2 api with Google's promise
@@ -33,6 +41,15 @@ module.exports = {
 
         // Then initiate a new 'auth client' with Google
         var initiated = gapi.auth2.init({ client_id: google.client_id });
+
+        // Integrate Google's event system with Backbone
+        initiated.isSignedIn.listen(function (status) {
+          Backbone.trigger('google:isSignedIn', status);
+        });
+
+        initiated.currentUser.listen(function (user) {
+          Backbone.trigger('google:currentUser', user);
+        });
 
         // Bind the context and resolve
         client.resolveWith(that, [initiated]);
@@ -44,18 +61,6 @@ module.exports = {
     // Return as jQuery promise
     return client.promise();
 
-  },
-
-  status: function () {
-    return this.client().isSignedIn.get();
-  },
-
-  user: function () {
-    return this.client().currentUser.get();
-  },
-
-  profile: function () {
-    return this.user().getBasicProfile();
   },
 
   signIn: function () {
@@ -70,6 +75,26 @@ module.exports = {
 
       // Bind the context and resolve the code 
       response.resolveWith(that, [user]);
+
+    });
+
+    // Return ad jQuery promise
+    return response.promise();
+
+  },
+
+  signOut: function () {
+
+    // First wrap Google's promise with our own
+    var that = this;
+    var response = $.Deferred();
+    var client = this.client();
+
+    // Sign use out
+    client.signOut().then(function () {
+
+      // Bind the context and resolve the code 
+      response.resolveWith(that);
 
     });
 

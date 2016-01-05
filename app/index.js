@@ -40,7 +40,7 @@ routes.forEach(function (found) {
   // Append '/' character; takes care of '.'
   var filename = path.join('/', found);
 
-  // Extract the url prefix
+  // Extract the uri prefix
   var prefix = path.dirname(filename);
 
   // Create the file path

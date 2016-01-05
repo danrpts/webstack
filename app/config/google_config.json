@@ -1,5 +1,5 @@
 {
-  "client_id": "__YOUR__CLIENT__ID__",
-  "client_secret": "__YOUR__CLIENT__SECRET__",
+  "client_id": "__CLIENT__ID__",
+  "client_secret": "__CLIENT__SECRET__",
   "redirect_uri": "postmessage"
 }

@@ -24,7 +24,7 @@ var ItemView = View.extend({
   },
 
   open: function () {
-    Backbone.trigger(config.name + ':goto', 'tasks/' + this.model.id);
+    Backbone.trigger('goto:' + config.name, 'tasks/' + this.model.id);
   },
 
   delete: function () {

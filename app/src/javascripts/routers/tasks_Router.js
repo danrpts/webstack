@@ -11,7 +11,7 @@ module.exports = Router.extend({
   },
 
   initialize: function () {
-    this.listenTo(Backbone, config.name + ':goto', this.goto);
+    this.listenTo(Backbone, 'goto:' + config.name, this.goto);
   }
 
 });

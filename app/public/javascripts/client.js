@@ -126,7 +126,7 @@ module.exports={
 
 },{}],6:[function(require,module,exports){
 module.exports={
-  "client_id": "__YOUR__CLIENT__ID__",
+  "client_id": "__CLIENT__ID__",
   "redirect_uri": "postmessage"
 }
 },{}],7:[function(require,module,exports){
@@ -279,7 +279,15 @@ module.exports = {
     return gapi.auth2.getAuthInstance();
   },
 
-  connect: function () {
+  user: function () {
+    return this.client().currentUser.get();
+  },
+
+  profile: function () {
+    return this.user().getBasicProfile();
+  },
+
+  start: function () {
 
     // First wrap Google's promise with our own
     var that = this;
@@ -296,7 +304,7 @@ module.exports = {
     
     }
 
-    // Otherwise
+    // Otherwise, initialize
     else {
 
       // Load the auth2 api with Google's promise
@@ -304,6 +312,15 @@ module.exports = {
 
         // Then initiate a new 'auth client' with Google
         var initiated = gapi.auth2.init({ client_id: google.client_id });
+
+        // Integrate Google's event system with Backbone
+        initiated.isSignedIn.listen(function (status) {
+          Backbone.trigger('google:isSignedIn', status);
+        });
+
+        initiated.currentUser.listen(function (user) {
+          Backbone.trigger('google:currentUser', user);
+        });
 
         // Bind the context and resolve
         client.resolveWith(that, [initiated]);
@@ -315,18 +332,6 @@ module.exports = {
     // Return as jQuery promise
     return client.promise();
 
-  },
-
-  status: function () {
-    return this.client().isSignedIn.get();
-  },
-
-  user: function () {
-    return this.client().currentUser.get();
-  },
-
-  profile: function () {
-    return this.user().getBasicProfile();
   },
 
   signIn: function () {
@@ -341,6 +346,26 @@ module.exports = {
 
       // Bind the context and resolve the code 
       response.resolveWith(that, [user]);
+
+    });
+
+    // Return ad jQuery promise
+    return response.promise();
+
+  },
+
+  signOut: function () {
+
+    // First wrap Google's promise with our own
+    var that = this;
+    var response = $.Deferred();
+    var client = this.client();
+
+    // Sign use out
+    client.signOut().then(function () {
+
+      // Bind the context and resolve the code 
+      response.resolveWith(that);
 
     });
 
@@ -426,7 +451,11 @@ module.exports = {
 
     if (!!region.view) {
       region.view.off();
-      (!!region.view.model) && region.view.model.off();
+      
+      // Do not call model.off! 
+      // We may have other view displayed that use the same model
+      //(!!region.view.model) && region.view.model.off();
+      
       region.view.remove();
       delete region.view;
     }
@@ -618,14 +647,13 @@ var Backbone = require('backbone');
 Backbone.LocalStorage = require('backbone.localstorage');
 var account = require('./controllers/account_controller.js');
 var tasks = require('./controllers/tasks_controller.js');
-var google = require('./helpers/google_helpers.js');
 
 $(function() {
 
-  // Initiate Google OAuth2
-  google.connect();
-
+  // Initiate the account module
   account.start();
+
+  // Initiate the tasks module
   tasks.start();
 
   // TODO: { pushState: true } requires thought out server mods
@@ -633,22 +661,56 @@ $(function() {
 
 });
 
-},{"./controllers/account_controller.js":9,"./controllers/tasks_controller.js":10,"./helpers/google_helpers.js":11,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],18:[function(require,module,exports){
+},{"./controllers/account_controller.js":9,"./controllers/tasks_controller.js":10,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],18:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
+var config = require('../config/account_config.json');
+var google = require('../helpers/google_helpers.js');
 
 var AccountModel = Model.extend({
 
   defaults: {
-    'authenticated': false,
-    'fullyAuthenticated': false,
     'name': null,
     'imageUrl': null,
     'email': null
   },
 
+  initialize: function () {
+
+    // Initiate the Google OAuth2 API
+    google.start();
+
+    // Listen for special Google events
+    Backbone.Events.listenTo.call(this, Backbone, 'google:isSignedIn', this.toggle);
+
+  },
+
+  toggle: function (isSignedIn) {
+    var profile;
+
+    if (isSignedIn) {
+
+      config.debug && console.log('Signing in...');
+
+      profile = google.profile();
+
+      this.set({
+        'id': profile.getId(),
+        'name': profile.getName(),
+        'imageUrl': profile.getImageUrl(),
+        'email': profile.getEmail()
+      });
+
+    }
+
+    else {
+      config.debug && console.log('Signing out...');
+      this.clear();
+    }
+
+  },
 
   // temporary override
   promise: function () {
@@ -663,7 +725,7 @@ module.exports = {
 
 }
 
-},{"../classes/Model.js":2,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
+},{"../classes/Model.js":2,"../config/account_config.json":5,"../helpers/google_helpers.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
@@ -730,7 +792,7 @@ module.exports = Router.extend({
   },
 
   initialize: function () {
-    this.listenTo(Backbone, config.name + ':goto', this.goto);
+    this.listenTo(Backbone, 'goto:' + config.name, this.goto);
   }
 
 });
@@ -749,7 +811,7 @@ module.exports = Router.extend({
   },
 
   initialize: function () {
-    this.listenTo(Backbone, config.name + ':goto', this.goto);
+    this.listenTo(Backbone, 'goto:' + config.name, this.goto);
   }
 
 });
@@ -771,13 +833,14 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var View = require('../classes/View.js');
-var config = require('../config/account_config.json');
+var google = require('../helpers/google_helpers.js');
 var closure = require('../helpers/presenter_helpers.js');
 
 var CardView = View.extend({
 
   events: {
-    'mouseup .back': 'back'
+    'mouseup .back': 'back',
+    'mouseup .signout': 'signout'
   },
 
   template: require('../../templates/account_CardTemplate.html'),
@@ -787,14 +850,21 @@ var CardView = View.extend({
   },
 
   back: function () {
-    Backbone.trigger('tasks:goto', '');
+    Backbone.trigger('goto:tasks', '');
+  },
+
+  signout: function () {
+    var that = this;
+    google.signOut().then(function () {
+      that.back(); 
+    });
   }
   
 });
 
 module.exports = CardView;
 
-},{"../../templates/account_CardTemplate.html":29,"../classes/View.js":4,"../config/account_config.json":5,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],25:[function(require,module,exports){
+},{"../../templates/account_CardTemplate.html":29,"../classes/View.js":4,"../helpers/google_helpers.js":11,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],25:[function(require,module,exports){
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -806,8 +876,8 @@ var closure = require('../helpers/presenter_helpers.js');
 var HeaderView = View.extend({
 
   events: {
-    'mouseup #authenticate': 'authenticate',
-    'mouseup #profile': 'profile'
+    'mouseup .signIn': 'signIn',
+    'mouseup .profile': 'profile'
   },
 
   template: require('../../templates/account_HeaderTemplate.html'),
@@ -816,27 +886,12 @@ var HeaderView = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  authenticate: function () {
-    config.debug && console.log('Authenticating...');
-    var that = this;
-    var set = function (profile) {
-      that.model.set({
-        'id': profile.getId(),
-        'name': profile.getName(),
-        'imageUrl': profile.getImageUrl(),
-        'email': profile.getEmail()
-      });
-    }
-
-    // Not happy with this at all
-    google.signIn().then(function (user) {
-      set(user.getBasicProfile());
-    });
-
+  signIn: function () {
+    google.signIn();
   },
 
   profile: function () {
-    Backbone.trigger(config.name + ':goto', 'account/' + this.model.id);
+    Backbone.trigger('goto:' + config.name, 'account/' + this.model.id);
   }
 
 });
@@ -879,7 +934,7 @@ var CardView = View.extend({
   },
 
   back: function () {
-    Backbone.trigger(config.name + ':goto', '');
+    Backbone.trigger('goto:' + config.name, '');
   },
 
   delete: function () {
@@ -931,7 +986,7 @@ var ItemView = View.extend({
   },
 
   open: function () {
-    Backbone.trigger(config.name + ':goto', 'tasks/' + this.model.id);
+    Backbone.trigger('goto:' + config.name, 'tasks/' + this.model.id);
   },
 
   delete: function () {
@@ -1008,10 +1063,10 @@ var ListView = View.extend({
 module.exports = ListView;
 
 },{"../../templates/tasks_ListTemplate.html":33,"../classes/View.js":4,"../config/keycodes_config.json":7,"../config/tasks_config.json":8,"./tasks_ItemView.js":27,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],29:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('name') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('email') %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
+module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('name') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('email') %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <a class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect signout\">\n          Sign out\n        </a>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
 },{}],30:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n  <button id=\"account\" class=\"mdl-button mdl-js-button mdl-button--fab\" style=\"margin: 0 auto; display: block; color: grey;\">\n    <% has('imageUrl') ? print('<img src='+get('imageUrl')+' width=\"56px\" height=\"56px\" id=\"profile\" />') : print('<i id=\"authenticate\" class=\"material-icons\">fingerprint</i>') %>\n  </button>\n  <p id=\"name\" style=\"display: block; text-align: center;\"><% has('name') && print(get('name')) %></p>\n  <span id=\"details\" style=\"display: block; text-align: center;\"><% has('fullyAuthenticated') && print('Fully Logged In') %></span>\n</div>\n";
+module.exports = "<div class=\"app\">\n  <button id=\"account\" style=\"margin: 0 auto; display: block; color: grey;\" class=\"mdl-button mdl-js-button mdl-button--fab <% has('id') ? print('profile') : print('signIn') %>\">\n\n    <% has('id') ? print('<img src='+get('imageUrl')+' width=\"56px\" height=\"56px\" />') : print('<i class=\"material-icons\">fingerprint</i>') %>\n\n  </button>\n  <p id=\"name\" style=\"display: block; text-align: center;\"><% has('name') && print(get('name')) %></p>\n</div>\n";
 
 },{}],31:[function(require,module,exports){
 module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% has('completed') ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">done</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";

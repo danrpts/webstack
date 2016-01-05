@@ -9,8 +9,8 @@ var closure = require('../helpers/presenter_helpers.js');
 var HeaderView = View.extend({
 
   events: {
-    'mouseup #authenticate': 'authenticate',
-    'mouseup #profile': 'profile'
+    'mouseup .signIn': 'signIn',
+    'mouseup .profile': 'profile'
   },
 
   template: require('../../templates/account_HeaderTemplate.html'),
@@ -19,27 +19,12 @@ var HeaderView = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  authenticate: function () {
-    config.debug && console.log('Authenticating...');
-    var that = this;
-    var set = function (profile) {
-      that.model.set({
-        'id': profile.getId(),
-        'name': profile.getName(),
-        'imageUrl': profile.getImageUrl(),
-        'email': profile.getEmail()
-      });
-    }
-
-    // Not happy with this at all
-    google.signIn().then(function (user) {
-      set(user.getBasicProfile());
-    });
-
+  signIn: function () {
+    google.signIn();
   },
 
   profile: function () {
-    Backbone.trigger(config.name + ':goto', 'account/' + this.model.id);
+    Backbone.trigger('goto:' + config.name, 'account/' + this.model.id);
   }
 
 });
