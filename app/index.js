@@ -1,42 +1,79 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var cookieParser = require('cookie-parser');
+var csurf = require('csurf');
+var path = require('path');
 var glob = require('glob');
-var passport = require('passport');
-var app = express();
+var app = require('./singletons/app_singleton.js');
 
-var helpers = require('./helpers/error_helpers.js');
+// Configure express
+app.disable('x-powered-by');
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended : false }));
+app.use(cookieParser('apples'));
 
-// Load all routes synchronously
-var routes = glob.sync('./routes/*.js', {cwd: path.join(process.cwd(), '/app')});
-  routes.forEach(function (route) {
-  require(route)(app);
-});
+// CSRF middleware enforcement
+// app.use(csurf({
+//   cookie: {
+//     key: 'token',
+//     httpOnly: true,
+//     signed: true
+//   }
+// }));
 
 // View engine setup
 app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
 
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.disable('x-powered-by');
 
+// Search firectory for routes
+var search = path.join(__dirname, 'routes');
 
-// Catch all routes
-app.get('*', function (req, res, next) {
-  next(helpers.httpError(404));
+// Load all routes synchronously
+var routes = glob.sync('**/*.js', { cwd: search });
+routes.forEach(function (found) {
+
+  // Append '/' character; takes care of '.'
+  var filename = path.join('/', found);
+
+  // Extract the url prefix
+  var prefix = path.dirname(filename);
+
+  // Create the file path
+  var absolute = path.join(search, filename);
+
+  // Mount the endpoint
+  app.use(prefix, require(absolute));
+
 });
 
-// Error handler
-app.use(helpers.logger);
-app.use(helpers.basic);
+// TODO: Catch all other routes
+// app.use(function (req, res, next) {
+//   var err = new Error('Add information here...');
+//   err.code = 404;
+//   return next(err);
+// });
+
+// Error handlers
+
+// Check for mutated csrf token and set forbidden
+app.use(function (err, req, res, next) {
+  if (err.code === 'EBADCSRFTOKEN') err.code = 403;
+  return next(err);
+});
+
+// Handle all http errors
+app.use(function (err, req, res, next) {
+  var code = err.code || 500;
+  var lookup = require('./config/errors_config.json');
+  var isDev = (app.get('env') === 'development');
+  if (res.headersSent) return next(err);
+  res.status(code);
+  res.render('error', { code: code, message: lookup[code], error: isDev ? err : undefined });
+});
 
 module.exports = app;
