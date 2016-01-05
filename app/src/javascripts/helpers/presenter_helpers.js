@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('Backbone');
 
+//TODO: make individual presenter from base presenter class
 // Call this function with a context to return a closure
 module.exports = function () {
   

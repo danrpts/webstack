@@ -14,9 +14,9 @@ var ItemModel = Model.extend({
 
   check: function (bool) {
 
-    var options = { wait : true }
+    var options = { wait: true }
 
-    this.save({ 'completed' : bool ? Date.now() : null }, options);
+    this.save({ 'completed': bool ? Date.now() : null }, options);
 
   },
 

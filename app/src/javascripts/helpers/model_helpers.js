@@ -1,7 +1,8 @@
 module.exports = {
   
-  promise: function(options) {
+  promise: function (options) {
     options = options || {};
     return this.fetch(options).promise();
   }
+
 }

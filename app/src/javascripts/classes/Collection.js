@@ -1,3 +1,4 @@
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
@@ -15,7 +16,7 @@ var specials =  {
     if (model = this.get(id)) {
 
       // Return as a resolved promise
-      model = require('jquery').Deferred().resolveWith(this, [model]);
+      model = $.Deferred().resolveWith(this, [model]);
 
     }
 

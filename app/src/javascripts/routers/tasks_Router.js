@@ -6,8 +6,8 @@ var config = require('../config/tasks_config.json');
 module.exports = Router.extend({
 
   routes: {
-    '': 'list',
-    'tasks/:id': 'card'
+    '': 'showList',
+    'tasks/:id': 'showCard'
   },
 
   initialize: function () {

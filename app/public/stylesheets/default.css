@@ -24,10 +24,8 @@ p {
 }
 
 .loader {
-  position: relative;
-  width: 512px;
-  margin: 0 50%;
-  padding-top: 15%;
+  margin: 128px auto;
+  display: block;
 }
 
 .complete {

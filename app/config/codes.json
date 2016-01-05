@@ -1,8 +1,0 @@
-{
-  "200": "OK",
-  "401": "Unauthorized",
-  "404": "Not Found",
-  "415": "Unsupported Media Type",
-  "500": "Internal Server Error",
-  "520": "Unknown Error"
-}

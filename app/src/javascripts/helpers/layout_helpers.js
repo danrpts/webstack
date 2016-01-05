@@ -41,7 +41,7 @@ module.exports = {
       (options.debug) && console.log('Loading...');
 
       // TODO
-      var loader = $('<div class="loader"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></div>');
+      var loader = $('<div class="app"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active loader"></div></div>');
       componentHandler.upgradeElements(loader[0]);
       loader.appendTo(region);
 
