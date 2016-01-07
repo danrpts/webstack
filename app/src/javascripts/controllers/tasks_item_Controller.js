@@ -1,11 +1,11 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View.js');
+var Controller = require('../classes/Controller.js');
 var config = require('../config/tasks_config.json');
 var closure = require('../helpers/presenter_helpers.js');
 
-var ItemView = View.extend({
+module.exports = Controller.extend({
 
   events: {
     'mouseup .toggle' : 'toggle',
@@ -33,5 +33,3 @@ var ItemView = View.extend({
   }
   
 });
-
-module.exports = ItemView;

@@ -47,7 +47,7 @@ router.post('/account', function (req, res, next) {
     console.log(tokens);
 
     // TODO: form response
-    res.json({ });
+    res.json({ "hello": "world" });
 
   });
 

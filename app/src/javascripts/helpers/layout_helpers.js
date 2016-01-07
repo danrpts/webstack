@@ -1,42 +1,48 @@
+
+// Import basic dependencies
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-// Private. TODO: move this to config
-var regions = {
-  header: $('[data-region="header"]'),
-  content: $('[data-region="content"]')
-}
+var $root = $('body');
 
-// Public
 module.exports = {
 
   swap: function (options) {
 
+    var $region;
+
     options = options || {};
 
+    // Set the default options
     _.defaults(options, {
       debug: undefined,
       delay: 0,
       loading: false,
-      region: 'content',
-      view: this
+      region: 'layout',
+      controller: this
     });
 
-    var region = regions[options.region];
+    // Reference the region to manipulate
+    $region = $root.find('[' + this.attribute + '=' + options.region + ']');
 
-    if (!!region.view) {
-      region.view.off();
+    if (!!$region.controller) {
+
+      // Turn of events
+      $region.controller.off();
       
-      // Do not call model.off! 
-      // We may have other view displayed that use the same model
-      //(!!region.view.model) && region.view.model.off();
+      // Do not call model.off since we may have other controllers using the same model
+      // (!!$region.controller.model) && $region.controller.model.off();
       
-      region.view.remove();
-      delete region.view;
+      // Remove it from DOM
+      $region.controller.remove();
+
+      // Delete it from memory
+      delete region.controller;
+
     }
 
-    region.view = options.view;
+    $region.controller = options.controller;
     
     // If loading screen desired
     if (!!options.loading) {
@@ -44,10 +50,10 @@ module.exports = {
       // Notify when promise has started
       (options.debug) && console.log('Loading...');
 
-      // TODO
+      // TODO: move this into proper template
       var loader = $('<div class="app"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active loader"></div></div>');
       componentHandler.upgradeElements(loader[0]);
-      loader.appendTo(region);
+      loader.appendTo($region);
 
       // Promise callbacks
       options.loading.done(function () {
@@ -58,8 +64,8 @@ module.exports = {
           // Notify when the promise has resolved
           (options.debug) && console.log('Resoloved!');
 
-          // If view has not changed since the promise was made, render it
-          (region.view === options.view) && region.html(options.view.render().$el);
+          // If regions controller has not changed since the promise was made, render it's view
+          ($region.controller === options.controller) && $region.html(options.controller.render().$el);
 
         }, Math.round(options.delay));
 
@@ -67,10 +73,31 @@ module.exports = {
 
     }
 
-    // Else just render it
+    // Otherwise
     else {
-      region.html(options.view.render().$el);
+
+      // Just render it
+      $region.html(options.controller.render().$el);
     }
+
+
+    console.log($region);
+
+    return this;
+
+  },
+
+  // Overwrite defualt compile function
+  compile: function () {
+
+    // First jQuery this sucker
+    this.$compiled = $(this.template);
+
+    // Find all the regions and store as the jQuery object
+    //this.$regions = this.$compiled.find('[' + this.attribute + ']');
+
+    // Chaining
+    return this;
 
   }
 

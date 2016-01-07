@@ -61,32 +61,24 @@ li:hover .delete {
   color: white;
 }
 
+.mdl-card__title {
+  color: grey;
+}
+
 .mdl-card__menu {
+  color: grey;
   z-index: 2;
 }
 
 .mdl-card__actions {
-  color: gray;
-}
-
-.mdl-card__title {
-  padding: 0px;
-  color: white;
-  height: 0px;
-  overflow: hidden;
-  background: url("http://thecatapi.com/api/images/get?format=src&type=gif&size=med") center / cover;
-  -webkit-transition: height 0.8s;
-  -moz-transition: height 0.8s;
-  -o-transition: height 2s;
-  transition: height 0.8s;
+  color: grey;
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
 }
 
 .mdl-card__supporting-text {
   width: auto;
-}
-
-.cats {
-  height: 500px;
 }
 
 .avatar-wrapper {

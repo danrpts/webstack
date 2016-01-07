@@ -36,7 +36,7 @@ var specials =  {
 
 }
 
-function Collection (models, options) {
+var Collection = module.exports = function (models, options) {
   Backbone.Collection.apply(this, arguments);
 }
 
@@ -46,15 +46,76 @@ _.extend(Collection.prototype, specials, helpers);
 
 Collection.extend = Backbone.Collection.extend;
 
-module.exports = Collection;
-
 },{"../helpers/model_helpers.js":13,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],2:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+var helpers = require('../helpers/controller_helpers.js');
+var create = _.isFunction(Object.create) ? Object.create : _.create;
+
+var specials = {
+
+  // TODO: move this back into presenter but use event listener
+  // Note: This may be unecessary, but just for good measure
+  remove: function () {
+
+    // Release the context closure
+    (!!this.presenter) && this.presenter.release();
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
+
+}
+
+// IMHO: Backbone views are controllers and the templates are views
+var Controller = module.exports = function (options) {
+  Backbone.View.apply(this, arguments);
+}
+
+Controller.prototype = create(Backbone.View.prototype);
+
+_.extend(Controller.prototype, specials, helpers);
+
+Controller.extend = Backbone.View.extend;
+
+},{"../helpers/controller_helpers.js":11,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+
+// Import basic dependencies
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Controller = require('./Controller.js');
+
+// Import our custom functions
+var helpers = require('../helpers/layout_helpers.js');
+
+// Make sure we have an Object creator
+var create = _.isFunction(Object.create) ? Object.create : _.create;
+
+// Export the Layout constructor
+var Layout = module.exports = function (options) {
+
+  // Describe the attribute for regions
+  this.attribute = 'data-region';
+
+  // Call the super class constructor
+  Controller.apply(this, arguments);
+
+}
+
+// Inherit from the Backbone View prototype
+Layout.prototype = create(Controller.prototype);
+
+// Inherit our helper functions
+_.extend(Layout.prototype, helpers);
+
+// Mix in the extend function
+Layout.extend = Controller.extend;
+
+},{"../helpers/layout_helpers.js":12,"./Controller.js":2,"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/model_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-function Model (attributes, options) {
+var Model = module.exports = function (attributes, options) {
   Backbone.Model.apply(this, arguments);
 }
 
@@ -64,18 +125,27 @@ _.extend(Model.prototype, helpers);
 
 Model.extend = Backbone.Model.extend;
 
-module.exports = Model;
-
-},{"../helpers/model_helpers.js":13,"backbone":"backbone","underscore":"underscore"}],3:[function(require,module,exports){
+},{"../helpers/model_helpers.js":13,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var helpers = require('../helpers/router_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
-function Router (options) {
+var Router = module.exports = function (options) {
+
+  // As always, use caution
   options = options || {};
-  options['controller'] && _.extend(this, _.pick(options.controller, _.functions(options.controller)));
+
+  // If the constructor was supplied with an api
+  if ('api' in options) {
+
+    // Copy all api functions into this router
+    _.extend(this, _.pick(options.api, _.functions(options.api)));
+  }
+
+  // Call the Backbone constructor
   Backbone.Router.apply(this, arguments);
+  
 }
 
 Router.prototype = create(Backbone.Router.prototype);
@@ -84,383 +154,297 @@ _.extend(Router.prototype, helpers);
 
 Router.extend = Backbone.Router.extend;
 
-module.exports = Router;
-
-},{"../helpers/router_helpers.js":15,"backbone":"backbone","underscore":"underscore"}],4:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var layout = require('../helpers/layout_helpers.js');
-var helpers = require('../helpers/view_helpers.js');
-var create = _.isFunction(Object.create) ? Object.create : _.create;
-
-var specials = {
-
-  // TODO: move this back into presenter but use event listener
-  // Note: This may be unecessary, but just for good measure
-  remove: function () {
-
-    // Release the context
-    (!!this.presenter) && this.presenter.release();
-    Backbone.View.prototype.remove.apply(this, arguments);
-  }
-
-}
-
-function View (options) {
-  Backbone.View.apply(this, arguments);
-}
-
-View.prototype = create(Backbone.View.prototype);
-
-_.extend(View.prototype, specials, layout, helpers);
-
-View.extend = Backbone.View.extend;
-
-module.exports = View;
-
-},{"../helpers/layout_helpers.js":12,"../helpers/view_helpers.js":16,"backbone":"backbone","underscore":"underscore"}],5:[function(require,module,exports){
-module.exports={
-  "name": "account",
-  "debug": true
-}
-
-},{}],6:[function(require,module,exports){
-module.exports={
-  "client_id": "__CLIENT__ID__",
-  "redirect_uri": "postmessage"
-}
-},{}],7:[function(require,module,exports){
+},{"../helpers/router_helpers.js":15,"backbone":"backbone","underscore":"underscore"}],6:[function(require,module,exports){
 module.exports={
   "ENTER": 13
 }
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports={
   "name": "tasks",
   "debug": true
 }
 
-},{}],9:[function(require,module,exports){
-var Router = require('../routers/account_Router.js');
-var HeaderView = require("../views/account_HeaderView.js");
-var CardView = require("../views/account_CardView.js");
-var account = require('../singletons/account_singleton.js');
-var config = require('../config/account_config.json');
-
-var api = {
-
-  showHeader: function () {
-
-    // Create a header view
-    var view = new HeaderView({ model: account });
-
-    // Then swap the view into the header region
-    view.swap({
-
-      // Inject debug settings
-      debug: config.debug,
-
-      // Swap the view into the header region
-      region: 'header'
-
-    });
-
-  },
-
-  showCard: function () {
-
-    // Create a card View
-    var view = new CardView({ model: account });
-
-    // Then swap the view into the default region
-    view.swap({
-
-      // Inject debug settings, temp
-      debug: config.debug,
-
-      // Artificial delay
-      delay: Math.random() * 500,
-
-      // And show the loader if necessary
-      loading: account.promise()
-
-    });
-
-  }
-  
-}
-
-module.exports = {
-
-  start: function () {
-
-    // Always
-    api.showHeader();
-
-    // Start routing
-    new Router({ controller: api });
-    return this;
-  }
-  
-}
-
-},{"../config/account_config.json":5,"../routers/account_Router.js":20,"../singletons/account_singleton.js":22,"../views/account_CardView.js":24,"../views/account_HeaderView.js":25}],10:[function(require,module,exports){
-var Router = require('../routers/tasks_Router.js');
-var ListView = require('../views/tasks_ListView.js');
-var CardView = require('../views/tasks_CardView.js');
-var tasks = require('../singletons/tasks_singleton.js');
-var config = require('../config/tasks_config.json');
-
-var api = {
-
-  showList: function () {
-
-    // Create its view
-    var view = new ListView({ collection: tasks });
-
-    // Then swap the view into the default region
-    view.swap({
-
-      // Inject debug settings, temp
-      debug: config.debug,
-
-      // Artificial delay
-      delay: Math.random() * 2000,
-
-      // And show the loader if necessary
-      loading: tasks.promise()
-
-    });
-
-  },
-
-  showCard: function (itemid) {
-
-    // Get or create the model
-    var item = tasks.add({ id: itemid });
-
-    // Create its view with model
-    var view = new CardView({ model: item });
-
-    // Then swap the view into the default region
-    view.swap({
-
-      // Inject debug settings, temp
-      debug: config.debug,
-
-      // Artificial delay
-      delay: Math.random() * 1000,
-
-      // And show the loader if necessary
-      loading: item.promise()
-
-    }); 
-
-  }
-
-}
-
-module.exports = {
-
-  start: function () {
-    new Router({ controller: api });
-    return this;
-  }
-  
-}
-
-},{"../config/tasks_config.json":8,"../routers/tasks_Router.js":21,"../singletons/tasks_singleton.js":23,"../views/tasks_CardView.js":26,"../views/tasks_ListView.js":28}],11:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var $ = require('jquery');
+var _ = require('underscore');
 var Backbone = require('backbone');
-var google = require('../config/google_config.json');
+var Controller = require('../classes/Controller.js');
+var config = require('../config/tasks_config.json');
+var closure = require('../helpers/presenter_helpers.js');
 
-module.exports = {
+module.exports = Controller.extend({
 
-  client: function () {
-    return gapi.auth2.getAuthInstance();
+  events: {
+    'mouseup .toggle': 'toggle',
+    'mouseup .back': 'back',
+    'mouseup .delete': 'delete',
+    'mouseup .mood': 'easterEgg',
+    'blur #title-input': 'updateTitle',
+    'blur #details-input': 'updateDetails'
   },
 
-  user: function () {
-    return this.client().currentUser.get();
+  template: require('../../templates/tasks_CardTemplate.html'),
+  
+  initialize: function () {
+    // this is bugged
+    // change is fired on sync due to localstorage, promise and events combo
+    // causes premature render
+    // need to rethink
+    // may be an edge case
+    // mixing promises and backbones event system is difficult...
+    this.listenTo(this.model, 'change', this.render);
   },
 
-  profile: function () {
-    return this.user().getBasicProfile();
+  toggle: function () {
+    this.model.toggle();
   },
 
-  start: function () {
+  back: function () {
+    Backbone.trigger('goto:' + config.name, '');
+  },
 
-    // First wrap Google's promise with our own
-    var that = this;
-    var client = $.Deferred();
+  delete: function () {
+    this.model.destroy();
+    this.remove();
+    this.back();
+  },
 
-    // If auth2 api has been loaded
-    if ('auth2' in gapi) {
+  easterEgg: function () {
+    this.$('.mdl-card__title').toggleClass('cats');
+  },
 
-      // Then retreive the existing 'auth client'
-      var existing = this.client();
+  updateTitle: function () {
+    this.model.save({'title': this.$('#title-input').val().trim()}, {wait: true});
+  },
 
-      // Bind the context and resolve
-      client.resolveWith(that, [existing]);
-    
+  updateDetails: function () {
+    this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
+  }
+  
+});
+
+
+},{"../../templates/tasks_CardTemplate.html":23,"../classes/Controller.js":2,"../config/tasks_config.json":7,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],9:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Controller = require('../classes/Controller.js');
+var config = require('../config/tasks_config.json');
+var closure = require('../helpers/presenter_helpers.js');
+
+module.exports = Controller.extend({
+
+  events: {
+    'mouseup .toggle' : 'toggle',
+    'mouseup .open'   : 'open',
+    'mouseup .delete' : 'delete'
+  },
+
+  template: require('../../templates/tasks_ItemTemplate.html'),
+
+  initialize: function () {
+    this.listenTo(this.model, 'change', this.render);
+  },
+
+  toggle: function () {
+    this.model.toggle();
+  },
+
+  open: function () {
+    Backbone.trigger('goto:' + config.name, 'tasks/' + this.model.id);
+  },
+
+  delete: function () {
+    this.model.destroy();
+    this.remove();
+  }
+  
+});
+
+},{"../../templates/tasks_ItemTemplate.html":24,"../classes/Controller.js":2,"../config/tasks_config.json":7,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],10:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Controller = require('../classes/Controller.js');
+var Item = require('./tasks_item_Controller.js');
+var config = require('../config/tasks_config.json');
+var codes = require('../config/keycodes_config.json');
+
+var List = module.exports = Controller.extend({
+
+  events: {
+    'mouseup .all' : 'all',
+    'mouseup .clear' : 'clear',
+    'keyup #input-title': 'enter'
+  },
+  
+  // Define the view
+  template: require('../../templates/tasks_ListTemplate.html'),
+
+  all: function () {
+
+    // Returns model if found
+    var flag = this.collection.find(function (model) {
+
+      // Detect a falsy value
+      return !model.get('completed');
+    });
+
+    // Set all true if any flag otherwise set all false
+    this.collection.each(function (model) {
+
+      // Coax flag into boolean
+      model.check(!!flag);
+
+    });
+
+  },
+
+  enter: function (event) {
+
+    if (event.which === codes['ENTER']) {
+      var input = this.$('#input-title');
+      this.collection.create({'created': Date.now(), 'title': input.val().trim()}, {wait: true});
+      input.val('');
+      this.render();
     }
 
-    // Otherwise, initialize
-    else {
+  },
 
-      // Load the auth2 api with Google's promise
-      gapi.load('auth2', function () {
+  render: function () {
 
-        // Then initiate a new 'auth client' with Google
-        var initiated = gapi.auth2.init({ client_id: google.client_id });
-
-        // Integrate Google's event system with Backbone
-        initiated.isSignedIn.listen(function (status) {
-          Backbone.trigger('google:isSignedIn', status);
-        });
-
-        initiated.currentUser.listen(function (user) {
-          Backbone.trigger('google:currentUser', user);
-        });
-
-        // Bind the context and resolve
-        client.resolveWith(that, [initiated]);
-
-      });
-
+    // List building function
+    function list () {
+      this.repeat(Item).appendTo(this.$('ul#task-items'));
     }
 
-    // Return as jQuery promise
-    return client.promise();
-
-  },
-
-  signIn: function () {
-
-    // First wrap Google's promise with our own
-    var that = this;
-    var response = $.Deferred();
-    var client = this.client();
-
-    // Invoke sign-in window
-    client.signIn().then(function (user) {
-
-      // Bind the context and resolve the code 
-      response.resolveWith(that, [user]);
-
-    });
-
-    // Return ad jQuery promise
-    return response.promise();
-
-  },
-
-  signOut: function () {
-
-    // First wrap Google's promise with our own
-    var that = this;
-    var response = $.Deferred();
-    var client = this.client();
-
-    // Sign use out
-    client.signOut().then(function () {
-
-      // Bind the context and resolve the code 
-      response.resolveWith(that);
-
-    });
-
-    // Return ad jQuery promise
-    return response.promise();
-
-  },
-
-  grantOfflineAccess: function () {
-
-    // First wrap Google's promise with our own
-    var that = this;
-    var response = $.Deferred();
-    var client = this.client();
-
-    // Grant the one-time code
-    client.grantOfflineAccess({ 'redirect_uri': google.redirect_uri }).then(function (authCode) {
-
-      // Bind the context and resolve the code 
-      response.resolveWith(that, [authCode]);
-
-    });
-
-    // Return ad jQuery promise
-    return response.promise();
-
-  },
-
-  postToServer: function (authCode) {
-
-    // First wrap Google's promise with our own
-    var that = this;
-    var response = $.Deferred();
-    var client = this.client();
-
-    // Grant the one-time code
-    $.ajax({
-      type: 'POST',
-      url: '/api/account',
-      contentType: 'application/json',
-      data: JSON.stringify(authcode),
-      dataType: 'json',
-      processData: false,
-      success: function (data, status, xhr) {
-        response.resolveWith(that, [client.currentUser.get()]);
-      }
-    });
-
-    // Return ad jQuery promise
-    return response.promise();
+    // Call the base renderer
+    return Controller.prototype.render.call(this, list);
 
   }
 
+});
+
+},{"../../templates/tasks_ListTemplate.html":25,"../classes/Controller.js":2,"../config/keycodes_config.json":6,"../config/tasks_config.json":7,"./tasks_item_Controller.js":9,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],11:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var closure = require('./presenter_helpers.js');
+
+module.exports = {
+
+  repeat: function (Controller) {
+    var $fragment = $(document.createDocumentFragment());
+    this.collection.each(function (model) {
+      new Controller({model: model}).render().$el.appendTo($fragment);
+    });
+    return $fragment;
+  },
+
+  compile: function () {
+
+      // Hoist 'em
+      var entity, template, templater, compiled;
+
+      // Reference the model or collection or nonsuch
+      entity = this.model || this.collection || false;
+
+      // When it's the intitial render, build the presenter
+      (!this._rendered) && (!!entity) && (this.presenter = closure.call(entity));
+
+      // Allow overriding of underscore's templater
+      templater = _.isFunction(this.templater) ? this.templater : _.template;
+
+      // First run the markup through the templater
+      template = templater(this.template);
+
+      // Then run the presenter through the templater
+      compiled = (!!this.presenter) ? template(this.presenter) : template();
+
+      // Jquery this sucker
+      this.$compiled = $(compiled);
+
+      // Chaining
+      return this;
+
+    },
+
+    render: function (callback) {
+
+      // Compile the $el
+      this.compile();
+
+      // When it's the initial render
+      if (!this._rendered) {
+
+        // Place in DOM
+        this.setElement(this.$compiled);
+
+        // Set render state
+        this._rendered = true;
+      }
+
+      // When it's a re-render
+      else this.$el.html(this.$compiled.html());
+
+      // Allow injection of async code
+      _.isFunction(callback) && callback.call(this);
+
+      // Material Design Lite (MDL)
+      componentHandler.upgradeElements(this.el);
+
+      // Force chaining on this
+      return this;
+      
+    }
+
 }
 
-},{"../config/google_config.json":6,"backbone":"backbone","jquery":"jquery"}],12:[function(require,module,exports){
+},{"./presenter_helpers.js":14,"jquery":"jquery","underscore":"underscore"}],12:[function(require,module,exports){
+
+// Import basic dependencies
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-// Private. TODO: move this to config
-var regions = {
-  header: $('[data-region="header"]'),
-  content: $('[data-region="content"]')
-}
+var $root = $('body');
 
-// Public
 module.exports = {
 
   swap: function (options) {
 
+    var $region;
+
     options = options || {};
 
+    // Set the default options
     _.defaults(options, {
       debug: undefined,
       delay: 0,
       loading: false,
-      region: 'content',
-      view: this
+      region: 'layout',
+      controller: this
     });
 
-    var region = regions[options.region];
+    // Reference the region to manipulate
+    $region = $root.find('[' + this.attribute + '=' + options.region + ']');
 
-    if (!!region.view) {
-      region.view.off();
+    if (!!$region.controller) {
+
+      // Turn of events
+      $region.controller.off();
       
-      // Do not call model.off! 
-      // We may have other view displayed that use the same model
-      //(!!region.view.model) && region.view.model.off();
+      // Do not call model.off since we may have other controllers using the same model
+      // (!!$region.controller.model) && $region.controller.model.off();
       
-      region.view.remove();
-      delete region.view;
+      // Remove it from DOM
+      $region.controller.remove();
+
+      // Delete it from memory
+      delete region.controller;
+
     }
 
-    region.view = options.view;
+    $region.controller = options.controller;
     
     // If loading screen desired
     if (!!options.loading) {
@@ -468,10 +452,10 @@ module.exports = {
       // Notify when promise has started
       (options.debug) && console.log('Loading...');
 
-      // TODO
+      // TODO: move this into proper template
       var loader = $('<div class="app"><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active loader"></div></div>');
       componentHandler.upgradeElements(loader[0]);
-      loader.appendTo(region);
+      loader.appendTo($region);
 
       // Promise callbacks
       options.loading.done(function () {
@@ -482,8 +466,8 @@ module.exports = {
           // Notify when the promise has resolved
           (options.debug) && console.log('Resoloved!');
 
-          // If view has not changed since the promise was made, render it
-          (region.view === options.view) && region.html(options.view.render().$el);
+          // If regions controller has not changed since the promise was made, render it's view
+          ($region.controller === options.controller) && $region.html(options.controller.render().$el);
 
         }, Math.round(options.delay));
 
@@ -491,10 +475,31 @@ module.exports = {
 
     }
 
-    // Else just render it
+    // Otherwise
     else {
-      region.html(options.view.render().$el);
+
+      // Just render it
+      $region.html(options.controller.render().$el);
     }
+
+
+    console.log($region);
+
+    return this;
+
+  },
+
+  // Overwrite defualt compile function
+  compile: function () {
+
+    // First jQuery this sucker
+    this.$compiled = $(this.template);
+
+    // Find all the regions and store as the jQuery object
+    //this.$regions = this.$compiled.find('[' + this.attribute + ']');
+
+    // Chaining
+    return this;
 
   }
 
@@ -558,7 +563,7 @@ module.exports = function () {
 
 }
 
-},{"Backbone":34,"underscore":"underscore"}],15:[function(require,module,exports){
+},{"Backbone":26,"underscore":"underscore"}],15:[function(require,module,exports){
 module.exports = {
   
   goto: function (fragment) {
@@ -567,165 +572,124 @@ module.exports = {
 
 }
 },{}],16:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var closure = require('./presenter_helpers.js');
-
-module.exports = {
-
-  repeat: function (View) {
-    var $fragment = $(document.createDocumentFragment());
-    this.collection.each(function (model) {
-      new View({model: model}).render().$el.appendTo($fragment);
-    });
-    return $fragment;
-  },
-
-  compile: function () {
-
-      // Hoist 'em
-      var entity, template, templater, compiled;
-
-      // Reference the model or collection or nonsuch
-      entity = this.model || this.collection || false;
-
-      // When it's the intitial render, build the presenter
-      (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
-
-      // Allow overriding of underscore's templater
-      templater = _.isFunction(this.templater) ? this.templater : _.template;
-
-      // First run the markup through the templater
-      template = templater(this.template);
-
-      // Then run the presenter through the templater
-      compiled = (!!this.presenter) ? template(this.presenter) : template();
-
-      // Jquery this sucker
-      this.$compiled = $(compiled);
-
-      // Chaining
-      return this;
-
-    },
-
-    render: function (callback) {
-
-      // Compile the $el
-      this.compile();
-
-      // When it's the initial render
-      if (!this.rendered) {
-
-        // Place in DOM
-        this.setElement(this.$compiled);
-
-        // Set render state
-        this.rendered = true;
-      }
-
-      // When it's a re-render
-      else this.$el.html(this.$compiled.html());
-
-      // Allow injection of async code
-      _.isFunction(callback) && callback.call(this);
-
-      // Material Design Lite (MDL)
-      componentHandler.upgradeElements(this.el);
-
-      // Force chaining on this
-      return this;
-      
-    }
-
-}
-
-},{"./presenter_helpers.js":14,"jquery":"jquery","underscore":"underscore"}],17:[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.LocalStorage = require('backbone.localstorage');
-var account = require('./controllers/account_controller.js');
-var tasks = require('./controllers/tasks_controller.js');
+var Basic = require('./layouts/basic_Layout.js');
 
 $(function() {
 
   // Initiate the account module
-  account.start();
+  //account.start();
 
   // Initiate the tasks module
-  tasks.start();
+  var b = new Basic().swap();
+  require('./layouts/todo_layout_controller.js').start(b);
 
   // TODO: { pushState: true } requires thought out server mods
   Backbone.history.start(); 
 
 });
 
-},{"./controllers/account_controller.js":9,"./controllers/tasks_controller.js":10,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],18:[function(require,module,exports){
+},{"./layouts/basic_Layout.js":17,"./layouts/todo_layout_controller.js":18,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],17:[function(require,module,exports){
+
+// Import any basic dependencies
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var Model = require('../classes/Model.js');
-var config = require('../config/account_config.json');
-var google = require('../helpers/google_helpers.js');
+var Layout = require('../classes/Layout.js');
 
-var AccountModel = Model.extend({
+// Build the Basic layout
+var Basic = module.exports = Layout.extend({
 
-  defaults: {
-    'name': null,
-    'imageUrl': null,
-    'email': null
-  },
-
-  initialize: function () {
-
-    // Initiate the Google OAuth2 API
-    google.start();
-
-    // Listen for special Google events
-    Backbone.Events.listenTo.call(this, Backbone, 'google:isSignedIn', this.toggle);
-
-  },
-
-  toggle: function (isSignedIn) {
-    var profile;
-
-    if (isSignedIn) {
-
-      config.debug && console.log('Signing in...');
-
-      profile = google.profile();
-
-      this.set({
-        'id': profile.getId(),
-        'name': profile.getName(),
-        'imageUrl': profile.getImageUrl(),
-        'email': profile.getEmail()
-      });
-
-    }
-
-    else {
-      config.debug && console.log('Signing out...');
-      this.clear();
-    }
-
-  },
-
-  // temporary override
-  promise: function () {
-    return $.Deferred().resolveWith(this, [this.toJSON()]).promise();
-  }
+  template: require('../../templates/fixed_header_layout_template.html')
 
 });
 
-module.exports = {
+},{"../../templates/fixed_header_layout_template.html":22,"../classes/Layout.js":3,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],18:[function(require,module,exports){
 
-  Model: AccountModel
+// Import any basic dependencies
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Layout = require('../classes/Layout.js');
+
+// Import any custom classes
+var Router = require('../routers/tasks_Router.js');
+var List = require('../controllers/tasks_list_Controller.js');
+var Card = require('../controllers/tasks_card_Controller.js');
+
+// Import any data singletons
+var tasks = require('../singletons/tasks_singleton.js');
+
+// Import any config objects as JSON
+var config = require('../config/tasks_config.json');
+
+var layout;
+
+var controllers = {
+
+  showList: function () {
+
+    // Then swap the view into the default region
+    layout.swap({
+
+      controller: new List({ collection: tasks }),
+
+      // Inject debug settings, temp
+      debug: config.debug,
+
+      // Artificial delay
+      delay: Math.random() * 2000,
+
+      // And show the loader if necessary
+      loading: tasks.promise(),
+
+      region: 'content'
+
+    });
+
+  },
+
+  showCard: function (itemid) {
+
+    // Get or create the model
+    var item = tasks.add({ id: itemid });
+
+    // Then swap the view into the default region
+    layout.swap({
+
+      controller: new Card({ model: item }),
+
+      // Inject debug settings, temp
+      debug: config.debug,
+
+      // Artificial delay
+      delay: Math.random() * 1000,
+
+      // And show the loader if necessary
+      loading: item.promise(),
+
+      region: 'content'
+
+    }); 
+
+  }
 
 }
 
-},{"../classes/Model.js":2,"../config/account_config.json":5,"../helpers/google_helpers.js":11,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
+module.exports = {
+
+  start: function (b) {
+    layout = b;
+    new Router({ api: controllers });
+    return this;
+  }
+  
+}
+
+},{"../classes/Layout.js":3,"../config/tasks_config.json":7,"../controllers/tasks_card_Controller.js":8,"../controllers/tasks_list_Controller.js":10,"../routers/tasks_Router.js":20,"../singletons/tasks_singleton.js":21,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Model = require('../classes/Model.js');
@@ -779,25 +743,7 @@ module.exports = {
   Collection: ListCollection
 
 }
-},{"../classes/Collection.js":1,"../classes/Model.js":2,"backbone":"backbone","underscore":"underscore"}],20:[function(require,module,exports){
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Router = require('../classes/Router.js');
-var config = require('../config/account_config.json');
-
-module.exports = Router.extend({
-
-  routes: {
-    'account/:id': 'showCard'
-  },
-
-  initialize: function () {
-    this.listenTo(Backbone, 'goto:' + config.name, this.goto);
-  }
-
-});
-
-},{"../classes/Router.js":3,"../config/account_config.json":5,"backbone":"backbone","underscore":"underscore"}],21:[function(require,module,exports){
+},{"../classes/Collection.js":1,"../classes/Model.js":4,"backbone":"backbone","underscore":"underscore"}],20:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Router = require('../classes/Router.js');
@@ -816,268 +762,25 @@ module.exports = Router.extend({
 
 });
 
-},{"../classes/Router.js":3,"../config/tasks_config.json":8,"backbone":"backbone","underscore":"underscore"}],22:[function(require,module,exports){
-var _ = require('underscore');
-var account = require('../models/account_Model.js');
-
-module.exports =  new account.Model();
-
-},{"../models/account_Model.js":18,"underscore":"underscore"}],23:[function(require,module,exports){
+},{"../classes/Router.js":5,"../config/tasks_config.json":7,"backbone":"backbone","underscore":"underscore"}],21:[function(require,module,exports){
 var _ = require('underscore');
 var tasks = require('../models/tasks_Collection.js');
 
 module.exports = new tasks.Collection();
 
-},{"../models/tasks_Collection.js":19,"underscore":"underscore"}],24:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var google = require('../helpers/google_helpers.js');
-var closure = require('../helpers/presenter_helpers.js');
+},{"../models/tasks_Collection.js":19,"underscore":"underscore"}],22:[function(require,module,exports){
+module.exports = "<div>\n  <div class=\"mdl-layout mdl-js-layout mdl-layout--fixed-header\">\n    <header class=\"mdl-layout__header\">\n      <div class=\"mdl-layout__header-row\">\n        <!-- Title -->\n        <span class=\"mdl-layout-title\">Tasks</span>\n        <!-- Add spacer, to align navigation to the right -->\n        <div class=\"mdl-layout-spacer\"></div>\n        <!-- Navigation. We hide it in small screens. -->\n        <nav class=\"mdl-navigation mdl-layout--large-screen-only\" data-region=\"header\"></nav>\n      </div>\n    </header>\n    <main class=\"mdl-layout__content\">\n      <div class=\"page-content\" data-region=\"content\"></div>\n    </main>\n    <div data-region=\"footer\"></div>\n  </div>\n</div>";
 
-var CardView = View.extend({
+},{}],23:[function(require,module,exports){
+module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__menu\">\n        <i class=\"material-icons\"><% has('completed') ? print('check_box') : print('check_box_outline_blank') %></i>\n      </div>\n\n      <div class=\"mdl-card__title\"></div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\" <% has('completed') && print('disabled')%> >\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" <% has('completed') && print('disabled')%>></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n        \n        <a class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect delete\">\n          Delete\n        </a>\n\n        <a class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect toggle\">\n          Toggle Completion\n        </a>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
-  events: {
-    'mouseup .back': 'back',
-    'mouseup .signout': 'signout'
-  },
-
-  template: require('../../templates/account_CardTemplate.html'),
-  
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
-
-  back: function () {
-    Backbone.trigger('goto:tasks', '');
-  },
-
-  signout: function () {
-    var that = this;
-    google.signOut().then(function () {
-      that.back(); 
-    });
-  }
-  
-});
-
-module.exports = CardView;
-
-},{"../../templates/account_CardTemplate.html":29,"../classes/View.js":4,"../helpers/google_helpers.js":11,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],25:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var config = require('../config/account_config.json');
-var google = require('../helpers/google_helpers.js');
-var closure = require('../helpers/presenter_helpers.js');
-
-var HeaderView = View.extend({
-
-  events: {
-    'mouseup .signIn': 'signIn',
-    'mouseup .profile': 'profile'
-  },
-
-  template: require('../../templates/account_HeaderTemplate.html'),
-
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
-
-  signIn: function () {
-    google.signIn();
-  },
-
-  profile: function () {
-    Backbone.trigger('goto:' + config.name, 'account/' + this.model.id);
-  }
-
-});
-
-module.exports = HeaderView;
-
-},{"../../templates/account_HeaderTemplate.html":30,"../classes/View.js":4,"../config/account_config.json":5,"../helpers/google_helpers.js":11,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],26:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var config = require('../config/tasks_config.json');
-var closure = require('../helpers/presenter_helpers.js');
-
-var CardView = View.extend({
-
-  events: {
-    'mouseup .toggle': 'toggle',
-    'mouseup .back': 'back',
-    'mouseup .delete': 'delete',
-    'mouseup .mood': 'easterEgg',
-    'blur #title-input': 'updateTitle',
-    'blur #details-input': 'updateDetails'
-  },
-
-  template: require('../../templates/tasks_CardTemplate.html'),
-  
-  initialize: function () {
-    // this is bugged
-    // change is fired on sync due to localstorage, promise and events combo
-    // causes premature render
-    // need to rethink
-    // may be an edge case
-    // mixing promises and backbones event system is difficult...
-    this.listenTo(this.model, 'change', this.render);
-  },
-
-  toggle: function () {
-    this.model.toggle();
-  },
-
-  back: function () {
-    Backbone.trigger('goto:' + config.name, '');
-  },
-
-  delete: function () {
-    this.model.destroy();
-    this.remove();
-    this.back();
-  },
-
-  easterEgg: function () {
-    this.$('.mdl-card__title').toggleClass('cats');
-  },
-
-  updateTitle: function () {
-    this.model.save({'title': this.$('#title-input').val().trim()}, {wait: true});
-  },
-
-  updateDetails: function () {
-    this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
-  }
-  
-});
-
-module.exports = CardView;
-
-},{"../../templates/tasks_CardTemplate.html":31,"../classes/View.js":4,"../config/tasks_config.json":8,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],27:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var config = require('../config/tasks_config.json');
-var closure = require('../helpers/presenter_helpers.js');
-
-var ItemView = View.extend({
-
-  events: {
-    'mouseup .toggle' : 'toggle',
-    'mouseup .open'   : 'open',
-    'mouseup .delete' : 'delete'
-  },
-
-  template: require('../../templates/tasks_ItemTemplate.html'),
-
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
-
-  toggle: function () {
-    this.model.toggle();
-  },
-
-  open: function () {
-    Backbone.trigger('goto:' + config.name, 'tasks/' + this.model.id);
-  },
-
-  delete: function () {
-    this.model.destroy();
-    this.remove();
-  }
-  
-});
-
-module.exports = ItemView;
-
-},{"../../templates/tasks_ItemTemplate.html":32,"../classes/View.js":4,"../config/tasks_config.json":8,"../helpers/presenter_helpers.js":14,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],28:[function(require,module,exports){
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var ItemView = require('./tasks_ItemView.js');
-var config = require('../config/tasks_config.json');
-var codes = require('../config/keycodes_config.json');
-
-var ListView = View.extend({
-
-  events: {
-    'mouseup .all' : 'all',
-    'mouseup .clear' : 'clear',
-    'keyup #input-title': 'enter'
-  },
-  
-  template: require('../../templates/tasks_ListTemplate.html'),
-
-  all: function () {
-
-    // Returns model if found
-    var flag = this.collection.find(function (model) {
-
-      // Detect a falsy value
-      return !model.get('completed');
-    });
-
-    // Set all true if any flag otherwise set all false
-    this.collection.each(function (model) {
-
-      // Coax flag into boolean
-      model.check(!!flag);
-    });
-
-  },
-
-  enter: function (event) {
-
-    if (event.which === codes['ENTER']) {
-      var input = this.$('#input-title');
-      this.collection.create({'created': Date.now(), 'title': input.val().trim()}, {wait: true});
-      input.val('');
-      this.render();
-    }
-
-  },
-
-  render: function () {
-
-    // List building function
-    function list () {
-      this.repeat(ItemView).appendTo(this.$('ul#task-items'));
-    }
-
-    // Call the base renderer
-    return View.prototype.render.call(this, list);
-
-  }
-
-});
-
-module.exports = ListView;
-
-},{"../../templates/tasks_ListTemplate.html":33,"../classes/View.js":4,"../config/keycodes_config.json":7,"../config/tasks_config.json":8,"./tasks_ItemView.js":27,"backbone":"backbone","jquery":"jquery","underscore":"underscore"}],29:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('name') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" disabled>\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('email') %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <a class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect signout\">\n          Sign out\n        </a>\n\n      </div>\n\n    </div>\n\n</div>\n";
-
-},{}],30:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n  <button id=\"account\" style=\"margin: 0 auto; display: block; color: grey;\" class=\"mdl-button mdl-js-button mdl-button--fab <% has('id') ? print('profile') : print('signIn') %>\">\n\n    <% has('id') ? print('<img src='+get('imageUrl')+' width=\"56px\" height=\"56px\" />') : print('<i class=\"material-icons\">fingerprint</i>') %>\n\n  </button>\n  <p id=\"name\" style=\"display: block; text-align: center;\"><% has('name') && print(get('name')) %></p>\n</div>\n";
-
-},{}],31:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card__menu\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab toggle <% has('completed') ? print('green') : print('red') %>\">\n        <i class=\"material-icons\">done</i>\n      </button>\n    </div>\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__title\">\n        <h2 class=\"mdl-card__title-text\"></h2>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\">\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" ></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon back\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n\n        <button class=\"mdl-button mdl-js-button mdl-button--icon mood\">\n          <i class=\"material-icons\">mood</i>\n        </button>\n\n      </div>\n\n    </div>\n\n</div>\n";
-
-},{}],32:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper left right\">\n\n      <div class=\"avatar left\">\n        <label class=\"mdl-checkbox mdl-js-checkbox toggle\" for=\"checkbox-<%- get('id') %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- get('id') %>\" class=\"mdl-checkbox__input\" <% has('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <p class=\"open <% has('completed') && print('completed') %>\"><%- get('title') %></p>\n\n      <span>\n        <% has('details') && print(get('details'), '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% has('completed') && print(format('completed')) %>\n      </span>\n\n      <div class=\"avatar right\">\n        <button class=\"mdl-button mdl-js-button mdl-button--icon delete\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
 
-},{}],33:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = "<div class=\"app\">\n\n  <div class=\"avatar-wrapper right\">\n    <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n      <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" length=\"23\">\n      <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n    </div>\n\n    <div class=\"avatar-fab right\">\n      <button class=\"mdl-button mdl-js-button mdl-button--fab all\">\n        <i class=\"material-icons\">done_all</i>\n      </button>\n    </div>\n  </div>\n  \n  <ul id=\"task-items\"></ul>\n\n</div>\n";
 
-},{}],34:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2975,4 +2678,4 @@ module.exports = "<div class=\"app\">\n\n  <div class=\"avatar-wrapper right\">\
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":"jquery","underscore":"underscore"}]},{},[17]);
+},{"jquery":"jquery","underscore":"underscore"}]},{},[16]);

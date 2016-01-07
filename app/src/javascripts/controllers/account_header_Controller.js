@@ -1,12 +1,12 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View.js');
+var Controller = require('../classes/Controller.js');
 var config = require('../config/account_config.json');
 var google = require('../helpers/google_helpers.js');
 var closure = require('../helpers/presenter_helpers.js');
 
-var HeaderView = View.extend({
+module.exports = Controller.extend({
 
   events: {
     'mouseup .signIn': 'signIn',
@@ -28,5 +28,3 @@ var HeaderView = View.extend({
   }
 
 });
-
-module.exports = HeaderView;

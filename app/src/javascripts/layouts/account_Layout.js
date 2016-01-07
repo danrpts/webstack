@@ -1,18 +1,29 @@
+
+// Import any basic dependencies
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Layout = require('../classes/Layout.js');
+
+// Import any custom classes
 var Router = require('../routers/account_Router.js');
-var HeaderView = require("../views/account_HeaderView.js");
-var CardView = require("../views/account_CardView.js");
+var Header = require("../controllers/account_header_Controller.js");
+var Card = require("../controllers/account_card_Controller.js");
+
+// Import any data singletons
 var account = require('../singletons/account_singleton.js');
+
+// Import any config objects as JSON
 var config = require('../config/account_config.json');
 
-var api = {
+var controllers = {
 
   showHeader: function () {
 
-    // Create a header view
-    var view = new HeaderView({ model: account });
-
     // Then swap the view into the header region
-    view.swap({
+    this.swap({
+
+      controller: new Header({ model: account });
 
       // Inject debug settings
       debug: config.debug,
@@ -26,11 +37,10 @@ var api = {
 
   showCard: function () {
 
-    // Create a card View
-    var view = new CardView({ model: account });
-
     // Then swap the view into the default region
-    view.swap({
+    this.swap({
+
+      controller: new Card({ model: account });
 
       // Inject debug settings, temp
       debug: config.debug,
@@ -52,10 +62,10 @@ module.exports = {
   start: function () {
 
     // Always
-    api.showHeader();
+    controllers.showHeader();
 
     // Start routing
-    new Router({ controller: api });
+    new Router({ api: controllers });
     return this;
   }
   

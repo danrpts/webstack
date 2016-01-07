@@ -16,7 +16,7 @@ module.exports = {
     return this.user().getBasicProfile();
   },
 
-  start: function () {
+  connect: function () {
 
     // First wrap Google's promise with our own
     var that = this;
@@ -40,7 +40,7 @@ module.exports = {
       gapi.load('auth2', function () {
 
         // Then initiate a new 'auth client' with Google
-        var initiated = gapi.auth2.init({ client_id: google.client_id });
+        var initiated = gapi.auth2.init({ 'client_id': google.client_id });
 
         // Integrate Google's event system with Backbone
         initiated.isSignedIn.listen(function (status) {
@@ -125,6 +125,8 @@ module.exports = {
 
   postToServer: function (authCode) {
 
+    console.log(authCode);
+
     // First wrap Google's promise with our own
     var that = this;
     var response = $.Deferred();
@@ -135,11 +137,12 @@ module.exports = {
       type: 'POST',
       url: '/api/account',
       contentType: 'application/json',
-      data: JSON.stringify(authcode),
+      data: JSON.stringify(authCode),
       dataType: 'json',
       processData: false,
       success: function (data, status, xhr) {
-        response.resolveWith(that, [client.currentUser.get()]);
+        Backbone.trigger('google:isFullySignedIn', true);
+        response.resolveWith(that, [data]);
       }
     });
 

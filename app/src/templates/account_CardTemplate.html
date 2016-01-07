@@ -1,24 +1,22 @@
 <div class="app">
 
-    <div class="mdl-card__menu">
-
-    </div>
-
     <div class="mdl-card mdl-shadow--2dp">
 
-      <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text"></h2>
+      <div class="mdl-card__menu">
+        <i class="material-icons">fingerprint</i>
       </div>
+
+      <div class="mdl-card__title"></div>
 
       <div class="mdl-card__supporting-text">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" disabled>
-          <label class="mdl-textfield__label" for="title-input"><%- get('name') %></label>
+          <label class="mdl-textfield__label"><%- get('name') %></label>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" disabled>
-          <label class="mdl-textfield__label" for="title-input"><%- get('email') %></label>
+          <label class="mdl-textfield__label"><%- get('email') %></label>
         </div>
       </div>
 
@@ -27,6 +25,10 @@
         <button class="mdl-button mdl-js-button mdl-button--icon back">
           <i class="material-icons">arrow_back</i>
         </button>
+
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect grant">
+          Grant offline access
+        </a>
 
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect signout">
           Sign out

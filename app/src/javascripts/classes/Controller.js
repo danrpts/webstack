@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-var layout = require('../helpers/layout_helpers.js');
-var helpers = require('../helpers/view_helpers.js');
+var helpers = require('../helpers/controller_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 var specials = {
@@ -10,21 +9,20 @@ var specials = {
   // Note: This may be unecessary, but just for good measure
   remove: function () {
 
-    // Release the context
+    // Release the context closure
     (!!this.presenter) && this.presenter.release();
     Backbone.View.prototype.remove.apply(this, arguments);
   }
 
 }
 
-function View (options) {
+// IMHO: Backbone views are controllers and the templates are views
+var Controller = module.exports = function (options) {
   Backbone.View.apply(this, arguments);
 }
 
-View.prototype = create(Backbone.View.prototype);
+Controller.prototype = create(Backbone.View.prototype);
 
-_.extend(View.prototype, specials, layout, helpers);
+_.extend(Controller.prototype, specials, helpers);
 
-View.extend = Backbone.View.extend;
-
-module.exports = View;
+Controller.extend = Backbone.View.extend;

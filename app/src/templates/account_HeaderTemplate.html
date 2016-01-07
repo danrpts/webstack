@@ -1,8 +1,13 @@
-<div class="app">
-  <button id="account" style="margin: 0 auto; display: block; color: grey;" class="mdl-button mdl-js-button mdl-button--fab <% has('id') ? print('profile') : print('signIn') %>">
+<div>
+  <a id="account" class="mdl-navigation__link <% has('id') ? print('profile') : print('signIn') %>">
 
-    <% has('id') ? print('<img src='+get('imageUrl')+' width="56px" height="56px" />') : print('<i class="material-icons">fingerprint</i>') %>
+      <button class="mdl-button mdl-js-button mdl-button--icon">
+        <%
+          has('id') ? 
+          print('<img src='+get('imageUrl')+' width="32px" height="32px" />') :
+          print('<i class="material-icons">fingerprint</i>')
+        %>
+      </button>
 
-  </button>
-  <p id="name" style="display: block; text-align: center;"><% has('name') && print(get('name')) %></p>
+  </a>
 </div>

@@ -1,18 +1,31 @@
+
+// Import any basic dependencies
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Layout = require('../classes/Layout.js');
+
+// Import any custom classes
 var Router = require('../routers/tasks_Router.js');
-var ListView = require('../views/tasks_ListView.js');
-var CardView = require('../views/tasks_CardView.js');
+var List = require('../controllers/tasks_list_Controller.js');
+var Card = require('../controllers/tasks_card_Controller.js');
+
+// Import any data singletons
 var tasks = require('../singletons/tasks_singleton.js');
+
+// Import any config objects as JSON
 var config = require('../config/tasks_config.json');
 
-var api = {
+var layout;
+
+var controllers = {
 
   showList: function () {
 
-    // Create its view
-    var view = new ListView({ collection: tasks });
-
     // Then swap the view into the default region
-    view.swap({
+    layout.swap({
+
+      controller: new List({ collection: tasks }),
 
       // Inject debug settings, temp
       debug: config.debug,
@@ -21,7 +34,9 @@ var api = {
       delay: Math.random() * 2000,
 
       // And show the loader if necessary
-      loading: tasks.promise()
+      loading: tasks.promise(),
+
+      region: 'content'
 
     });
 
@@ -32,11 +47,10 @@ var api = {
     // Get or create the model
     var item = tasks.add({ id: itemid });
 
-    // Create its view with model
-    var view = new CardView({ model: item });
-
     // Then swap the view into the default region
-    view.swap({
+    layout.swap({
+
+      controller: new Card({ model: item }),
 
       // Inject debug settings, temp
       debug: config.debug,
@@ -45,7 +59,9 @@ var api = {
       delay: Math.random() * 1000,
 
       // And show the loader if necessary
-      loading: item.promise()
+      loading: item.promise(),
+
+      region: 'content'
 
     }); 
 
@@ -55,8 +71,9 @@ var api = {
 
 module.exports = {
 
-  start: function () {
-    new Router({ controller: api });
+  start: function (b) {
+    layout = b;
+    new Router({ api: controllers });
     return this;
   }
   

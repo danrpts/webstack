@@ -1,5 +1,4 @@
 - [ ] Persist task list changes across all open clients in the same browser
 - [ ] Pushstate
-- [ ] Dry up views
-- [ ] Push more responsibility onto controller. Controller class
-- [ ] Root app/controller instance
+- [ ] Rename View class to Controller
+- [ ] Integrate "Layout" class and include layout html i.e. dashboard_layoutTemplate.html

@@ -35,7 +35,7 @@ var specials =  {
 
 }
 
-function Collection (models, options) {
+var Collection = module.exports = function (models, options) {
   Backbone.Collection.apply(this, arguments);
 }
 
@@ -44,5 +44,3 @@ Collection.prototype = create(Backbone.Collection.prototype);
 _.extend(Collection.prototype, specials, helpers);
 
 Collection.extend = Backbone.Collection.extend;
-
-module.exports = Collection;

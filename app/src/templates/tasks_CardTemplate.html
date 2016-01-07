@@ -1,25 +1,21 @@
 <div class="app">
 
-    <div class="mdl-card__menu">
-      <button class="mdl-button mdl-js-button mdl-button--fab toggle <% has('completed') ? print('green') : print('red') %>">
-        <i class="material-icons">done</i>
-      </button>
-    </div>
-
     <div class="mdl-card mdl-shadow--2dp">
 
-      <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text"></h2>
+      <div class="mdl-card__menu">
+        <i class="material-icons"><% has('completed') ? print('check_box') : print('check_box_outline_blank') %></i>
       </div>
+
+      <div class="mdl-card__title"></div>
 
       <div class="mdl-card__supporting-text">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" id="title-input" length="23">
+          <input class="mdl-textfield__input" type="text" id="title-input" length="23" <% has('completed') && print('disabled')%> >
           <label class="mdl-textfield__label" for="title-input"><%- get('title') %></label>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <textarea class="mdl-textfield__input" type="text" rows= "1" id="details-input" ></textarea>
+          <textarea class="mdl-textfield__input" type="text" rows= "1" id="details-input" <% has('completed') && print('disabled')%>></textarea>
           <label class="mdl-textfield__label" for="details-input"><% has('details') ? print(get('details')) : print("Add details") %></label>
         </div>
       </div>
@@ -29,14 +25,14 @@
         <button class="mdl-button mdl-js-button mdl-button--icon back">
           <i class="material-icons">arrow_back</i>
         </button>
+        
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect delete">
+          Delete
+        </a>
 
-        <button class="mdl-button mdl-js-button mdl-button--icon delete">
-          <i class="material-icons">delete</i>
-        </button>
-
-        <button class="mdl-button mdl-js-button mdl-button--icon mood">
-          <i class="material-icons">mood</i>
-        </button>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect toggle">
+          Toggle Completion
+        </a>
 
       </div>
 

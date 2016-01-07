@@ -1,12 +1,12 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View.js');
-var ItemView = require('./tasks_ItemView.js');
+var Controller = require('../classes/Controller.js');
+var Item = require('./tasks_item_Controller.js');
 var config = require('../config/tasks_config.json');
 var codes = require('../config/keycodes_config.json');
 
-var ListView = View.extend({
+var List = module.exports = Controller.extend({
 
   events: {
     'mouseup .all' : 'all',
@@ -14,6 +14,7 @@ var ListView = View.extend({
     'keyup #input-title': 'enter'
   },
   
+  // Define the view
   template: require('../../templates/tasks_ListTemplate.html'),
 
   all: function () {
@@ -30,6 +31,7 @@ var ListView = View.extend({
 
       // Coax flag into boolean
       model.check(!!flag);
+
     });
 
   },
@@ -49,14 +51,12 @@ var ListView = View.extend({
 
     // List building function
     function list () {
-      this.repeat(ItemView).appendTo(this.$('ul#task-items'));
+      this.repeat(Item).appendTo(this.$('ul#task-items'));
     }
 
     // Call the base renderer
-    return View.prototype.render.call(this, list);
+    return Controller.prototype.render.call(this, list);
 
   }
 
 });
-
-module.exports = ListView;

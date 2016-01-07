@@ -4,10 +4,10 @@ var closure = require('./presenter_helpers.js');
 
 module.exports = {
 
-  repeat: function (View) {
+  repeat: function (Controller) {
     var $fragment = $(document.createDocumentFragment());
     this.collection.each(function (model) {
-      new View({model: model}).render().$el.appendTo($fragment);
+      new Controller({model: model}).render().$el.appendTo($fragment);
     });
     return $fragment;
   },
@@ -21,7 +21,7 @@ module.exports = {
       entity = this.model || this.collection || false;
 
       // When it's the intitial render, build the presenter
-      (!this.rendered) && (!!entity) && (this.presenter = closure.call(entity));
+      (!this._rendered) && (!!entity) && (this.presenter = closure.call(entity));
 
       // Allow overriding of underscore's templater
       templater = _.isFunction(this.templater) ? this.templater : _.template;
@@ -46,13 +46,13 @@ module.exports = {
       this.compile();
 
       // When it's the initial render
-      if (!this.rendered) {
+      if (!this._rendered) {
 
         // Place in DOM
         this.setElement(this.$compiled);
 
         // Set render state
-        this.rendered = true;
+        this._rendered = true;
       }
 
       // When it's a re-render

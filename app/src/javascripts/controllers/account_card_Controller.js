@@ -1,14 +1,15 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var View = require('../classes/View.js');
+var Controller = require('../classes/Controller.js');
 var google = require('../helpers/google_helpers.js');
 var closure = require('../helpers/presenter_helpers.js');
 
-var CardView = View.extend({
+module.exports = Controller.extend({
 
   events: {
     'mouseup .back': 'back',
+    'mouseup .grant': 'grant',
     'mouseup .signout': 'signout'
   },
 
@@ -22,6 +23,11 @@ var CardView = View.extend({
     Backbone.trigger('goto:tasks', '');
   },
 
+  grant: function () {
+    var that = this;
+    google.grantOfflineAccess().then(google.postToServer);
+  },
+
   signout: function () {
     var that = this;
     google.signOut().then(function () {
@@ -30,5 +36,3 @@ var CardView = View.extend({
   }
   
 });
-
-module.exports = CardView;

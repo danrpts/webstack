@@ -10,16 +10,18 @@ var AccountModel = Model.extend({
   defaults: {
     'name': null,
     'imageUrl': null,
-    'email': null
+    'email': null,
+    'fullySignedIn': false
   },
 
   initialize: function () {
 
     // Initiate the Google OAuth2 API
-    google.start();
+    google.connect();
 
     // Listen for special Google events
     Backbone.Events.listenTo.call(this, Backbone, 'google:isSignedIn', this.toggle);
+    Backbone.Events.listenTo.call(this, Backbone, 'google:isFullySignedIn', this.fully);
 
   },
 
@@ -46,6 +48,13 @@ var AccountModel = Model.extend({
       this.clear();
     }
 
+  },
+
+  fully: function (status) {
+    config.debug && status && console.log('Fully signing in...');
+    this.set({
+      'fullySignedIn': status
+    });
   },
 
   // temporary override
