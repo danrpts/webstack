@@ -1,4 +1,5 @@
-var _ = require('underscore');
-var account = require('../models/account_Model.js');
+'use strict';
 
-module.exports =  new account.Model();
+var AccountModel = require('../models/account_Model.js');
+
+module.exports =  new AccountModel();

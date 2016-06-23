@@ -1,19 +1,16 @@
 'use strict';
+
 var $ = require('jquery');
-var Backbone = require('backbone');
-Backbone.LocalStorage = require('backbone.localstorage');
-var Basic = require('./layouts/basic_Layout.js');
+var backbone = require('backbone');
+backbone.LocalStorage = require('backbone.localstorage');
+var TransitionRouter = require('./routers/transition_Router.js');
 
 $(function() {
 
-  // Initiate the account module
-  //account.start();
+  window.transition = new TransitionRouter();
 
-  // Initiate the tasks module
-  var b = new Basic().swap();
-  require('./layouts/todo_layout_controller.js').start(b);
-
-  // TODO: { pushState: true } requires thought out server mods
-  Backbone.history.start(); 
+  // TODO:
+  // Using { pushState: true } requires thought-out server
+  backbone.history.start(); 
 
 });

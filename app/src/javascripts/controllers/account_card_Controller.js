@@ -1,38 +1,38 @@
+'use strict';
+
 var $ = require('jquery');
 var _ = require('underscore');
-var Backbone = require('backbone');
-var Controller = require('../classes/Controller.js');
-var google = require('../helpers/google_helpers.js');
-var closure = require('../helpers/presenter_helpers.js');
+var PageView = require('../views/default_page_View.js');
+var LinkView = require('../views/account_link_View.js');
+var CardView = require('../views/account_card_View.js');
+var account = require('../singletons/account_singleton.js');
+var page = require('../singletons/page_singleton.js');
 
-module.exports = Controller.extend({
+module.exports = function () {
 
-  events: {
-    'mouseup .back': 'back',
-    'mouseup .grant': 'grant',
-    'mouseup .signout': 'signout'
-  },
+  (!!page)
+    && page.remove();
 
-  template: require('../../templates/account_CardTemplate.html'),
-  
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
+  (page = new PageView())
 
-  back: function () {
-    Backbone.trigger('goto:tasks', '');
-  },
+  .insert($('[data-region="layout"]'))
 
-  grant: function () {
-    var that = this;
-    google.grantOfflineAccess().then(google.postToServer);
-  },
+  .then(function () {
 
-  signout: function () {
-    var that = this;
-    google.signOut().then(function () {
-      that.back(); 
+    (new LinkView({ model: account }))
+
+    .insert(page.$('[data-region="header"]'));
+
+    (new CardView({ model: account }))
+
+    .insert(page.$('[data-region="content"]'), {
+
+      wait: account.promise(),
+      
+      delay: 0
+
     });
-  }
-  
-});
+
+  });
+
+}

@@ -1,4 +1,11 @@
-- [ ] Persist task list changes across all open clients in the same browser
-- [ ] Pushstate
-- [ ] Rename View class to Controller
-- [ ] Integrate "Layout" class and include layout html i.e. dashboard_layoutTemplate.html
+- [ ] Persist task list changes across all open clients in the same browser (app specific)
+- [ ] Pushstate (needs server mods)
+- [x] Early integration of promises w/ controller and view logic
+- [ ] Enitity promises fire events on views (see next item)
+- [ ] Deprecate controllers (see next item)
+- [ ] Use small functions to instance page views in router definition
+- [ ] Orthogonal state (https://youtu.be/UAl_N62gKmM?t=22m11s)
+- [ ] Rethink window.transition global (the router singleton)
+- [ ] Rethink "account" custom methods so that it has signin/signout methods
+- [ ] Add config object for entire app (debug settings and more)
+- [ ] Research testing techniques

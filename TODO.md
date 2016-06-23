@@ -1,4 +1,5 @@
 - [ ] CSS watcher
 - [ ] Watch for Gulp 4 release and then update code i.e. gulp-util
 - [ ] Customize express server
-- [ ] ES6
+- [ ] Think about ES6
+- [ ] Pushstate

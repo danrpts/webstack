@@ -1,8 +1,11 @@
-var _ = require('underscore');
-var api = require('../config/rest_config.json');
+'use strict';
 
-var api = function (type) {
+var rest = require('../config/rest_config.json');
+
+module.exports = {
   
-}
+  api: function (resource) {
+  
+  }
 
-module.exports = api;
+}

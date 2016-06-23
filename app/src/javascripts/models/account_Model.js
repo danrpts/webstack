@@ -1,11 +1,11 @@
+'use strict';
+
 var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
+var backbone = require('backbone');
 var Model = require('../classes/Model.js');
-var config = require('../config/account_config.json');
 var google = require('../helpers/google_helpers.js');
 
-var AccountModel = Model.extend({
+module.exports = Model.extend({
 
   defaults: {
     'name': null,
@@ -16,12 +16,14 @@ var AccountModel = Model.extend({
 
   initialize: function () {
 
+    console.log('Signing in...');
+
     // Initiate the Google OAuth2 API
     google.connect();
 
     // Listen for special Google events
-    Backbone.Events.listenTo.call(this, Backbone, 'google:isSignedIn', this.toggle);
-    Backbone.Events.listenTo.call(this, Backbone, 'google:isFullySignedIn', this.fully);
+    backbone.Events.listenTo.call(this, backbone, 'google:isSignedIn', this.toggle);
+    backbone.Events.listenTo.call(this, backbone, 'google:isFullySignedIn', this.fully);
 
   },
 
@@ -30,7 +32,7 @@ var AccountModel = Model.extend({
 
     if (isSignedIn) {
 
-      config.debug && console.log('Signing in...');
+      console.log('...signed in.');
 
       profile = google.profile();
 
@@ -44,14 +46,14 @@ var AccountModel = Model.extend({
     }
 
     else {
-      config.debug && console.log('Signing out...');
+      console.log('...signed out.');
       this.clear();
     }
 
   },
 
   fully: function (status) {
-    config.debug && status && console.log('Fully signing in...');
+    status && console.log('...fully signed in.');
     this.set({
       'fullySignedIn': status
     });
@@ -63,9 +65,3 @@ var AccountModel = Model.extend({
   }
 
 });
-
-module.exports = {
-
-  Model: AccountModel
-
-}

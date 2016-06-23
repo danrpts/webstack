@@ -1,5 +1,7 @@
+'use strict';
+
 var $ = require('jquery');
-var Backbone = require('backbone');
+var backbone = require('backbone');
 var google = require('../config/google_config.json');
 
 module.exports = {
@@ -42,13 +44,13 @@ module.exports = {
         // Then initiate a new 'auth client' with Google
         var initiated = gapi.auth2.init({ 'client_id': google.client_id });
 
-        // Integrate Google's event system with Backbone
+        // Integrate Google's event system with backbone
         initiated.isSignedIn.listen(function (status) {
-          Backbone.trigger('google:isSignedIn', status);
+          backbone.trigger('google:isSignedIn', status);
         });
 
         initiated.currentUser.listen(function (user) {
-          Backbone.trigger('google:currentUser', user);
+          backbone.trigger('google:currentUser', user);
         });
 
         // Bind the context and resolve
@@ -141,7 +143,7 @@ module.exports = {
       dataType: 'json',
       processData: false,
       success: function (data, status, xhr) {
-        Backbone.trigger('google:isFullySignedIn', true);
+        backbone.trigger('google:isFullySignedIn', true);
         response.resolveWith(that, [data]);
       }
     });

@@ -1,62 +1,39 @@
+'use strict';
+
 var $ = require('jquery');
 var _ = require('underscore');
-var Backbone = require('backbone');
-var Controller = require('../classes/Controller.js');
-var Item = require('./tasks_item_Controller.js');
-var config = require('../config/tasks_config.json');
-var codes = require('../config/keycodes_config.json');
+var PageView = require('../views/default_page_View.js');
+var LinkView = require('../views/account_link_View.js');
+var ListView = require('../views/tasks_list_View.js');
+var account = require('../singletons/account_singleton.js');
+var tasks = require('../singletons/tasks_singleton.js');
+var page = require('../singletons/page_singleton.js');
 
-var List = module.exports = Controller.extend({
+module.exports = function () {
 
-  events: {
-    'mouseup .all' : 'all',
-    'mouseup .clear' : 'clear',
-    'keyup #input-title': 'enter'
-  },
-  
-  // Define the view
-  template: require('../../templates/tasks_ListTemplate.html'),
+  (!!page)
+    && page.remove();
 
-  all: function () {
+  (page = new PageView())
 
-    // Returns model if found
-    var flag = this.collection.find(function (model) {
+  .insert($('[data-region="layout"]'))
 
-      // Detect a falsy value
-      return !model.get('completed');
-    });
+  .then(function () {
 
-    // Set all true if any flag otherwise set all false
-    this.collection.each(function (model) {
+    (new LinkView({ model: account }))
 
-      // Coax flag into boolean
-      model.check(!!flag);
+    .insert(page.$('[data-region="header"]'));
+
+    (new ListView({ collection: tasks }))
+
+    .insert(page.$('[data-region="content"]'), {
+
+      wait: tasks.promise(),
+      
+      delay: 0
 
     });
 
-  },
+  });
 
-  enter: function (event) {
-
-    if (event.which === codes['ENTER']) {
-      var input = this.$('#input-title');
-      this.collection.create({'created': Date.now(), 'title': input.val().trim()}, {wait: true});
-      input.val('');
-      this.render();
-    }
-
-  },
-
-  render: function () {
-
-    // List building function
-    function list () {
-      this.repeat(Item).appendTo(this.$('ul#task-items'));
-    }
-
-    // Call the base renderer
-    return Controller.prototype.render.call(this, list);
-
-  }
-
-});
+}

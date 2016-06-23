@@ -70,10 +70,10 @@ app.use(function (err, req, res, next) {
 app.use(function (err, req, res, next) {
   var code = err.code || 500;
   var lookup = require('./config/errors_config.json');
-  var isDev = (app.get('env') === 'development');
+  var dev = (app.get('env') === 'development');
   if (res.headersSent) return next(err);
   res.status(code);
-  res.render('error', { code: code, message: lookup[code], error: isDev ? err : undefined });
+  res.render('error', { code: code, message: lookup[code], error: dev ? err : undefined });
 });
 
 module.exports = app;

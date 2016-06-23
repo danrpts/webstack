@@ -1,58 +1,41 @@
+'use strict';
+
 var $ = require('jquery');
 var _ = require('underscore');
-var Backbone = require('backbone');
-var Controller = require('../classes/Controller.js');
-var config = require('../config/tasks_config.json');
-var closure = require('../helpers/presenter_helpers.js');
+var PageView = require('../views/default_page_View.js');
+var LinkView = require('../views/account_link_View.js');
+var CardView = require('../views/tasks_card_View.js');
+var account = require('../singletons/account_singleton.js');
+var tasks = require('../singletons/tasks_singleton.js');
+var page = require('../singletons/page_singleton.js');
 
-module.exports = Controller.extend({
+module.exports = function (itemid) {
 
-  events: {
-    'mouseup .toggle': 'toggle',
-    'mouseup .back': 'back',
-    'mouseup .delete': 'delete',
-    'mouseup .mood': 'easterEgg',
-    'blur #title-input': 'updateTitle',
-    'blur #details-input': 'updateDetails'
-  },
+  (!!page)
+    && page.remove();
 
-  template: require('../../templates/tasks_CardTemplate.html'),
-  
-  initialize: function () {
-    // this is bugged
-    // change is fired on sync due to localstorage, promise and events combo
-    // causes premature render
-    // need to rethink
-    // may be an edge case
-    // mixing promises and backbones event system is difficult...
-    this.listenTo(this.model, 'change', this.render);
-  },
+  (page = new PageView())
 
-  toggle: function () {
-    this.model.toggle();
-  },
+  .insert($('[data-region="layout"]'))
 
-  back: function () {
-    Backbone.trigger('goto:' + config.name, '');
-  },
+  .then(function () {
 
-  delete: function () {
-    this.model.destroy();
-    this.remove();
-    this.back();
-  },
+    (new LinkView({ model: account }))
 
-  easterEgg: function () {
-    this.$('.mdl-card__title').toggleClass('cats');
-  },
+    .insert(page.$('[data-region="header"]'));
 
-  updateTitle: function () {
-    this.model.save({'title': this.$('#title-input').val().trim()}, {wait: true});
-  },
+    var item = tasks.add({ id: itemid });
 
-  updateDetails: function () {
-    this.model.save({'details': this.$('#details-input').val().trim()}, {wait: true});
-  }
-  
-});
+    (new CardView({ model: item }))
 
+    .insert(page.$('[data-region="content"]'), {
+
+      wait: item.promise(),
+      
+      delay: 0
+
+    });
+
+  });
+
+}

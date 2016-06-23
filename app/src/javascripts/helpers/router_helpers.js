@@ -1,7 +1,19 @@
+'use strict';
+
+var backbone = require('backbone');
+
 module.exports = {
   
-  goto: function (fragment) {
-    this.navigate(fragment, {trigger: true});
+  to: function (fragment) {
+    backbone.Router.prototype.navigate.call(this, fragment, true);
+  },
+
+  back: function () {
+    window.history.back();
+  },
+
+  forward: function () {
+    window.history.forward();
   }
 
 }
