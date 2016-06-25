@@ -470,6 +470,33 @@ module.exports = {
 
     return intermediary;
 
+  },
+
+  // High-level append renderer
+  append: function ($region, options) {
+
+    var intermediary;
+
+    options = options || {};
+
+    _.defaults(options, {
+      wait: false,
+      delay: 0
+    });
+
+    intermediary
+      = (!!options.wait)
+      ? this.wait($region, options.wait, { delay: options.delay })
+      : $.Deferred().resolveWith(this);
+
+    intermediary.done(function () {
+
+      $region.append(this.render().$el);
+
+    });
+
+    return intermediary;
+
   }
 
 }
@@ -822,8 +849,8 @@ module.exports = View.extend({
   template: require('../../templates/tasks_card_template.html'),
 
   events: {
-    'blur .title-input': 'updateTitle',
-    'blur .details-input': 'updateDetails',
+    'blur #inputTitle': 'updateTitle',
+    'blur #inputDetails': 'updateDetails',
     'mouseup #transitionBack': 'transitionBack',
     'mouseup #transitionHome': 'transitionHome',
     'mouseup #delete': 'delete',
@@ -837,14 +864,14 @@ module.exports = View.extend({
 
   updateTitle: function () {
     this.model.save({
-      'title': this.$('#title-input').val().trim()
+      'title': this.$('#inputTitle').val().trim()
     },
     { wait: true });
   },
 
   updateDetails: function () {
     this.model.save({
-      'details': this.$('#details-input').val().trim()
+      'details': this.$('#inputDetails').val().trim()
     },
     { wait: true });
   },
@@ -872,6 +899,7 @@ module.exports = View.extend({
 },{"../../templates/tasks_card_template.html":32,"../classes/View.js":4,"underscore":"underscore"}],27:[function(require,module,exports){
 'use strict';
 
+var _ = require('underscore');
 var View = require('../classes/View.js');
 
 module.exports = View.extend({
@@ -897,13 +925,20 @@ module.exports = View.extend({
   },
 
   delete: function () {
+    var remove = _.bind(this.remove, this);
     this.model.destroy();
-    this.remove();
+    this.$el.fadeOut(remove);
+  },
+
+  render: function () {
+    return View.prototype.render.call(this, function () {
+      this.$el.fadeIn();
+    });
   }
   
 });
 
-},{"../../templates/tasks_item_template.html":33,"../classes/View.js":4}],28:[function(require,module,exports){
+},{"../../templates/tasks_item_template.html":33,"../classes/View.js":4,"underscore":"underscore"}],28:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -917,7 +952,7 @@ module.exports = View.extend({
 
   events: {
     'mouseup #toggleAllCompletion' : 'toggleAllCompletion',
-    'keyup .input-title' : 'onKeyup'
+    'keyup #inputTitle' : 'onEnter'
   },
 
   toggleAllCompletion: function () {
@@ -933,36 +968,34 @@ module.exports = View.extend({
     });
   },
 
-  onKeyup: function (event) {
+  onEnter: function (event) {
     if (event.which === codes['ENTER']) {
-      var input = this.$('#input-title');
-      this.collection.create({
-        'created': Date.now(),
-        'title': input.val().trim()
-      },
-      { wait: true });
-      input.val('').blur();
-      this.render();
+      this.appendItem();
     }
   },
 
+  appendItem: function (item) {
+    var $input = this.$('#inputTitle');
+    var $region = this.$('ul#task-items');
+    item = item || this.collection.create({
+      'created': Date.now(),
+      'title': $input.val().trim()
+    },
+    { wait: true });
+    $input.val('');
+    (new ItemView({ model: item }))
+    .append($region);
+  },
+
   render: function () {
-    
     return View.prototype.render.call(this, function () {
-     
       var $fragment = $(document.createDocumentFragment());
-      
       this.collection.each(function (item) {
         (new ItemView({ model: item }))
         .insert($fragment);
       });
-
       $fragment.appendTo(this.$('ul#task-items'));
-
-      this.$el.hide().fadeIn();
-    
     });
-  
   }
 
 });
@@ -977,12 +1010,12 @@ module.exports = "<a class=\"mdl-navigation__link\">\n  <button id=\"<% has('id'
 module.exports = "<div>\n  <div class=\"mdl-layout mdl-js-layout mdl-layout--fixed-header\">\n    <header class=\"mdl-layout__header mdl-layout__header--transparent\">\n      <div class=\"mdl-layout__header-row\">\n        <!-- <span class=\"mdl-layout-title\">Title</span> -->\n        <div class=\"mdl-layout-spacer\"></div>\n        <nav class=\"mdl-navigation mdl-layout--large-screen-only\" data-region=\"header\"></nav>\n      </div>\n    </header>\n    <main class=\"mdl-layout__content\">\n      <div class=\"page-content\" data-region=\"content\"></div>\n    </main>\n    <div data-region=\"footer\"></div>\n  </div>\n</div>";
 
 },{}],32:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__menu\">\n        <i class=\"material-icons\"><% has('completed') ? print('check_box') : print('check_box_outline_blank') %></i>\n      </div>\n\n      <div class=\"mdl-card__title\"></div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"title-input\" length=\"23\" <% has('completed') && print('disabled')%> >\n          <label class=\"mdl-textfield__label\" for=\"title-input\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"details-input\" <% has('completed') && print('disabled')%>></textarea>\n          <label class=\"mdl-textfield__label\" for=\"details-input\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button id=\"transitionBack\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button id=\"transitionHome\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n          <i class=\"material-icons\">home</i>\n        </button>\n\n        <a id=\"delete\" class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\">\n          Delete\n        </a>\n\n        <a id=\"toggleCompletion\" class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\">\n          Toggle Completion\n        </a>\n\n      </div>\n\n    </div>\n\n</div>\n";
+module.exports = "<div class=\"app\">\n\n    <div class=\"mdl-card mdl-shadow--2dp\">\n\n      <div class=\"mdl-card__menu\">\n        <i class=\"material-icons\"><% has('completed') ? print('check_box') : print('check_box_outline_blank') %></i>\n      </div>\n\n      <div class=\"mdl-card__title\"></div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <input class=\"mdl-textfield__input\" type=\"text\" id=\"inputTitle\" length=\"23\" <% has('completed') && print('disabled')%> >\n          <label class=\"mdl-textfield__label\" for=\"inputTitle\"><%- get('title') %></label>\n        </div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n          <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"1\" id=\"inputDetails\" <% has('completed') && print('disabled')%>></textarea>\n          <label class=\"mdl-textfield__label\" for=\"inputDetails\"><% has('details') ? print(get('details')) : print(\"Add details\") %></label>\n        </div>\n      </div>\n\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n        <button id=\"transitionBack\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n          <i class=\"material-icons\">arrow_back</i>\n        </button>\n\n        <button id=\"transitionHome\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n          <i class=\"material-icons\">home</i>\n        </button>\n\n        <a id=\"delete\" class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\">\n          Delete\n        </a>\n\n        <a id=\"toggleCompletion\" class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\">\n          Toggle Completion\n        </a>\n\n      </div>\n\n    </div>\n\n</div>\n";
 
 },{}],33:[function(require,module,exports){
 module.exports = "<li>\n  <div class=\"mdl-card mdl-shadow--2dp\">\n    <div class=\"mdl-card__supporting-text\">\n\n    <div class=\"avatar-wrapper left right\">\n\n      <div class=\"avatar left\">\n        <label id=\"toggleCompletion\" class=\"mdl-checkbox mdl-js-checkbox\" for=\"checkbox-<%- get('id') %>\">\n          <input type=\"checkbox\" id=\"checkbox-<%- get('id') %>\" class=\"mdl-checkbox__input\" <% has('completed') && print('checked') %>>\n        </label>\n      </div>\n\n      <p id=\"transitionToTask\" class=\"<% has('completed') && print('completed') %>\"><%- get('title') %></p>\n\n      <span>\n        <% has('details') && print(get('details'), '<br>') %>\n        <% print(format('created'), '<br>') %>\n        <% has('due') && print(format('due'), '<br>') %>\n        <% has('completed') && print(format('completed')) %>\n      </span>\n\n      <div class=\"avatar right\">\n        <button id=\"delete\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n          <i class=\"material-icons\">delete</i>\n        </button>\n      </div>\n\n    </div>\n\n    </div>\n  </div>\n</li>";
 
 },{}],34:[function(require,module,exports){
-module.exports = "<div class=\"app\">\n\n  <div class=\"avatar-wrapper right\">\n    <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n      <input class=\"mdl-textfield__input\" type=\"text\" id=\"input-title\" length=\"23\">\n      <label class=\"mdl-textfield__label\" for=\"input-title\">What needs to be done?</label>\n    </div>\n\n    <div class=\"avatar-fab right\">\n      <button id=\"toggleAllCompletion\" class=\"mdl-button mdl-js-button mdl-button--fab\">\n        <i class=\"material-icons\">done_all</i>\n      </button>\n    </div>\n  </div>\n  \n  <ul id=\"task-items\"></ul>\n\n</div>\n";
+module.exports = "<div class=\"app\">\n\n  <div class=\"avatar-wrapper right\">\n    <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--floating-label\">\n      <input class=\"mdl-textfield__input\" type=\"text\" id=\"inputTitle\" length=\"23\">\n      <label class=\"mdl-textfield__label\" for=\"inputTitle\">What needs to be done?</label>\n    </div>\n\n    <div class=\"avatar-fab right\">\n      <button id=\"toggleAllCompletion\" class=\"mdl-button mdl-js-button mdl-button--fab\">\n        <i class=\"material-icons\">done_all</i>\n      </button>\n    </div>\n  </div>\n  \n  <ul id=\"task-items\"></ul>\n\n</div>\n";
 
 },{}]},{},[14]);

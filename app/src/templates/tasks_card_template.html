@@ -10,13 +10,13 @@
 
       <div class="mdl-card__supporting-text">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" id="title-input" length="23" <% has('completed') && print('disabled')%> >
-          <label class="mdl-textfield__label" for="title-input"><%- get('title') %></label>
+          <input class="mdl-textfield__input" type="text" id="inputTitle" length="23" <% has('completed') && print('disabled')%> >
+          <label class="mdl-textfield__label" for="inputTitle"><%- get('title') %></label>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <textarea class="mdl-textfield__input" type="text" rows= "1" id="details-input" <% has('completed') && print('disabled')%>></textarea>
-          <label class="mdl-textfield__label" for="details-input"><% has('details') ? print(get('details')) : print("Add details") %></label>
+          <textarea class="mdl-textfield__input" type="text" rows= "1" id="inputDetails" <% has('completed') && print('disabled')%>></textarea>
+          <label class="mdl-textfield__label" for="inputDetails"><% has('details') ? print(get('details')) : print("Add details") %></label>
         </div>
       </div>
 

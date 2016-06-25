@@ -11,7 +11,7 @@ module.exports = View.extend({
 
   events: {
     'mouseup #toggleAllCompletion' : 'toggleAllCompletion',
-    'keyup .input-title' : 'onKeyup'
+    'keyup #inputTitle' : 'onEnter'
   },
 
   toggleAllCompletion: function () {
@@ -27,36 +27,34 @@ module.exports = View.extend({
     });
   },
 
-  onKeyup: function (event) {
+  onEnter: function (event) {
     if (event.which === codes['ENTER']) {
-      var input = this.$('#input-title');
-      this.collection.create({
-        'created': Date.now(),
-        'title': input.val().trim()
-      },
-      { wait: true });
-      input.val('').blur();
-      this.render();
+      this.appendItem();
     }
   },
 
+  appendItem: function (item) {
+    var $input = this.$('#inputTitle');
+    var $region = this.$('ul#task-items');
+    item = item || this.collection.create({
+      'created': Date.now(),
+      'title': $input.val().trim()
+    },
+    { wait: true });
+    $input.val('');
+    (new ItemView({ model: item }))
+    .append($region);
+  },
+
   render: function () {
-    
     return View.prototype.render.call(this, function () {
-     
       var $fragment = $(document.createDocumentFragment());
-      
       this.collection.each(function (item) {
         (new ItemView({ model: item }))
         .insert($fragment);
       });
-
       $fragment.appendTo(this.$('ul#task-items'));
-
-      this.$el.hide().fadeIn();
-    
     });
-  
   }
 
 });

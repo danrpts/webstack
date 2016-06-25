@@ -156,6 +156,33 @@ module.exports = {
 
     return intermediary;
 
+  },
+
+  // High-level append renderer
+  append: function ($region, options) {
+
+    var intermediary;
+
+    options = options || {};
+
+    _.defaults(options, {
+      wait: false,
+      delay: 0
+    });
+
+    intermediary
+      = (!!options.wait)
+      ? this.wait($region, options.wait, { delay: options.delay })
+      : $.Deferred().resolveWith(this);
+
+    intermediary.done(function () {
+
+      $region.append(this.render().$el);
+
+    });
+
+    return intermediary;
+
   }
 
 }

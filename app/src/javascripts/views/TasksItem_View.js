@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var View = require('../classes/View.js');
 
 module.exports = View.extend({
@@ -25,8 +26,15 @@ module.exports = View.extend({
   },
 
   delete: function () {
+    var remove = _.bind(this.remove, this);
     this.model.destroy();
-    this.remove();
+    this.$el.fadeOut(remove);
+  },
+
+  render: function () {
+    return View.prototype.render.call(this, function () {
+      this.$el.fadeIn();
+    });
   }
   
 });

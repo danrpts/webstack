@@ -8,8 +8,8 @@ module.exports = View.extend({
   template: require('../../templates/tasks_card_template.html'),
 
   events: {
-    'blur .title-input': 'updateTitle',
-    'blur .details-input': 'updateDetails',
+    'blur #inputTitle': 'updateTitle',
+    'blur #inputDetails': 'updateDetails',
     'mouseup #transitionBack': 'transitionBack',
     'mouseup #transitionHome': 'transitionHome',
     'mouseup #delete': 'delete',
@@ -23,14 +23,14 @@ module.exports = View.extend({
 
   updateTitle: function () {
     this.model.save({
-      'title': this.$('#title-input').val().trim()
+      'title': this.$('#inputTitle').val().trim()
     },
     { wait: true });
   },
 
   updateDetails: function () {
     this.model.save({
-      'details': this.$('#details-input').val().trim()
+      'details': this.$('#inputDetails').val().trim()
     },
     { wait: true });
   },
