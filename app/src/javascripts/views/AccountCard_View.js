@@ -1,42 +1,37 @@
 'use strict';
 
 var View = require('../classes/View.js');
-var google = require('../helpers/google_helpers.js');
+var account = require('../singletons/account_singleton.js');
 
 module.exports = View.extend({
 
   template: require('../../templates/account_card_template.html'),
 
   events: {
-    'mouseup .back': 'back',
-    'mouseup .home': 'home',
-    'mouseup .forward': 'forward',
-    'mouseup .grant': 'grant',
-    'mouseup .signout': 'signout'
+    'mouseup #transitionBack': 'transitionBack',
+    'mouseup #transitionHome': 'transitionHome',
+    'mouseup #grantOfflineAccess': 'grantOfflineAccess',
+    'mouseup #signOut': 'signOut'
   },
   
   initialize: function () {
     this.listenTo(this.model, 'change', this.render);
   },
 
-  back: function () {
+  transitionBack: function () {
      window.transition.back();
   },
 
-  home: function () {
+  transitionHome: function () {
      window.transition.to('');
   },
 
-  forward: function () {
-     window.transition.forward();
+  grantOfflineAccess: function () {
+    account.grantOfflineAccess();
   },
 
-  grant: function () {
-    google.grantOfflineAccess().then(google.postToServer);
-  },
-
-  signout: function () {
-    google.signOut().then(transition.back);
+  signOut: function () {
+    account.signOut(this.transitionHome);
   },
 
   render: function () {

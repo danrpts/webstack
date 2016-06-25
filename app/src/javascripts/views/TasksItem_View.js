@@ -7,20 +7,20 @@ module.exports = View.extend({
   template: require('../../templates/tasks_item_template.html'),
 
   events: {
-    'mouseup .toggle' : 'toggle',
-    'mouseup .open' : 'open',
-    'mouseup .delete' : 'delete'
+    'mouseup #toggleCompletion' : 'toggleCompletion',
+    'mouseup #transitionToTask' : 'transitionToTask',
+    'mouseup #delete' : 'delete'
   },
 
   initialize: function () {
     this.listenTo(this.model, 'change', this.render);
   },
 
-  toggle: function () {
-    this.model.toggle();
+  toggleCompletion: function () {
+    this.model.toggleCompletion();
   },
 
-  open: function () {
+  transitionToTask: function () {
      window.transition.to('tasks/' + this.model.id);
   },
 

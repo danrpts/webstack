@@ -5,12 +5,12 @@
     <div class="avatar-wrapper left right">
 
       <div class="avatar left">
-        <label class="mdl-checkbox mdl-js-checkbox toggle" for="checkbox-<%- get('id') %>">
+        <label id="toggleCompletion" class="mdl-checkbox mdl-js-checkbox" for="checkbox-<%- get('id') %>">
           <input type="checkbox" id="checkbox-<%- get('id') %>" class="mdl-checkbox__input" <% has('completed') && print('checked') %>>
         </label>
       </div>
 
-      <p class="open <% has('completed') && print('completed') %>"><%- get('title') %></p>
+      <p id="transitionToTask" class="<% has('completed') && print('completed') %>"><%- get('title') %></p>
 
       <span>
         <% has('details') && print(get('details'), '<br>') %>
@@ -20,7 +20,7 @@
       </span>
 
       <div class="avatar right">
-        <button class="mdl-button mdl-js-button mdl-button--icon delete">
+        <button id="delete" class="mdl-button mdl-js-button mdl-button--icon">
           <i class="material-icons">delete</i>
         </button>
       </div>

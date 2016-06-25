@@ -5,7 +5,7 @@ var Collection = require('../classes/Collection.js');
 
 module.exports = Collection.extend({
 
-  model: require('./tasks_Model.js'),
+  model: require('./Tasks_Model.js'),
   
   localStorage: new backbone.LocalStorage('TasksApp')
 

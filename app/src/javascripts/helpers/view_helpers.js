@@ -66,12 +66,12 @@ module.exports = {
     // Set state
     this.rendered = true;
 
+    // Material Design Lite (MDL)
+    componentHandler.upgradeElements(this.el);
+
     // Allow injection of async code
     _.isFunction(callback)
       && callback.call(this);
-
-    // Material Design Lite (MDL)
-    componentHandler.upgradeElements(this.el);
 
     // Force chaining on this
     return this;

@@ -16,6 +16,10 @@ p {
   margin: 0;
 }
 
+a {
+  color: grey !important;
+}
+
 .app {
   position: relative;
   padding-top: 30px;
@@ -28,15 +32,19 @@ p {
   display: block;
 }
 
-.complete {
+p.completed {
   text-decoration: line-through;
 }
 
-.open {
+p#transitionToTask {
   cursor: pointer;
 }
 
-li .delete {
+button#toggleAllCompletion {
+  background: rgb(33,150,243);
+}
+
+li#delete {
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
@@ -44,7 +52,7 @@ li .delete {
   opacity: 0;
 }
 
-li:hover .delete {
+li:hover #delete {
   opacity: 1;
 }
 
@@ -125,19 +133,4 @@ li:hover .delete {
 
 .avatar-wrapper .avatar-fab.right {
   right: 0px;
-}
-
-.all,
-.all:hover {
-  background: rgb(33,150,243);
-}
-
-.green,
-.green:hover {
-  background: #4caf50;
-}
-
-.red,
-.red:hover {
-  background: #f44336;
 }

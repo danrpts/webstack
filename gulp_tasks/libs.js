@@ -8,13 +8,16 @@ var buffer = require('vinyl-buffer');
 module.exports = function (plugins, config) {
 
   var taskname = 'libs';
+
   config.defaults.push(taskname);
 
   gulp.task(taskname, function () {
 
     // Setup file bundle
     var bundler = browserify(watchify.args)
-      .require(config.libs, {noParse: config.libs}); // libs must be require-able
+      .require(config.libs, { 
+        noParse: config.libs 
+      }); // libs must be require-able
 
     // Setup file watcher
     var watcher = watchify(bundler).on('update', rebundler);
@@ -31,5 +34,6 @@ module.exports = function (plugins, config) {
 
     // Return as completion hint
     return rebundler();
+
   });
 }

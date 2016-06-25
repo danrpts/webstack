@@ -9,3 +9,4 @@
 - [ ] Rethink "account" custom methods so that it has signin/signout methods
 - [ ] Add config object for entire app (debug settings and more)
 - [ ] Research testing techniques
+- [ ] Support more OAuth2 provider and properly brand

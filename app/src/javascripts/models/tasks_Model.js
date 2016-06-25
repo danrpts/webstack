@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var backbone = require('backbone');
 var Model = require('../classes/Model.js');
 
@@ -12,26 +13,24 @@ module.exports = Model.extend({
     'created': null
   },
 
-  check: function (bool) {
-
-    var options = { wait: true }
-
-    this.save({ 'completed': bool ? Date.now() : null }, options);
-
+  complete: function (bool) {
+    this.save({ 
+      'completed': bool ? Date.now() : null
+    }, {
+      wait: true
+    });
   },
 
-  toggle: function () {
-
-    !this.get('completed') ? this.check(true) : this.check(false);
-
+  toggleCompletion: function () {
+    (!! this.get('completed'))
+      ? this.complete(false)
+      : this.complete(true);
   },
 
   validate: function (attributes) {
-
-    if ('title' in attributes && attributes.title.length === 0) {
+    if (_.has(attributes, 'title') && attributes.title.length === 0) {
       return "Title cannot be empty.";
     }
-    
   }
 
 });

@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 var View = require('../classes/View.js');
-var ItemView = require('./tasks_item_View.js');
+var ItemView = require('./TasksItem_View.js');
 var codes = require('../config/keycodes_config.json');
 
 module.exports = View.extend({
@@ -10,12 +10,11 @@ module.exports = View.extend({
   template: require('../../templates/tasks_list_template.html'),
 
   events: {
-    'mouseup .all' : 'check',
-    'mouseup .clear' : 'remove',
-    'keyup #input-title': 'enter'
+    'mouseup #toggleAllCompletion' : 'toggleAllCompletion',
+    'keyup .input-title' : 'onKeyup'
   },
 
-  check: function () {
+  toggleAllCompletion: function () {
 
     // Coax into boolean flag
     var flag = !!this.collection.find(function (model) {
@@ -24,11 +23,11 @@ module.exports = View.extend({
 
     // Set all true if any flag otherwise set all false
     this.collection.each(function (model) {
-      model.check(flag);
+      model.complete(flag);
     });
   },
 
-  enter: function (event) {
+  onKeyup: function (event) {
     if (event.which === codes['ENTER']) {
       var input = this.$('#input-title');
       this.collection.create({
@@ -48,7 +47,8 @@ module.exports = View.extend({
       var $fragment = $(document.createDocumentFragment());
       
       this.collection.each(function (item) {
-        (new ItemView({ model: item })).insert($fragment);
+        (new ItemView({ model: item }))
+        .insert($fragment);
       });
 
       $fragment.appendTo(this.$('ul#task-items'));

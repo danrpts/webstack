@@ -12,4 +12,5 @@ v1.1.0
 - Refactor of app architecture
 - Early integration of promises w/ controller and view logic
 - Single router for important state transitions
-- Promises
+- Subclassing for GoogleAccount model
+- Uppercased, renamed constructors

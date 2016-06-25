@@ -2,12 +2,12 @@
 
 var $ = require('jquery');
 var _ = require('underscore');
-var PageView = require('../views/default_page_View.js');
-var LinkView = require('../views/account_link_View.js');
-var ListView = require('../views/tasks_list_View.js');
+var PageView = require('../views/Page_View.js');
+var LinkView = require('../views/AccountLink_View.js');
+var ListView = require('../views/TasksList_View.js');
+var page = require('../singletons/page_singleton.js');
 var account = require('../singletons/account_singleton.js');
 var tasks = require('../singletons/tasks_singleton.js');
-var page = require('../singletons/page_singleton.js');
 
 module.exports = function () {
 

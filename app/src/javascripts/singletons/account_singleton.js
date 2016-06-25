@@ -1,5 +1,5 @@
 'use strict';
 
-var AccountModel = require('../models/account_Model.js');
+var GoogleAccountModel = require('../models/Google_Account_Model.js');
 
-module.exports =  new AccountModel();
+module.exports =  new GoogleAccountModel();

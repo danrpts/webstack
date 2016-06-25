@@ -3,7 +3,7 @@
 var $ = require('jquery');
 var backbone = require('backbone');
 backbone.LocalStorage = require('backbone.localstorage');
-var TransitionRouter = require('./routers/transition_Router.js');
+var TransitionRouter = require('./routers/Transition_Router.js');
 
 $(function() {
 

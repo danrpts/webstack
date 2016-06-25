@@ -8,40 +8,17 @@ module.exports = View.extend({
   template: require('../../templates/tasks_card_template.html'),
 
   events: {
-    'mouseup .toggle': 'toggle',
-    'mouseup .back': 'back',
-    'mouseup .home': 'home',
-    'mouseup .forward': 'forward',
-    'mouseup .delete': 'delete',
-    'blur #title-input': 'updateTitle',
-    'blur #details-input': 'updateDetails'
+    'blur .title-input': 'updateTitle',
+    'blur .details-input': 'updateDetails',
+    'mouseup #transitionBack': 'transitionBack',
+    'mouseup #transitionHome': 'transitionHome',
+    'mouseup #delete': 'delete',
+    'mouseup #toggleCompletion': 'toggleCompletion'
   },
   
   initialize: function () {
     // May need to _.debounce render
     this.listenTo(this.model, 'change', this.render);
-  },
-
-  toggle: function () {
-    this.model.toggle();
-  },
-
-  back: function () {
-     window.transition.back();
-  },
-
-  home: function () {
-     window.transition.to('');
-  },
-
-  forward: function () {
-     window.transition.forward();
-  },
-
-  delete: function () {
-    this.model.destroy();
-    this.remove();
-    this.back();
   },
 
   updateTitle: function () {
@@ -56,6 +33,24 @@ module.exports = View.extend({
       'details': this.$('#details-input').val().trim()
     },
     { wait: true });
-  }
+  },
+
+  toggleCompletion: function () {
+    this.model.toggleCompletion();
+  },
+
+  transitionBack: function () {
+     window.transition.back();
+  },
+
+  transitionHome: function () {
+     window.transition.to('');
+  },
+
+  delete: function () {
+    this.model.destroy();
+    this.remove();
+    this.transitionBack();
+  },
   
 });

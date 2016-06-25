@@ -1,13 +1,5 @@
-<div>
-  <a id="account" class="mdl-navigation__link <% has('id') ? print('profile') : print('signin') %>">
-
-      <button class="mdl-button mdl-js-button mdl-button--icon">
-        <%
-          has('id') ? 
-          print('<img src='+get('imageUrl')+' width="32px" height="32px" />') :
-          print('<i class="material-icons">fingerprint</i>')
-        %>
-      </button>
-
-  </a>
-</div>
+<a class="mdl-navigation__link">
+  <button id="<% has('id') ? print('transitionToAccount') : print('signIn') %>" class="mdl-button mdl-js-button mdl-button--icon">
+    <% has('id') ? print('<img src="'+get('image_url')+'" width="32px" height="32px" />') : print('<i class="material-icons">fingerprint</i>') %>
+  </button>
+</a>

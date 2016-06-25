@@ -73,7 +73,11 @@ app.use(function (err, req, res, next) {
   var dev = (app.get('env') === 'development');
   if (res.headersSent) return next(err);
   res.status(code);
-  res.render('error', { code: code, message: lookup[code], error: dev ? err : undefined });
+  res.render('error', { 
+    code: code,
+    message: lookup[code],
+    error: dev ? err : undefined
+  });
 });
 
 module.exports = app;
