@@ -8,5 +8,6 @@
 - [ ] Rethink window.transition global (the router singleton)
 - [ ] Rethink "account" custom methods so that it has signin/signout methods
 - [ ] Add config object for entire app (debug settings and more)
-- [ ] Research testing techniques
+- [ ] Research and implement testing techniques
 - [ ] Support more OAuth2 provider and properly brand
+- [ ] Remove octothorpe from url
