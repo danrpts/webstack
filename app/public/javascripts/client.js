@@ -470,33 +470,6 @@ module.exports = {
 
     return intermediary;
 
-  },
-
-  // High-level append renderer
-  append: function ($region, options) {
-
-    var intermediary;
-
-    options = options || {};
-
-    _.defaults(options, {
-      wait: false,
-      delay: 0
-    });
-
-    intermediary
-      = (!!options.wait)
-      ? this.wait($region, options.wait, { delay: options.delay })
-      : $.Deferred().resolveWith(this);
-
-    intermediary.done(function () {
-
-      $region.append(this.render().$el);
-
-    });
-
-    return intermediary;
-
   }
 
 }
@@ -976,7 +949,6 @@ module.exports = View.extend({
 
   appendItem: function (item) {
     var $input = this.$('#inputTitle');
-    var $region = this.$('ul#task-items');
     item = item || this.collection.create({
       'created': Date.now(),
       'title': $input.val().trim()
@@ -984,7 +956,7 @@ module.exports = View.extend({
     { wait: true });
     $input.val('');
     (new ItemView({ model: item }))
-    .append($region);
+    .render().$el.appendTo(this.$('ul#task-items'));
   },
 
   render: function () {

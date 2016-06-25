@@ -35,7 +35,6 @@ module.exports = View.extend({
 
   appendItem: function (item) {
     var $input = this.$('#inputTitle');
-    var $region = this.$('ul#task-items');
     item = item || this.collection.create({
       'created': Date.now(),
       'title': $input.val().trim()
@@ -43,7 +42,7 @@ module.exports = View.extend({
     { wait: true });
     $input.val('');
     (new ItemView({ model: item }))
-    .append($region);
+    .render().$el.appendTo(this.$('ul#task-items'));
   },
 
   render: function () {

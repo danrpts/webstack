@@ -1,5 +1,5 @@
 - [ ] Persist task list changes across all open clients in the same browser (app specific)
-- [ ] Pushstate (needs server mods)
+- [ ] Pushstate (needs server mods); Remove octothorpe from url
 - [x] Early integration of promises w/ controller and view logic
 - [ ] Enitity promises fire events on views (see next item)
 - [ ] Deprecate controllers (see next item)
@@ -10,4 +10,3 @@
 - [ ] Add config object for entire app (debug settings and more)
 - [ ] Research and implement testing techniques
 - [ ] Support more OAuth2 provider and properly brand
-- [ ] Remove octothorpe from url
