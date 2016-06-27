@@ -50,7 +50,7 @@ module.exports = View.extend({
       var $fragment = $(document.createDocumentFragment());
       this.collection.each(function (item) {
         (new ItemView({ model: item }))
-        .insert($fragment);
+        .render().$el.appendTo($fragment);
       });
       $fragment.appendTo(this.$('ul#task-items'));
     });
