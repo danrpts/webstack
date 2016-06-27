@@ -1,45 +1,32 @@
 <div class="app">
-
-    <div class="mdl-card mdl-shadow--2dp">
-
-      <div class="mdl-card__menu">
-        <i class="material-icons">fingerprint</i>
-      </div>
-
-      <div class="mdl-card__title"></div>
-
-      <div class="mdl-card__supporting-text">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" disabled>
-          <label class="mdl-textfield__label"><%- get('name') %></label>
-        </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" disabled>
-          <label class="mdl-textfield__label"><%- get('email') %></label>
-        </div>
-      </div>
-
-      <div class="mdl-card__actions mdl-card--border">
-
-        <button id="transitionBack" class="mdl-button mdl-js-button mdl-button--icon">
-          <i class="material-icons">arrow_back</i>
-        </button>
-
-        <button id="transitionHome" class="mdl-button mdl-js-button mdl-button--icon">
-          <i class="material-icons">home</i>
-        </button>
-
-        <a id="grantOfflineAccess" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-          Grant offline access
-        </a>
-
-        <a id="signOut" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-          Sign out
-        </a>
-
-      </div>
-
+  <div class="mdl-card mdl-shadow--2dp">
+    <div class="mdl-card__menu">
+      <i class="material-icons">fingerprint</i>
     </div>
-
+    <div class="mdl-card__title"></div>
+    <div class="mdl-card__supporting-text">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" disabled>
+        <label class="mdl-textfield__label"><%- get('name') %></label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" disabled>
+        <label class="mdl-textfield__label"><%- get('email') %></label>
+      </div>
+    </div>
+    <div class="mdl-card__actions mdl-card--border">
+      <button id="transitionBack" class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <button id="transitionHome" class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">home</i>
+      </button>
+      <a id="grantOfflineAccess" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+        Grant offline access
+      </a>
+      <a id="signOut" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+        Sign out
+      </a>
+    </div>
+  </div>
 </div>
