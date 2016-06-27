@@ -40,7 +40,10 @@ module.exports = View.extend({
       'title': $input.val().trim()
     },
     { wait: true });
-    $input.val('');
+    $input.val('').blur();
+
+    // Ugly MDL workaround
+    this.$('.mdl-js-textfield')[0].MaterialTextfield.checkDirty();
     (new ItemView({ model: item }))
     .render().$el.appendTo(this.$('ul#task-items'));
   },

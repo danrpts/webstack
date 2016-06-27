@@ -10,4 +10,4 @@
 - [ ] Add config object for entire app (debug settings and more)
 - [ ] Research and implement testing techniques
 - [ ] Support more OAuth2 provider and properly brand
-- [ ] Fix blur bug on tasks input after adding to list
+- [x] Fix blur bug on tasks input after adding to list (work around for now)
