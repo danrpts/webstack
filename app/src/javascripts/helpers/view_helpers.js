@@ -7,155 +7,144 @@ var closure = require('./presenter_helpers.js');
 
 module.exports = {
 
-  // Release the context
-  remove: function () {
-    (!!this.presenter)
-      && this.presenter.release();
-    backbone.View.prototype.remove.apply(this, arguments);
+  // Abstract renderer w/ minimal memory management
+  append: function (child, selector, options) {
+
+    // Child view removes itself upon parent view removal
+    var remove_child = _.bind(child.remove, child);
+    child.listenTo(this, 'remove', remove_child);
+
+    // Parent view deletes reference upon child view removal
+    this.listenTo(child, 'remove', function () {
+
+      console.log('removing child')
+
+      var index = _.indexOf(this.children[selector], child);
+
+      !! index && 
+        (this.children[selector] = this.children[selector].slice(index, 1));
+
+      this.stopListening(child);
+
+      //console.log(this.children);
+    
+    });
+
+    this.children[selector] = this.children[selector] || [];
+
+    this.children[selector].push(child);
+
+    child.render(options).$el.appendTo(this.$(selector));
+
+    return this;
+
   },
 
+  insert: function(child, selector, options) {
+
+    var region_is_active = _.has(this.children, selector);
+    
+    region_is_active && _.each(this.children[selector], function (child) {
+
+      child.remove();
+    
+    });
+
+    return this.append.apply(this, arguments);
+
+  },
+
+  remove: function () {
+
+    var options = _.last(arguments) || {};
+
+    $.Deferred().resolveWith(this)
+
+    .then(function () {
+      this.trigger('preremove', options);
+      _.isFunction(this.preremove)
+        && this.preremove(options);
+    })
+    
+    .then(function () {
+
+      // Release the resource's context to be safe
+      !!this.presenter
+        && this.presenter.release();
+
+      // Detach from the DOM
+      backbone.View.prototype.remove.apply(this, arguments);
+
+      // Make children remove themselves
+      this.trigger('remove', options);
+    })
+    
+    .then(function () {
+      this.trigger('postremove', options);
+      _.isFunction(this.postremove)
+        && this.postremove(options);
+    });
+
+    return this;
+
+  },
+
+  resource: function () {
+    return this.model || this.collection || {};
+  },
+
+  // Build template using its presenter
   compile: function () {
 
-    // Hoist 'em
-    var entity, template, templater, compiled;
-
-    // Reference the model or collection or none
-    entity
-      = this.model
-      || this.collection
-      || false;
-
-    // When it's the intitial render, build the presenter
-    (!this.rendered)
-      && (!!entity)
-      && (this.presenter = closure.call(entity));
+    // Get cached presenter or create a new one
+    this.presenter = this.presenter
+      || closure.call(this.resource());
 
     // Allow overriding of underscore's templater
-    templater
-      = _.isFunction(this.templater)
-      ? this.templater
+    this.engine = _.isFunction(this.engine)
+      ? this.engine
       : _.template;
 
-    // First run the markup through the templater
-    template = templater(this.template);
+    var template = this.engine(this.template)(this.presenter);
+    
+    this.$template = $(template);
+    
+    if (!this.rendered) {
+      this.setElement(this.$template);
+      this.rendered = true;
+    }
 
-    // Then run the presenter through the templater
-    compiled
-      = (!!this.presenter)
-      ? template(this.presenter)
-      : template();
+    else this.$el.html(this.$template.html());
 
-    // Jquery this sucker
-    this.$compiled = $(compiled);
-
-    // Chaining
     return this;
 
   },
 
-  render: function (callback) {
+  render: function () {
 
-    // Compile the $el
-    this.compile();
+    var options = _.last(arguments) || {};
+    
+    $.Deferred().resolveWith(this)
 
-    // Initial vs. Re-render
-    (!this.rendered)
-      ? this.setElement(this.$compiled)
-      : this.$el.html(this.$compiled.html());
-
-    // Set state
-    this.rendered = true;
-
-    // Material Design Lite (MDL)
-    componentHandler.upgradeElements(this.el);
-
-    // Allow injection of async code
-    _.isFunction(callback)
-      && callback.call(this);
-
-    // Force chaining on this
-    return this;
-
-  },
-
-  wait: function ($region, promises, options) {
-
-    console.log("Loading resource...");
-
-    var context = this;
-
-    var intermediary = $.Deferred();
-
-    // Move this to a template or view
-    var $loader = $('\
-      <div class="app">\
-        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active loader"></div>\
-      </div>\
-    ');
-
-    options = options || {};
-
-    _.defaults(options, {
-      delay: 0
+    .then(function () {
+      this.trigger('prerender', options);
+      _.isFunction(this.prerender)
+        && this.prerender(options);
     })
 
-    promises
-      = _.isArray(promises)
-      ? promises
-      : [promises];
+    .then(function () {
+      this.compile(options);
+      this.trigger('render', options);
+    })
 
-    // Material Design Lite (MDL)
-    componentHandler.upgradeElements($loader[0]);
-
-    // Animate the loader
-    $region.html($loader.hide().fadeIn());
-
-    $.when(promises).done(function (promises) {
-
-      // Artificial delay for perceived performance
-      setTimeout(function () {
-
-        console.log("...resource resolved.");
-
-        $loader.fadeOut(function () {
-
-          intermediary.resolveWith(context, promises);
-
-        });
-
-      }, Math.round(options.delay));
-
+    .then(function () {
+      this.trigger('postrender', options);
+      _.isFunction(this.postrender)
+        && this.postrender(options);
     });
-
-    return intermediary;
-
-  },
-
-  // High-level insert renderer
-  insert: function ($region, options) {
-
-    var intermediary;
-
-    options = options || {};
-
-    _.defaults(options, {
-      wait: false,
-      delay: 0
-    });
-
-    intermediary
-      = (!!options.wait)
-      ? this.wait($region, options.wait, { delay: options.delay })
-      : $.Deferred().resolveWith(this);
-
-    intermediary.done(function () {
-
-      $region.html(this.render().$el);
-
-    });
-
-    return intermediary;
-
+    
+    return this;
+  
   }
 
 }

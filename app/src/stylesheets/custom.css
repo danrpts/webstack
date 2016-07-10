@@ -32,6 +32,10 @@ a {
   display: block;
 }
 
+#spinner {
+  line-height: normal;
+}
+
 p.completed {
   text-decoration: line-through;
 }

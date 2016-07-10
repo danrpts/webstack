@@ -6,6 +6,7 @@ var helpers = require('../helpers/view_helpers.js');
 var create = _.isFunction(Object.create) ? Object.create : _.create;
 
 var View = module.exports = function (options) {
+  this.children = {};
   backbone.View.apply(this, arguments);
 }
 

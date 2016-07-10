@@ -5,7 +5,33 @@ var _ = require('underscore');
 var AccountModel = require('./Account_Model.js');
 var config = require('../config/google_config.json');
 
+var googleAuthDeferred = $.Deferred();
+
 module.exports = AccountModel.extend({
+
+  initialize: function () {
+
+    this.set('provider', 'Google');
+
+    if (!_.has(gapi, 'auth2')) {
+
+      // Load the auth2 api
+      gapi.load('auth2', function () {
+
+        // Initiate new 'auth client'
+        gapi.auth2.
+
+        init({ 
+          'client_id': config.client_id 
+        }).
+
+        then(googleAuthDeferred.resolve);
+
+      });
+
+    }
+
+  },
 
   setGoogleUser: function (user) {
 
@@ -17,8 +43,7 @@ module.exports = AccountModel.extend({
         'id': profile.getId(),
         'name': profile.getName(),
         'image_url': profile.getImageUrl(),
-        'email': profile.getEmail(),
-        'provider': 'Google'
+        'email': profile.getEmail()
       });
 
     }
@@ -27,66 +52,63 @@ module.exports = AccountModel.extend({
 
   },
 
-  initialize: function () {
-
-    // Bind the signin/signout handler
-    var setOrClear = _.bind(this.setGoogleUser, this);
-
-    // Load the auth2 api
-    gapi.load('auth2', function () {
-
-      // Initiate new 'auth client'
-      gapi.auth2
-      .init({ 
-        'client_id': config.client_id 
-      });
-
-      // Listen and set the user attributes
-      gapi.auth2
-      .getAuthInstance()
-      .currentUser.listen(setOrClear);
-
-    });
-
-  },
-
   signIn: function (callback) {
 
-    var context = this;
+    var model = this;
 
     console.log('Signing into Google...');
 
-    gapi.auth2
-    .getAuthInstance()
-    .signIn()
-    .then(function (user) {
+    googleAuthDeferred.
 
-      console.log('...signed in.');
+    done(function (googleAuth) {
 
-      _.isFunction(callback)
-        && callback.call(context, user);
+      googleAuth.
+      
+      signIn().
+      
+      then(function (user) {
+
+        console.log('...signed in.');
+
+        model.setGoogleUser(user);
+
+        _.isFunction(callback)
+          && callback();
+
+      });
 
     });
+
+    return this;
 
   },
 
   signOut: function (callback) {
 
-    var context = this;
+    var model = this;
 
     console.log('Signing out of Google...');
 
-    gapi.auth2
-    .getAuthInstance()
-    .signOut()
-    .then(function () {
+    googleAuthDeferred.
 
-      console.log('...signed out.');
+    done(function (googleAuth) {
 
-      _.isFunction(callback)
-        && callback.call(context);
+      googleAuth.
+    
+      signOut().
+
+      then(function () {
+
+        console.log('...signed out.');
+
+        _.isFunction(callback)
+          && callback();
+
+      });
 
     });
+
+    return this;
 
   },
 
@@ -96,23 +118,52 @@ module.exports = AccountModel.extend({
 
     console.log('Fully signing in...');
 
-    gapi.auth2
-    .getAuthInstance()
-    .grantOfflineAccess({  // Grant the one-time code
-      'redirect_uri': config.redirect_uri
-    })
-    .then(function (response) {
+    googleAuthDeferred.
 
-      console.log('...functionality not available.');
+    done(function (googleAuth) {
 
-      context.set('token', response.code);
+      googleAuth.
+    
+      grantOfflineAccess({  // Grant the one-time code
+        'redirect_uri': config.redirect_uri
+      }).
+      
+      then(function (response) {
 
-      // TODO: Post to server
+        console.log('... functionality not yet available.');
 
-      _.isFunction(callback)
-        && callback.call(context);
+        // context.set('token', response.code);
+
+        // TODO: Post to server
+
+      });
 
     });
+
+    return this;
+
+  },
+
+  fetch: function (options) {
+
+    // TODO: Explore errors and return values
+
+    var model = this;
+
+    this.promise = this.promise || $.Deferred();
+
+    this.trigger('request', this.promise, options);
+
+    googleAuthDeferred.
+    done(function (googleAuth) {
+      var user = googleAuth.currentUser.get();
+      model.promise.
+      resolveWith(model, user);
+      model.setGoogleUser(user);
+      model.trigger('sync', model, user);
+    });
+
+    return this.promise;
 
   }
 

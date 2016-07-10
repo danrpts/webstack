@@ -14,3 +14,9 @@ v1.1.0
 - Single router for important state transitions
 - Subclassing for GoogleAccount model
 - Uppercased, renamed constructors
+
+v1.1.1
+- More stateful templates to reach a balance between the view and template
+- New presenter function to check the state of a promise
+- Data hierarchy: Instanced-Local, Cached, Server (TODO)
+- Early zombie view management via events

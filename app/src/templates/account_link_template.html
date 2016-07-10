@@ -1,5 +1,16 @@
 <a class="mdl-navigation__link">
+  <% if (state('pending')) {%>
+  Initializing <%- get('provider') %>...
+  <% } else if (state('resolved') && has('id')) { %>
+    <%- get('greeting') %>, <%- get('name').split(' ', 1)[0] %>&nbsp;&nbsp;&nbsp;
+  <% } %>
   <button id="<% has('id') ? print('transitionToAccount') : print('signIn') %>" class="mdl-button mdl-js-button mdl-button--icon">
-    <% has('id') ? print('<img src="'+get('image_url')+'" width="32px" height="32px" />') : print('<i class="material-icons">fingerprint</i>') %>
+    <% if (state('pending')) {%>
+    <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+    <% } else if (state('resolved') && has('id')) { %>
+    <img src=<%= get('image_url') %> width="32px" height="32px" />
+    <% } else { %>
+    <i id="icon" class="material-icons">fingerprint</i>
+    <% } %>
   </button>
 </a>

@@ -1,10 +1,10 @@
 'use strict';
 
+var backbone = require('backbone');
 module.exports = {
-  
-  promise: function (options) {
-    options = options || {};
-    return this.fetch(options).promise();
-  }
 
+  sync: function () {
+    return this.promise = backbone.Model.prototype.sync.apply(this, arguments);
+  }
+  
 }

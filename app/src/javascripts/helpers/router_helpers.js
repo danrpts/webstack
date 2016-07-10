@@ -4,7 +4,7 @@ var backbone = require('backbone');
 
 module.exports = {
   
-  to: function (fragment) {
+  transition: function (fragment) {
     backbone.Router.prototype.navigate.call(this, fragment, true);
   },
 

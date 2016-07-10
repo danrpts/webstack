@@ -14,15 +14,13 @@ module.exports = Model.extend({
   },
 
   complete: function (bool) {
-    this.save({ 
-      'completed': bool ? Date.now() : null
-    }, {
-      wait: true
+    this.save({
+      completed : bool ? Date.now() : null
     });
   },
 
   toggleCompletion: function () {
-    (!! this.get('completed'))
+    !!this.get('completed')
       ? this.complete(false)
       : this.complete(true);
   },

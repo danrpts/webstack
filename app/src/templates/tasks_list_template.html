@@ -10,5 +10,9 @@
       </button>
     </div>
   </div>
-  <ul id="task-items"></ul>
+  <% if (state('pending')) {%>
+  <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+  <% } else if (state('resolved')) { %>
+  <ul data-region="list"></ul>
+  <% } %>
 </div>

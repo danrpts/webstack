@@ -1,0 +1,1 @@
+Controllers instance views and retrieve their associated resources via a lookedup through the data hierarchy.

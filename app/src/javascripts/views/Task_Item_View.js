@@ -8,9 +8,9 @@ module.exports = View.extend({
   template: require('../../templates/tasks_item_template.html'),
 
   events: {
-    'mouseup #toggleCompletion' : 'toggleCompletion',
-    'mouseup #transitionToTask' : 'transitionToTask',
-    'mouseup #delete' : 'delete'
+    'mouseup #toggleCompletion': 'toggleCompletion',
+    'mouseup #transitionToTask': 'transitionToTask',
+    'mouseup #delete': 'delete'
   },
 
   initialize: function () {
@@ -22,19 +22,18 @@ module.exports = View.extend({
   },
 
   transitionToTask: function () {
-     window.transition.to('tasks/' + this.model.id);
+    window.application.transition('task/' + this.model.id); // no-op if on same route
+    //window.transition.routes['tasks/:id'](this.model.id);
   },
 
   delete: function () {
-    var remove = _.bind(this.remove, this);
     this.model.destroy();
-    this.$el.fadeOut(remove);
+    this.remove();
   },
 
-  render: function () {
-    return View.prototype.render.call(this, function () {
-      this.$el.fadeIn();
-    });
+  postrender: function (options) {
+    options.animate && this.$el.hide().fadeIn();
+    componentHandler.upgradeElements(this.el);
   }
   
 });

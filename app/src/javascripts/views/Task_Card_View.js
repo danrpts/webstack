@@ -24,15 +24,13 @@ module.exports = View.extend({
   updateTitle: function () {
     this.model.save({
       'title': this.$('#inputTitle').val().trim()
-    },
-    { wait: true });
+    });
   },
 
   updateDetails: function () {
     this.model.save({
       'details': this.$('#inputDetails').val().trim()
-    },
-    { wait: true });
+    });
   },
 
   toggleCompletion: function () {
@@ -44,7 +42,8 @@ module.exports = View.extend({
   },
 
   transitionHome: function () {
-     window.transition.to('');
+    window.application.transition(''); // no-op if on same route
+    //window.transition.routes['']();
   },
 
   delete: function () {
@@ -52,5 +51,10 @@ module.exports = View.extend({
     this.remove();
     this.transitionBack();
   },
+
+  postrender: function (options) {
+    options.animate && this.$el.hide().fadeIn();
+    componentHandler.upgradeElements(this.el);
+  }
   
 });

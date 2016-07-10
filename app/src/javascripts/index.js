@@ -3,11 +3,11 @@
 var $ = require('jquery');
 var backbone = require('backbone');
 backbone.LocalStorage = require('backbone.localstorage');
-var TransitionRouter = require('./routers/Transition_Router.js');
+var ApplicationRouter = require('./routers/Application_Router.js');
 
 $(function() {
 
-  window.transition = new TransitionRouter();
+  window.application = new ApplicationRouter();
 
   // TODO:
   // Using { pushState: true } requires thought-out server
