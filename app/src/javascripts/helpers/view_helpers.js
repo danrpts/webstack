@@ -68,6 +68,9 @@ module.exports = {
     
     .then(function () {
 
+      // Make children remove themselves
+      this.trigger('remove', options);
+
       // Release the resource's context to be safe
       !!this.presenter
         && this.presenter.release();
@@ -75,8 +78,6 @@ module.exports = {
       // Detach from the DOM
       backbone.View.prototype.remove.apply(this, arguments);
 
-      // Make children remove themselves
-      this.trigger('remove', options);
     })
     
     .then(function () {
