@@ -4,7 +4,7 @@ var _ = require('underscore');
 var View = require('../classes/View.js');
 var codes = require('../config/keycodes_config.json');
 
-var task_item_controller = require('../controllers/task_item_controller.js');
+var Task_Item_View = require('./Task_Item_View.js');
 
 module.exports = View.extend({
 
@@ -15,8 +15,26 @@ module.exports = View.extend({
     'keyup #inputTitle': 'onEnter'
   },
 
+  defaultViews: {
+    '[data-region="list"]': 'buildList'
+  },
+
   initialize: function () {
+
     this.listenTo(this.collection, 'change', this.render);
+    
+    window.remove = _.bind(this.remove, this);
+    
+    window.views = _.bind(function () {
+      console.log(this.views);
+    }, this);
+  
+  },
+
+  buildList: function () {
+    return this.collection.map(function (task) {
+      return new Task_Item_View({ model: task });
+    });
   },
 
   toggleAllCompletion: function () {
@@ -39,7 +57,9 @@ module.exports = View.extend({
   },
 
   appendItem: function () {
+    
     var $input = this.$('#inputTitle');
+    
     var task = this.collection.create({
       'created': Date.now(),
       'title': $input.val().trim()
@@ -48,33 +68,25 @@ module.exports = View.extend({
       wait: true,
       silent: true
     });
+
     if (!!task) {
       
       $input.val('').blur();
 
       this.$('.mdl-js-textfield')[0].MaterialTextfield.checkDirty();
 
-      var task_item_view = task_item_controller(task.id);
+      // Notice how a handler is not needed because the model is available
+      var task_item_view = new Task_Item_View({ model: task });
 
-      this.append(task_item_view, '[data-region="list"]');
+      // Use the compositing functionality to append
+      this.appendViews(task_item_view, '[data-region="list"]');
 
     }
+
   },
 
-  postrender: function (options) {
-
-    this.collection.each(function (task) {
-
-      var task_item_view = task_item_controller(task.id);
-
-      this.append(task_item_view, '[data-region="list"]');
-
-    }, this);
-
-    options.animate && this.$('[data-region="list"]').hide().fadeIn();
-
-    componentHandler.upgradeElements(this.el);
-  
+  postrender: function () {
+    componentHandler.upgradeElements(this.el);  
   }
 
 });

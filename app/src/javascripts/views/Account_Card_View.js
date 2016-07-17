@@ -11,8 +11,6 @@ module.exports = View.extend({
   template: require('../../templates/account_card_template.html'),
 
   events: {
-    'mouseup #transitionBack': 'transitionBack',
-    'mouseup #transitionHome': 'transitionHome',
     'mouseup #grantOfflineAccess': 'grantOfflineAccess',
     'mouseup #signOut': 'signOut',
     'keyup #inputGreeting': 'onEnter'
@@ -23,20 +21,12 @@ module.exports = View.extend({
     this.listenTo(this.model, 'change', this.render);
   },
 
-  transitionBack: function () {
-    window.application.back();
-  },
-
-  transitionHome: function () {
-    window.application.transition('');
-  },
-
   grantOfflineAccess: function () {
     account.grantOfflineAccess();
   },
 
   signOut: function () {
-    account.signOut(this.transitionHome);
+    account.signOut(window.transition.to);
   },
 
   onEnter: function (event) {
@@ -51,7 +41,6 @@ module.exports = View.extend({
   },
 
   postrender: function (options) {
-    options.animate && this.$el.hide().fadeIn();
     componentHandler.upgradeElements(this.el);
   }
   

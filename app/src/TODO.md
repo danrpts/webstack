@@ -1,22 +1,26 @@
-- [ ] Persist task list changes across all open clients in the same browser (weird, app specific)
-- [ ] Pushstate; Remove octothorpe from url (difficult, server mods)
-- [x] Early integration of promises w/ controller and view logic
-- [ ] Orthogonal state (https://youtu.be/UAl_N62gKmM?t=22m11s)
-- [ ] Rethink window.transition global (the router singleton)
-- [ ] Rethink "account" custom methods so that it has signin/signout methods
-- [ ] Add config object for entire app (debug settings and more)
-- [ ] Research and implement testing techniques (boring)
-- [x] Fix blur bug on tasks input after adding to list (work around for now)
-- [ ] Support more OAuth2 provider and properly brand (easy after next items completes)
+# app
+- [ ] Persist task list changes across all open clients in the same browser
+
+# arch
+- [ ] Pushstate server modifications
+- [ ] Research and implement testing techniques
+- [ ] Research "orthogonal state" (https://youtu.be/UAl_N62gKmM?t=22m11s)
+- [ ] Config objects (debug settings and more)
+- [ ] File and variable naming cleanup
+- [ ] Presenter class with custom methods per view
+
+# auth
+- [ ] Support more OAuth2 provider and properly brand (easy after next items are completed)
 - [ ] Fully integrate promises w/ view sync-fetch logic and view event system (difficult, see next items)
 - [ ] Enitity promises fire events on views (see next item)
-- [x] Deprecate controllers (see next item) (changed mind)
-- [ ] Use small functions to instance page views in router definition
-- [ ] Mod backbone.localStorage to be used as a cache (cachedFetch(), cachedSync())
-- [ ] Cache account (and use special lookups like above)
-- [ ] Implement save() on GoogleAccountModel to save to cache
-- [ ] Memory leak (not removing views; they are still listening for events!)
-- [ ] Page_Model or package.json singelton
-- [ ] View registry for mass removal; mem cleanup
-- [ ] postRender callback
-- [ ] need way to traverse views/controllers via ui when no route is hit
+
+# data
+- [ ] Data hierarchy for handler lookups
+-- Instance <--> Local Storage <--> Server
+-- Use backbone.localStorage as a cache (cachedFetch(), cachedSync())
+-- Develop data coherency protocol
+
+# compositing
+- [ ] Look for memory leaks, zombie views (views still listening to events)
+- [ ] Print view id in rendered templates (using debug object)
+

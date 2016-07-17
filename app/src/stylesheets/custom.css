@@ -40,7 +40,7 @@ p.completed {
   text-decoration: line-through;
 }
 
-p#transitionToTask {
+p.task {
   cursor: pointer;
 }
 

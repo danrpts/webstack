@@ -1,5 +1,5 @@
 'use strict';
 
-var TasksCollection = require('../models/Tasks_Collection.js');
+var Task_List_Collection = require('../models/Task_List_Collection.js');
 
-module.exports = new TasksCollection();
+module.exports = new Task_List_Collection();

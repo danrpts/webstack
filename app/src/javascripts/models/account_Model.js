@@ -7,6 +7,7 @@ var Model = require('../classes/Model.js');
 module.exports = Model.extend({
 
   defaults: {
+    'id': undefined,
     'greeting': 'Howdy',
     'name': undefined,
     'image_url': undefined,

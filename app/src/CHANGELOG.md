@@ -16,7 +16,9 @@ v1.1.0
 - Uppercased, renamed constructors
 
 v1.1.1
-- More stateful templates to reach a balance between the view and template
+- More stateful templates to reach an appropriate balance with the view
 - New presenter function to check the state of a promise
-- Data hierarchy: Instanced-Local, Cached, Server (TODO)
-- Early zombie view management via events
+- View management with compositing helpers
+- Catch relative hrefs and pass to router
+- Handlers instance views that need data hierarchy lookup
+- Controllers and Views are the same thing

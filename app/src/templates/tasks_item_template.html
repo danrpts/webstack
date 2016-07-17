@@ -7,7 +7,7 @@
           <input type="checkbox" id="checkbox-<%- get('id') %>" class="mdl-checkbox__input" <% has('completed') && print('checked') %>>
         </label>
       </div>
-      <p id="transitionToTask" class="<% has('completed') && print('completed') %>"><%- get('title') %></p>
+      <p href="/task/<%- rid() %>" class="task <% has('completed') && print('completed') %>"><%- get('title') %></p>
       <span>
         <% has('details') && print(get('details'), '<br>') %>
         <% print(format('created'), '<br>') %>

@@ -26,7 +26,6 @@ module.exports = View.extend({
   },
 
   postrender: function (options) {
-    options.animate && this.$el.hide().fadeIn();
     componentHandler.upgradeElements(this.el);
   }
 

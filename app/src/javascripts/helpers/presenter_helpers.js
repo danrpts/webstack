@@ -1,16 +1,15 @@
 var _ = require('underscore');
 
-// Import this within a context to return a closure
-module.exports = function () {
-  
-  // Using eval so that resource may be deleted
-  // http://perfectionkills.com/understanding-delete/
-  eval('var resource = this;');
+module.exports = function (resource, view) {
 
   return {
 
-    id: function () {
-      return resource.id;
+    rid: function () {
+      return resource.id || undefined;
+    },
+
+    vid: function () {
+      return view.cid || undefined;
     },
 
     get: function (key) {
@@ -18,7 +17,7 @@ module.exports = function () {
     },
 
     has: function (key) {
-      return (!!resource.get(key));
+      return !! resource.get(key);
     },
 
     size: function () {
@@ -40,11 +39,6 @@ module.exports = function () {
     state: function (value) {
       return resource.promise 
         && (resource.promise.state() === value);
-    },
-
-    release: function () {
-      console.log('Releasing the context closure on the resource.');
-      delete resource;
     }
 
   }

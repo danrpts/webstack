@@ -1,10 +1,10 @@
 <a class="mdl-navigation__link">
   <% if (state('pending')) {%>
   Initializing <%- get('provider') %>...
-  <% } else if (state('resolved') && has('id')) { %>
+  <% } else if (state('resolved') && rid()) { %>
     <%- get('greeting') %>, <%- get('name').split(' ', 1)[0] %>&nbsp;&nbsp;&nbsp;
   <% } %>
-  <button id="<% has('id') ? print('transitionToAccount') : print('signIn') %>" class="mdl-button mdl-js-button mdl-button--icon">
+  <button <% if(rid()) { %> href="/account/<%= rid() %>" <% } else { %> id="signIn" <% } %> class="mdl-button mdl-js-button mdl-button--icon">
     <% if (state('pending')) {%>
     <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
     <% } else if (state('resolved') && has('id')) { %>

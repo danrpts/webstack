@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var View = require('../classes/View.js');
 
 module.exports = View.extend({
@@ -10,14 +9,11 @@ module.exports = View.extend({
   events: {
     'blur #inputTitle': 'updateTitle',
     'blur #inputDetails': 'updateDetails',
-    'mouseup #transitionBack': 'transitionBack',
-    'mouseup #transitionHome': 'transitionHome',
     'mouseup #delete': 'delete',
     'mouseup #toggleCompletion': 'toggleCompletion'
   },
   
   initialize: function () {
-    // May need to _.debounce render
     this.listenTo(this.model, 'change', this.render);
   },
 
@@ -37,23 +33,13 @@ module.exports = View.extend({
     this.model.toggleCompletion();
   },
 
-  transitionBack: function () {
-     window.transition.back();
-  },
-
-  transitionHome: function () {
-    window.application.transition(''); // no-op if on same route
-    //window.transition.routes['']();
-  },
-
   delete: function () {
     this.model.destroy();
     this.remove();
-    this.transitionBack();
+    window.transition.back();
   },
 
   postrender: function (options) {
-    options.animate && this.$el.hide().fadeIn();
     componentHandler.upgradeElements(this.el);
   }
   

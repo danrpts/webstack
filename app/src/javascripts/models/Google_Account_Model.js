@@ -11,8 +11,6 @@ module.exports = AccountModel.extend({
 
   initialize: function () {
 
-    this.set('provider', 'Google');
-
     if (!_.has(gapi, 'auth2')) {
 
       // Load the auth2 api
@@ -35,6 +33,8 @@ module.exports = AccountModel.extend({
 
   setGoogleUser: function (user) {
 
+    this.set(this.defaults, { silent: true });
+
     if (user.isSignedIn()) {
 
       var profile = user.getBasicProfile();
@@ -43,7 +43,8 @@ module.exports = AccountModel.extend({
         'id': profile.getId(),
         'name': profile.getName(),
         'image_url': profile.getImageUrl(),
-        'email': profile.getEmail()
+        'email': profile.getEmail(),
+        'provider': 'Google'
       });
 
     }

@@ -4,7 +4,7 @@
       <button class="mdl-button mdl-js-button mdl-button--icon">
         <% if (state('pending')) {%>
         <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
-        <% } else if (state('resolved') && has('id')) { %>
+        <% } else if (state('resolved') && rid()) { %>
         <img src=<%= get('image_url') %> width="32px" height="32px" />
         <% } %>
       </button>
@@ -14,7 +14,7 @@
     <div class="mdl-card__title">
       <h2 class="mdl-card__title-text">Initializing <%- get('provider') %>...</h2>
     </div>
-    <% } else if (state('resolved') && has('id')) { %>
+    <% } else if (state('resolved') && rid()) { %>
     <div class="mdl-card__supporting-text">
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" type="text" disabled>
@@ -25,6 +25,10 @@
         <label class="mdl-textfield__label"><%- get('email') %></label>
       </div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" disabled>
+        <label class="mdl-textfield__label"><%- get('provider') %> Account</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" type="text" id="inputGreeting" length="23">
         <label class="mdl-textfield__label"><%- get('greeting') %></label>
       </div>
@@ -32,13 +36,13 @@
     <% } %>
 
     <div class="mdl-card__actions mdl-card--border">
-      <button id="transitionBack" class="mdl-button mdl-js-button mdl-button--icon">
+      <button href="/<" class="mdl-button mdl-js-button mdl-button--icon">
         <i class="material-icons">arrow_back</i>
       </button>
-      <button id="transitionHome" class="mdl-button mdl-js-button mdl-button--icon">
+      <button href="/" class="mdl-button mdl-js-button mdl-button--icon">
         <i class="material-icons">home</i>
       </button>
-      <% if (state('resolved') && has('id')) { %>
+      <% if (state('resolved') && rid()) { %>
       <a id="grantOfflineAccess" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
         Grant offline access
       </a>

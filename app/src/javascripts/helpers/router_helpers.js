@@ -4,8 +4,10 @@ var backbone = require('backbone');
 
 module.exports = {
   
-  transition: function (fragment) {
-    backbone.Router.prototype.navigate.call(this, fragment, true);
+  to: function (fragment) {
+    if (fragment === '<') window.transition.back();
+    else if (fragment === '>') window.transition.forward();
+    else backbone.Router.prototype.navigate.call(this, fragment, true);
   },
 
   back: function () {
