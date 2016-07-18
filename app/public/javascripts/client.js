@@ -227,9 +227,9 @@ module.exports = {
 
     _.each(this.views[selector], function (view) {
 
-        this.stopListening(view);
+      this.stopListening(view);
 
-        view.remove();
+      view.remove();
 
     }, this);
 
@@ -241,7 +241,7 @@ module.exports = {
 
   freeAllViews: function () {
 
-    _.keys(this.views, function (selector) {
+    _.chain(this.views).keys().each(function (selector) {
 
       this.freeViews(selector);
 
@@ -264,6 +264,7 @@ module.exports = {
       // A special case when a child view is managed and it
       // removes itself from the DOM. The parent must then
       // free it manually from internal storage.
+      
       this.listenTo(view, 'post:remove', function () {
 
         this.stopListening(view);
@@ -297,7 +298,7 @@ module.exports = {
     // The defaultViews object is used to generate a default
     // scene by setDefaultViews, which may be called any number
     // of times by the parent to reset the scene to default.
-    
+
     _.each(this.defaultViews, function (set, selector) {
 
       set =
