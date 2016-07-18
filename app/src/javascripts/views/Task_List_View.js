@@ -1,7 +1,9 @@
 'use strict';
 
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
+
 var codes = require('../config/keycodes_config.json');
 
 var Task_Item_View = require('./Task_Item_View.js');
@@ -11,8 +13,8 @@ module.exports = View.extend({
   template: require('../../templates/tasks_list_template.html'),
 
   events: {
-    'mouseup #toggleAllCompletion': 'toggleAllCompletion',
-    'keyup #inputTitle': 'onEnter'
+    'keyup #inputTitle': 'appendItem',
+    'mouseup #toggleAllCompletion': 'toggleAllCompletion'
   },
 
   defaultViews: {
@@ -20,21 +22,50 @@ module.exports = View.extend({
   },
 
   initialize: function () {
-
     this.listenTo(this.collection, 'change', this.render);
-    
-    window.remove = _.bind(this.remove, this);
-    
-    window.views = _.bind(function () {
-      console.log(this.views);
-    }, this);
-  
   },
 
   buildList: function () {
     return this.collection.map(function (task) {
       return new Task_Item_View({ model: task });
     });
+  },
+
+  isEnter: function (event) {
+    return (event.which === codes['ENTER']) ? true : false;
+  },
+
+  appendItem: function () {
+    
+    if (this.isEnter(event)) {
+
+      var $input = this.$('#inputTitle');
+      
+      var task = this.collection.create({
+        'created': Date.now(),
+        'title': $input.val().trim()
+      }, {
+        validate: true,
+        wait: true,
+        silent: true
+      });
+
+      if (!!task) {
+        
+        $input.val('').blur();
+
+        this.$('.mdl-js-textfield')[0].MaterialTextfield.checkDirty();
+
+        // Notice how a handler is not needed because the model is available
+        var task_item_view = new Task_Item_View({ model: task });
+
+        // Use the compositing functionality to append
+        this.appendViews(task_item_view, '[data-region="list"]');
+
+      }
+
+    }
+
   },
 
   toggleAllCompletion: function () {
@@ -48,41 +79,6 @@ module.exports = View.extend({
     this.collection.each(function (model) {
       model.complete(flag);
     });
-  },
-
-  onEnter: function (event) {
-    if (event.which === codes['ENTER']) {
-      this.appendItem();
-    }
-  },
-
-  appendItem: function () {
-    
-    var $input = this.$('#inputTitle');
-    
-    var task = this.collection.create({
-      'created': Date.now(),
-      'title': $input.val().trim()
-    }, {
-      validate: true,
-      wait: true,
-      silent: true
-    });
-
-    if (!!task) {
-      
-      $input.val('').blur();
-
-      this.$('.mdl-js-textfield')[0].MaterialTextfield.checkDirty();
-
-      // Notice how a handler is not needed because the model is available
-      var task_item_view = new Task_Item_View({ model: task });
-
-      // Use the compositing functionality to append
-      this.appendViews(task_item_view, '[data-region="list"]');
-
-    }
-
   },
 
   postrender: function () {

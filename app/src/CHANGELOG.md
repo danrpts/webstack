@@ -22,3 +22,4 @@ v1.1.1
 - Catch relative hrefs and pass to router
 - Handlers instance views that need data hierarchy lookup
 - Controllers and Views are the same thing
+- Parent views can re-render w/o child re-renders

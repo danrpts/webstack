@@ -8,6 +8,7 @@
 - [ ] Config objects (debug settings and more)
 - [ ] File and variable naming cleanup
 - [ ] Presenter class with custom methods per view
+- [ ] Use UI event helpers in view (isEnter, etc...)
 
 # auth
 - [ ] Support more OAuth2 provider and properly brand (easy after next items are completed)
