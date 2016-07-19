@@ -6,7 +6,7 @@ var router = express.Router();
   *
   * @response <HTML template>
   */
-router.get('/', function(req, res, next) {
+router.get('/*', function(req, res, next) {
   res.render('index');
 });
 
