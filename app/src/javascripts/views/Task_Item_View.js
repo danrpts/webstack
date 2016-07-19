@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
 
 module.exports = View.extend({

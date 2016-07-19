@@ -1,7 +1,9 @@
 'use strict';
 
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
+
 var account = require('../singletons/account_singleton.js');
 
 module.exports = View.extend({

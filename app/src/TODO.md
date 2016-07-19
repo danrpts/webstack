@@ -9,6 +9,7 @@
 - [ ] File and variable naming cleanup
 - [ ] Presenter class with custom methods per view
 - [ ] Use UI event helpers in view (isEnter, etc...)
+- [ ] Research and consider Polymer integration
 
 # auth
 - [ ] Support more OAuth2 provider and properly brand (easy after next items are completed)
@@ -24,4 +25,3 @@
 # compositing
 - [ ] Look for memory leaks, zombie views (views still listening to events)
 - [ ] Print view id in rendered templates (using debug object)
-

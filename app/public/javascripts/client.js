@@ -866,9 +866,13 @@ module.exports = new Task_List_Collection();
 'use strict';
 
 var $ = require('jquery');
+
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
+
 var account = require('../singletons/account_singleton.js');
+
 var codes = require('../config/keycodes_config.json');
 
 module.exports = View.extend({
@@ -915,7 +919,9 @@ module.exports = View.extend({
 'use strict';
 
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
+
 var account = require('../singletons/account_singleton.js');
 
 module.exports = View.extend({
@@ -953,6 +959,7 @@ var _ = require('underscore');
 var View = require('../classes/View.js');
 
 var account_link_handler = require('../handlers/account_link_handler.js');
+
 var account_card_handler = require('../handlers/account_card_handler.js');
 
 module.exports = View.extend({
@@ -987,6 +994,7 @@ var _ = require('underscore');
 var View = require('../classes/View.js');
 
 var task_page_handler = require('../handlers/task_page_handler.js');
+
 var account_page_handler = require('../handlers/account_page_handler.js');
 
 module.exports = View.extend({
@@ -1077,6 +1085,7 @@ module.exports = View.extend({
 'use strict';
 
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
 
 module.exports = View.extend({

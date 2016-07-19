@@ -1,9 +1,13 @@
 'use strict';
 
 var $ = require('jquery');
+
 var _ = require('underscore');
+
 var View = require('../classes/View.js');
+
 var account = require('../singletons/account_singleton.js');
+
 var codes = require('../config/keycodes_config.json');
 
 module.exports = View.extend({

@@ -5,6 +5,7 @@ var _ = require('underscore');
 var View = require('../classes/View.js');
 
 var account_link_handler = require('../handlers/account_link_handler.js');
+
 var account_card_handler = require('../handlers/account_card_handler.js');
 
 module.exports = View.extend({

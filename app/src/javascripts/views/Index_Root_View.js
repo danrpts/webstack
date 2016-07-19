@@ -5,6 +5,7 @@ var _ = require('underscore');
 var View = require('../classes/View.js');
 
 var task_page_handler = require('../handlers/task_page_handler.js');
+
 var account_page_handler = require('../handlers/account_page_handler.js');
 
 module.exports = View.extend({
