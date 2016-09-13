@@ -23,3 +23,10 @@ v1.1.1
 - Handlers instance views that need data hierarchy lookup
 - Controllers and Views are the same thing
 - Parent views can re-render w/o child re-renders
+
+v1.2
+- Many client architecture modifications
+- Removed presenter helpers; now passing resource to template
+- Only router uses handlers
+- Better authentication flow
+- More to come...
