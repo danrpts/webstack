@@ -1,0 +1,16 @@
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--1-offset-tablet mdl-cell--middle custom-cell--center">
+
+    <% if ( isPending() ) {%>
+      <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+    <% } else { %>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" style="width: 100%; font-size: 16px; margin: 20px 0 10px; font-weight: 300; height: 58px; border: 1px solid rgba(76,87,102,0.1); color: #000000;" id="signin">
+        <span style="vertical-align: middle; float: left;">
+          <img src="/images/g-logo.png" height="22" width="22">
+        </span>
+        <span style="text-transform: capitalize; vertical-align: middle;">Continue With Google</span>
+      </button>
+    <% } %>
+
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="mdl-layout__header-row">
+  <div class="mdl-layout-spacer"></div>
+  <nav class="mdl-navigation mdl-layout--large-screen-only">
+    <span style="color: black; font-weight: 300; font-family: 'Roboto'; line-height: 64px; padding: 0 12px;">
+      Hello, <%- get('name').split(' ', 1)[0] %>
+    </span>
+    <a class="mdl-button mdl-js-button mdl-button--icon" href="/account/<%= get('id') %>">
+      <img src="<%= get('image_url') %>" width="32px" height="32px" />
+    </a>
+  </nav>
+</div>

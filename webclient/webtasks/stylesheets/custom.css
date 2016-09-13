@@ -1,0 +1,132 @@
+body {
+  background-color: #fafafa;
+}
+
+ul {
+  padding: 0px;
+}
+
+li {
+  list-style-type: none;
+  padding-bottom: 6px;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: grey !important;
+}
+
+.loader {
+  margin: 128px auto; 
+  display: block;
+}
+
+#spinner {
+  line-height: normal;
+}
+
+p.completed {
+  text-decoration: line-through;
+}
+
+p.task {
+  cursor: pointer;
+}
+
+button#toggleAllCompletion {
+  background: rgb(33,150,243);
+}
+
+li#delete {
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+  opacity: 0;
+}
+
+li:hover #delete {
+  opacity: 1;
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+.mdl-card {
+  min-height: 50px;
+  width: 100%;
+}
+
+.mdl-button--fab {
+  color: white;
+}
+
+.mdl-card__title {
+  color: grey;
+}
+
+.mdl-card__menu {
+  color: grey;
+  z-index: 2;
+}
+
+.mdl-card__actions {
+  color: grey;
+  display: flex;
+  box-sizing:border-box;
+  align-items: center;
+}
+
+.mdl-card__supporting-text {
+  width: auto;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.avatar-wrapper.left {
+  padding-left: 72px;
+}
+
+.avatar-wrapper.right {
+  padding-right: 72px;
+}
+
+.avatar-wrapper .avatar {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 0px;
+}
+
+.avatar-wrapper .avatar.left {
+  left: 15px;
+}
+
+.avatar-wrapper .avatar.right {
+  color: grey;
+  right: -15px;
+  top: -5px;
+}
+
+.avatar-wrapper .avatar-fab {
+  position: absolute;
+  padding: 10px 0;
+  top: 0px;
+}
+
+.avatar-wrapper .avatar-fab.left {
+  left: 10px;
+}
+
+.avatar-wrapper .avatar-fab.right {
+  right: 0px;
+}
