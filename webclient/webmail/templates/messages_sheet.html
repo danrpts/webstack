@@ -1,0 +1,63 @@
+<div>
+
+  <% if ( isPending() ) { %>
+  
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate custom-progress__indeterminate">
+    </div>
+
+  <% } else if ( isEmpty() ) { %>
+ 
+    <h3>You're all caught up.</h3>
+    <p></p>
+
+  <% } else { %>
+
+    <ul>
+
+      <% each(function (message) { %>
+
+        <li class="mdl-grid list-item">
+          
+          <div class="mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone mdl-cell--middle custom-cell--center">
+            <!-- Place unread indicator here -->
+            <% if ( message.isUnread() ) { %>
+              <i class="material-icons" style="font-size: 11px; color: rgb(255,87,34)">lens</i>
+            <% } else { %>
+              <i class="material-icons" style="font-size: 11px; color: rgb(255,87,34)">radio_button_unchecked</i>
+            <% } %>
+          </div>
+
+          <div class="mdl-cell mdl-cell--11-col-desktop mdl-cell--7-col-tablet mdl-cell--3-col-phone mdl-cell--middle">
+            <a class="clear" href="/messages/<%= message.id %>">
+              <span class="truncate">
+                <strong><%= message.getHeader('From') %></strong>
+                <span><%= message.getHeader('Date') %></span>
+              </span>
+              <span class="truncate"><%= message.getHeader('Subject') %></span>
+              <span class="truncate"><%= message.getSnippet() %></span>
+            </a>
+          </div>
+
+        </li>
+
+      <% }); %>
+
+    </ul>
+
+    <div class="mdl-grid">
+
+      <div class="mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone mdl-cell--middle custom-cell--center"></div>
+
+      <div class="mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone mdl-cell--middle custom-cell--center">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" id="more">
+          <i class="material-icons">arrow_downward</i>
+        </button>
+      </div>
+
+      <div class="mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone mdl-cell--middle custom-cell--center"></div>
+
+    </div>
+
+  <% } %>
+
+</div>
