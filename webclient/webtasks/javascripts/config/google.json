@@ -1,0 +1,4 @@
+{
+  "client_id": "__YOUR__GOOGLE__CLIENT__ID__HERE__",
+  "redirect_uri": "postmessage"
+}
