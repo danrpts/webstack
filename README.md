@@ -9,9 +9,9 @@ A lightweight webstack for Javascript SPAs. Built on top of Node, Gulp, Express,
     npm install -g gulp express
     npm install
 
-## Build
+## Build the tasks client
 
-    gulp
+    gulp -c webtasks
 
 The project is now being watched for changes
 
