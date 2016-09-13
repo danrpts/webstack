@@ -1,8 +1,10 @@
 'use strict';
 
+var $ = require('jquery');
+
 var View = require('../../../architecture/classes/View.js');
 
-var codes = require('../config/keycodes.json');
+var keycodes = require('../config/keycodes.json');
 
 module.exports = View.extend({
 
@@ -17,35 +19,33 @@ module.exports = View.extend({
   },
 
   events: {
-    'keyup #inputTitle': 'updateTitle',
-    'keyup #inputDetails': 'updateDetails',
-    'mouseup #delete': 'delete',
-    'mouseup #toggleCompletion': 'toggleCompletion'
+    'keyup .task-input':  'onInputKeyup',
+    'click #task-toggle': 'onToggleClick',
+    'click #task-delete': 'onDeleteClick'
   },
 
-  isEnter: function (event) {
-    return (event.which === codes['ENTER']) ? true : false;
+  onInputKeyup: function (event) {
+    switch (event.which) {
+      case keycodes['ENTER'] : this.onInputEnter($(event.currentTarget)); break;
+    }
   },
 
-  updateTitle: function (event) {
-    this.isEnter(event) &&
-    this.model.save({
-      'title': this.$('#inputTitle').val().trim()
-    });
+  // Notice this enter key handler for all inputs
+  onInputEnter: function ($input) {
+    var key = $input.attr('id');
+    var value = $input.val().trim();
+    if (!! value) {
+      this.model.save(key, $input.val().trim());
+      $input.val('').blur();
+      this.$('.mdl-js-textfield')[0].MaterialTextfield.checkDirty();
+    }
   },
 
-  updateDetails: function (event) {
-    this.isEnter(event) &&
-    this.model.save({
-      'details': this.$('#inputDetails').val().trim()
-    });
-  },
-
-  toggleCompletion: function () {
+  onToggleClick: function () {
     this.model.toggleCompletion();
   },
 
-  delete: function () {
+  onDeleteClick: function () {
     this.model.destroy();
     this.remove();
     window.transition.back();
