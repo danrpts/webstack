@@ -7,9 +7,9 @@ module.exports = function (plugins, config) {
   config.defaults.push(taskname);
 
   gulp.task(taskname, function () {
-    return gulp.src('./app/src/stylesheets/index.css')
+    return gulp.src(config.input + '/stylesheets/index.css')
       .pipe(plugins.importCss())
       .pipe(plugins.rename('default.css'))
-      .pipe(gulp.dest('./app/public/stylesheets/'));
+      .pipe(gulp.dest(config.output + '/stylesheets/'));
   });
 }

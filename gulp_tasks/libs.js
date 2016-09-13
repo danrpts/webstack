@@ -29,7 +29,7 @@ module.exports = function (plugins, config) {
         //.pipe(buffer())
         //.pipe(plugins.uglify())
         //.pipe(plugins.gzip())
-        .pipe(gulp.dest('./app/public/javascripts/'));
+        .pipe(gulp.dest(config.output + '/javascripts/'));
     }
 
     // Return as completion hint
