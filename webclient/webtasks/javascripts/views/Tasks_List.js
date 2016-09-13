@@ -25,8 +25,8 @@ module.exports = View.extend({
       return new TaskItem({ model: task });
     });
 
-    // The appendViews is optimized to use a document fragment
-    this.appendViews(children, 'ul');
+    // The setViews is optimized to use a document fragment
+    this.setViews(children, 'ul');
 
   }
 
