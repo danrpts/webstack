@@ -1,0 +1,50 @@
+
+<!-- Need 100% height here for scrolling to work -->
+<div style="height: 100%;">
+
+  <div class="mdl-layout mdl-js-layout
+              mdl-layout--fixed-header">
+
+    <header class="mdl-layout__header
+                   mdl-color--white
+                   mdl-color-text--grey-700"
+            style="box-shadow: none;
+                   border-bottom: 1px solid #e0e0e0;">
+
+      <div class="mdl-layout__header-row">
+
+        <div class="mdl-layout-spacer"></div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                    mdl-textfield--floating-label mdl-textfield--align-right">
+
+          <label class="mdl-button mdl-js-button mdl-button--icon"
+                 for="search">
+
+            <i class="material-icons">search</i>
+          
+          </label>
+          
+          <div class="mdl-textfield__expandable-holder">
+            <input class="mdl-textfield__input" type="text" name="query"
+                   id="search">
+                   
+          </div>
+        
+        </div>
+    
+      </div>
+      
+    </header>
+
+    <div class="mdl-layout__content
+                mdl-color-text--grey-600"
+         data-region="messages-list">
+
+        <!-- Messages list inejected here -->
+
+    </div>
+
+  </div>
+
+</div>

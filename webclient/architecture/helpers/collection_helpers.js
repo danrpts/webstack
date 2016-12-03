@@ -2,16 +2,21 @@
 
 var $ = require('jquery');
 
+var _ = require('underscore');
+
 var backbone = require('backbone');
 
 module.exports = {
 
   sync: function (method, model, options) {
 
-    // Reset the promise
-    this.promise = $.Deferred();
+    var jqXHR = backbone.Collection.prototype.sync.apply(this, arguments);
 
-    return this.promise = backbone.Collection.prototype.sync.apply(this, arguments);
+    if (this.isResolved()) this.promise = jqXHR.promise();
+
+    //console.log('5: sync called');
+
+    return jqXHR;
 
   },
 

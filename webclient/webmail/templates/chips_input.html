@@ -1,0 +1,16 @@
+<div class="mdl-textfield mdl-js-textfield chips-textfield" style="width: 100%; padding: 0;">
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap; border-bottom: 1px solid rgba(0,0,0,.12);">
+    <div id="chips-list" style="flex-shrink: 1;"><!-- Chips list injected here  --></div>
+    <div style="flex-grow: 1; flex-shrink: 2;">
+      <input class="mdl-textfield__input custom-chips-textfield__input" type="text" autocomplete="off" list="chips-datalist" id="chips-input">
+      <datalist id="chips-datalist">
+        <!-- Todo: populate the list via ajax or loaded json
+        <% Array(10).fill("Chip").forEach(function (element) { %>
+          <option class="chips-option" value="<%= element %>">
+        <% }) %> -->
+      </datalist>
+    </div>
+  </div>
+  <!-- Todo: css for label alignment -->
+  <label class="mdl-textfield__label" for="chips-input"></label>
+</div>

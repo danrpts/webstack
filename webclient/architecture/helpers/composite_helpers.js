@@ -22,6 +22,12 @@ module.exports = {
 
   },
 
+  freeView: function (selector) {
+
+    this.freeViews(selector);
+
+  },
+
   freeAllViews: function () {
 
     _.chain(this.views).keys().each(function (selector) {

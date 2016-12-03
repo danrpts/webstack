@@ -16,10 +16,14 @@
     "ejs": "~2.3.3",
     "express": "^4.13.4",
     "googleapis": "^2.1.7",
+    "human-time": "0.0.1",
     "jquery": "^2.2.4",
     "jquery-ui": "^1.12.0",
+    "jquery-ui-browserify": "^1.11.0-pre-seelio",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
+    "time-ago": "^0.1.0",
+    "timeago": "^1.5.3",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

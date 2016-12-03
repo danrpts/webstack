@@ -1,0 +1,54 @@
+.search-container .mdl-chip:first-of-type {
+  margin-left: 3px;
+}
+
+.search-container {
+  width: 100%;
+  font-weight: 300;
+  width: 100%;
+}
+
+.search-textfield {
+  outline: none;
+  border: none;
+  font-weight: 300;
+  width: 100%;
+  padding: 2px 0;
+  line-height: 32px;
+  font-size: 16px;
+  display:inline-block;
+  vertical-align:middle;
+  color: rgba(0,0,0,.87);
+}
+
+.search-chip {
+  margin: 0px;
+  font-size: 16px;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.search-textfield::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: rgba(0,0,0,.43);
+  font-size: 16px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+}
+
+.search-textfield::-moz-placeholder { /* Firefox 19+ */
+  color: rgba(0,0,0,.43);
+  font-size: 16px;  
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+
+}
+
+.search-textfield:-ms-input-placeholder { /* IE 10+ */
+  color: rgba(0,0,0,.43);
+  font-size: 16px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+}
+
+.search-textfield:-moz-placeholder { /* Firefox 18- */
+  color: rgba(0,0,0,.43);
+  font-size: 16px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+}

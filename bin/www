@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-var app = require('../app');
+var server = require('../webserver/index.js');
 var debug = require('debug')('webstack');
 var http = require('http');
 
 // Get port from environment and store in Express
 var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+server.set('port', port);
 
 // Create HTTP server
-var server = http.createServer(app);
+server = http.createServer(server);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

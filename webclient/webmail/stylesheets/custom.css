@@ -1,0 +1,120 @@
+
+* { 
+  margin: 0;
+  padding: 0;
+}
+
+*:before, *:after {
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
+}
+
+html, body{
+  background-color: #fafafa;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+}
+
+a.clear {
+  color: inherit !important;
+  font: inherit !important;
+  text-decoration: none !important;
+}
+
+li.mdl-list__item {
+  position: relative;
+}
+
+li.mdl-list__item:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 36px;
+  top: 87px;
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.custom-cell--center {
+  text-align: center;
+}
+
+.custom-cell {
+  -ms-flex: 0 1 auto;
+  position: relative;
+  display: inline-block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  z-index: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-grid {
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.custom-tabs__tab {
+  cursor: pointer;
+}
+
+.custom-progress__indeterminate {
+  position: fixed;
+  z-index: 90;
+  width: 100%;
+  height: 2px;
+  top: 0px;
+  left: 0px;
+}
+
+.ui-resizable-w {
+  z-index: 80;
+  height: 100%;
+  width: .5rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: col-resize;
+}
+
+.ui-resizable-e {
+  z-index: 80;
+  height: 100%;
+  width: .5rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: col-resize;
+}
+
+.labels {
+  padding-top: 16px;
+}
+
+.labels__link {
+  display: block;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* So that the loader will not be in a new stacking context */
+.mdl-layout__content {
+  z-index: initial;
+}
+
+.mdl-layout__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

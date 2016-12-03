@@ -1,0 +1,11 @@
+<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+  <div class="mdl-tabs__tab-bar" style="border: 0px;">
+    <% if (isPending()) { %>
+      Loading...
+    <% } else { %>
+      <% each(function (label) { %>
+        <a id="<%= label.cid %>" class="mdl-tabs__tab <% label.isActive() && print('is-active') %>" style="cursor: pointer;"><%= label.getName() %></a>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
