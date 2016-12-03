@@ -16,8 +16,8 @@ module.exports = View.extend({
     this.listenTo(this.collection, 'batch:request', this.render);
     this.listenTo(this.collection, 'batch:sync', this.render);
 
-    // Trigger reredner for things such as removes, merges, etc...
-    this.listenTo(this.collection, 'update', this.render);
+    // Trigger re redner for things such as removes, merges, etc...
+    this.listenTo(this.collection, 'change update', this.render);
   },
 
   postrender: function () {
@@ -25,6 +25,7 @@ module.exports = View.extend({
     console.log("Rendering messages list of size %i and is pending %s", this.collection.length, this.collection.isPending());
     
     componentHandler.upgradeElements(this.el);
+    
   },
 
   events: {

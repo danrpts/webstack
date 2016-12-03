@@ -220,6 +220,8 @@ module.exports = Collection.extend({
     
     //console.log('1: refresh called');
 
+    // Todo: This should enforce the previous query
+
     return this.search.apply(this, arguments);
   
   },

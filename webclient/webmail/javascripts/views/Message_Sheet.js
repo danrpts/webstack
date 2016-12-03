@@ -15,6 +15,15 @@ module.exports = View.extend({
 
   postrender: function () {
     componentHandler.upgradeElements(this.el);
+  },
+
+  events: {
+    'click #star': 'onStarClick'
+  },
+
+  onStarClick: function () {
+    console.log('click');
+    this.model.toggle('starred');
   }
 
 });

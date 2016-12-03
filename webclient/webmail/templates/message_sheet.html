@@ -6,11 +6,12 @@
     <header class="mdl-layout__header
                    mdl-color--white
                    mdl-color-text--grey-700"
-            style="box-shadow: none;
-                   border-bottom: 1px solid #e0e0e0;">
+            style="box-shadow: none;">
       
-      <div class="mdl-layout__header-row" style="padding: 0 16px;">
-
+      <div class="mdl-layout__header-row"
+           style="padding: 0 16px;
+                  border-bottom: 1px solid #e0e0e0;">
+                  
         <div style="flex: 1; text-align: left;">
           <button class="mdl-button
                          mdl-js-button
@@ -18,6 +19,15 @@
                   id="close">
             <i class="material-icons">close</i>
           </button>
+        </div>
+        
+        <div style="flex: 1; text-align: center;">
+          <span class="mdl-layout-title"
+                style="padding: 16px;
+                       font-size: 16px;
+                       color: rgba(0,0,0,.54);">
+                Read
+          </span>
         </div>
 
         <div style="flex: 1; text-align: right;">
@@ -46,14 +56,29 @@
         <div class="mdl-card mdl-shadow--2dp" style="width: 100%;">
 
           <h5 class="mdl-card__title" style="margin: 0px; font-weight: 200; padding: 16px 16px 0 16px;">
+            
             <div class="truncate">
+              
               <span class="ellipsis"><%= getSubject() %></span>
+              
               <span style="text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); padding: 0;">
-                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                  <i class="material-icons">star_outline</i>
-                </button>
+                
+                <label class="mdl-icon-toggle
+                              mdl-js-icon-toggle"
+                       for="star">
+              
+                  <input type="checkbox"
+                         id="star" class="mdl-icon-toggle__input" 
+                         <% if ( isStarred() ) { %> checked <% } %> >
+              
+                  <i class="mdl-icon-toggle__label material-icons">star_outline</i>
+              
+                </label>
+              
               </span>
+            
             </div>
+          
           </h5>
 
           <div class="mdl-card__title" style="padding: 0 16px;">
@@ -91,8 +116,6 @@
         </div>
 
       <% } %>
-    
-    </main>
 
       <footer>
 
@@ -137,6 +160,8 @@
         </div>
 
       </footer>
+    
+    </main>
 
   </div>
 

@@ -24,34 +24,28 @@ module.exports = View.extend({
   },
 
   defaultViews: {
-    '[data-region="drawer"]': 'navSheet',
-    '[data-region="content"]': 'messagesSheet'
+    '[data-region="drawer"]': 'newNavSheet',
+    '[data-region="content"]': 'newMessagesSheet'
   },
 
-  navSheet: function () {
+  newNavSheet: function () {
     var account = require('../singletons/account.js');
     var NavSheet = require('./Nav_Sheet.js');
     return new NavSheet({ model: account });
   },
 
-  searchInput: function () {
-    var search = require('../singletons/search.js');
-    var SearchInput = require('./Search_Input.js');
-    return new SearchInput({ collection: search });
-  },
-
-  messagesSheet: function () {
+  newMessagesSheet: function () {
     var messages = require('../singletons/messages.js');
     var MessagesSheet = require('./Messages_Sheet.js');
     return new MessagesSheet({ collection: messages });
   },
 
-  messageSheet: function () {
+  newMessageSheet: function () {
     var MessageSheet = require('./Message_Sheet.js');
     return new MessageSheet({ model: this.model });
   },
 
-  composeSheet: function () {
+  newComposeSheet: function () {
     var ComposeSheet = require('./Compose_Sheet.js');
     return new ComposeSheet({ model: this.model });
   },
@@ -75,7 +69,7 @@ module.exports = View.extend({
         w : '.ui-resizable-w'
       }
     });
-    this.setView(this.composeSheet(), '[data-region="secondary"]');
+    this.setView(this.newComposeSheet(), '[data-region="secondary"]');
     $el.show();
   },
 
@@ -86,7 +80,10 @@ module.exports = View.extend({
         w : '.ui-resizable-w'
       }
     });
-    this.setView(this.messageSheet(), '[data-region="secondary"]');
+    
+    this.model.unmark('unread');
+
+    this.setView(this.newMessageSheet(), '[data-region="secondary"]');
     $el.show();
   },
 
@@ -94,7 +91,6 @@ module.exports = View.extend({
     var previous = this.model;
     var messages = require('../singletons/messages.js');
     var index = messages.indexOf(previous);
-    console.log(index);
     if (index > -1) {
       this.model = messages.at(index+1);
     }

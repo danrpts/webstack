@@ -375,9 +375,13 @@ module.exports = {
 
     var value = _.isFunction(get) ? get.call(context) : get; 
 
-    // Condensed if/else; set returns model so we negate to return value
+    // Condensed if/else; 'set' returns the model so we negate to return the value
     return this.get(attr) || ! this.set(attr, value, { silent: true }) || value;
 
+  },
+
+  toggle: function (attr) {
+    this.set(attr, ! this.get(attr));
   },
 
   isPending: function () {
@@ -561,48 +565,6 @@ module.exports={
 
 var $ = require('jquery');
 
-var AccountPage = require('../views/Account_Page.js');
-
-var $region = $('body');
-
-module.exports = function (id, options) {
-
-  this.authenticate()
-
-  .done(function(account) {
-
-    options = options || {};
-
-    // Do this first so events aren't caught on old view
-    if (this.active) this.active.remove();
-
-    var account = require('../singletons/account.js');
-
-    account.fetch(id);
-
-    var accountPage = new AccountPage({ model: account });
-
-    this.active = accountPage;
-
-    accountPage.render().$el.appendTo($region);
-
-  })
-
-  .fail(function (account) {
-
-    //console.log("Not signed in...");
-
-    this.to('login');
-  
-  });
-
-}
-
-},{"../singletons/account.js":23,"../views/Account_Page.js":29,"jquery":"jquery"}],13:[function(require,module,exports){
-'use strict';
-
-var $ = require('jquery');
-
 var LoginPage = require('../views/Login_Page.js');
 
 var $region = $('body');
@@ -633,7 +595,7 @@ module.exports = function (options) {
   });
 
 }
-},{"../views/Login_Page.js":33,"jquery":"jquery"}],14:[function(require,module,exports){
+},{"../views/Login_Page.js":28,"jquery":"jquery"}],13:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -655,8 +617,11 @@ module.exports = function (id, options) {
 
     var search = require('../singletons/search.js');
 
-    // Check the search bar for state
-    var queries = search.getValues();
+    // Check the search bar for state (only in chips style search)
+    // var queries = search.getValues();
+
+    // Default inbox query
+    var queries = [ 'in:inbox' ];
 
     // Thought: Maybe trade the account as a token for the messages
     var messages = require('../singletons/messages.js');
@@ -692,7 +657,7 @@ module.exports = function (id, options) {
 
 }
 
-},{"../singletons/messages.js":24,"../singletons/search.js":25,"../views/Messages_Page.js":36,"jquery":"jquery","underscore":"underscore"}],15:[function(require,module,exports){
+},{"../singletons/messages.js":23,"../singletons/search.js":24,"../views/Messages_Page.js":31,"jquery":"jquery","underscore":"underscore"}],14:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -730,7 +695,7 @@ $(function() {
 
 });
 
-},{"./routers":21,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],16:[function(require,module,exports){
+},{"./routers":20,"backbone":"backbone","backbone.localstorage":"backbone.localstorage","jquery":"jquery"}],15:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -761,7 +726,7 @@ module.exports = Model.extend({
   
 });
 
-},{"../../../architecture/classes/Collection.js":1,"../../../architecture/classes/Model.js":2,"jquery":"jquery"}],17:[function(require,module,exports){
+},{"../../../architecture/classes/Collection.js":1,"../../../architecture/classes/Model.js":2,"jquery":"jquery"}],16:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -793,7 +758,7 @@ module.exports = Collection.extend({
   
 });
 
-},{"../../../architecture/classes/Collection.js":1,"../../../architecture/classes/Model.js":2,"jquery":"jquery"}],18:[function(require,module,exports){
+},{"../../../architecture/classes/Collection.js":1,"../../../architecture/classes/Model.js":2,"jquery":"jquery"}],17:[function(require,module,exports){
 'use strict';
 
 // Todo: fix the ugly promise anti-patterns in this code
@@ -995,7 +960,7 @@ module.exports = Model.extend({
 
 });
 
-},{"../../../architecture/classes/Model.js":2,"../config/google.json":10,"../services/gAuth.js":22,"jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
+},{"../../../architecture/classes/Model.js":2,"../config/google.json":10,"../services/gAuth.js":21,"jquery":"jquery","underscore":"underscore"}],18:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -1102,28 +1067,128 @@ module.exports = Checkbox.extend({
     messages.remove(this);
 
     // Then invoke the remote procedure
-    this.procedure('trash');
+    this.procedure('trash', {
+
+      // Set the attrs option to prevent backbone from serializing the entire model
+      attrs: {}
+
+    });
 
     // If error add back to collection and handle error
   
   },
 
+  // Higher level POST/PUT operation
+  save: function () {
+
+  },
+
+  mark: function (label) {
+
+    var index = this.hasLabel(label);
+
+    // The model doesn't already have the label
+    if (index === -1) {
+
+      this.procedure('modify', {
+
+        // Set the attrs option to prevent backbone from serializing the entire model
+        attrs: {
+
+          'addLabelIds': [ label.toUpperCase() ]
+
+        },
+
+        success: function (model, response) {
+
+          // Merge the result into model
+          model.set(response);
+
+        }
+
+      });
+
+
+    }
+
+  },
+
+  unmark: function (label) {
+
+    var index = this.hasLabel(label);
+
+    // The model has the label
+    if (index > -1) {
+
+      this.procedure('modify', {
+
+        // Set the attrs option to prevent backbone from serializing the entire model
+        attrs: {
+
+          'removeLabelIds': [ label.toUpperCase() ]
+
+        },
+
+        success: function (model, response) {
+
+          // Merge the result into model
+          model.set(response);
+
+        }
+
+      });
+
+
+    }
+
+  },
+
   // Higher level POST operation
   send: function () {
 
-    // Build rfc message from attributes
-    var body = '';
+    var account = require('../singletons/account.js');
 
-    body += 'From: <' + this.get('from') + '>' + '\r\n';
-    body += 'To: <' + this.get('to') + '>' + '\r\n';
-    body += 'Subject: ' + this.get('subject') + '\r\n';
-    body += 'Date: ' + new Date().toUTCString(); + '\r\n\n';
+    var to = this.get('to').getValues();
+
+    // Build RFC5322 payload
+    var payload = '';
+
+    payload += 'From: ' + account.get('name') + ' <' + account.get('email') + '>' + '\r\n';
     
-    body += this.get('body'); + '\r\n\n';
+    payload += _.reduce(to, function (memo, value, index) {
+
+      return memo += ' <' + value + '>' + ( (index + 1 < to.length) ? ',' : '' );
+
+    }, 'To:') + '\r\n';
+
+    payload += 'Subject: ' + this.get('subject') + '\r\n';
     
+    payload += 'Date: ' + new Date().toUTCString() + '\r\n\n';
+    
+    payload += this.get('body'); + '\r\n\n';
+
+    // Save attributes and put back in if unsuccessful at sending
+
+    // Clear the data from the model
+    this.clear({ silent: true });
+
+    // Create a google type base-64 encoded ASCII string
+    payload = window.btoa(payload).replace(/\+/g, '-').replace(/\//g, '\\');
+
+    // Set the string on the model for serialization
+    //this.set('raw', payload);
+
     // Then invoke the remote procedure
-    //this.procedure('send');
-    console.log(body);
+    this.procedure('send', {
+
+      // Set the attrs option to prevent backbone from serializing the entire model
+      attrs: {
+
+        'raw': payload
+
+      }
+
+    });
   
   },
 
@@ -1149,7 +1214,11 @@ module.exports = Checkbox.extend({
 
     var labels = this.get('labelIds');
 
-    return !! labels && labels.indexOf(label.toUpperCase()) > -1;
+    var index = labels.indexOf(label.toUpperCase());
+
+    // Returns the index -1 or false;
+    // Todo: clean up reutrn value
+    return !! labels &&  index;
 
   },
 
@@ -1177,10 +1246,13 @@ module.exports = Checkbox.extend({
 
     function recursePayload (payload) {
 
-      return (payload.mimeType === 'text/html') 
+      // Return the encoded body
+      return (payload.body.size > 0) 
 
+      // Body is easy to get
       ? payload.body.data
 
+      // Otherwise we have to get it by parts
       : _.reduce(payload.parts, function (memo, part) {
         
         return memo || recursePayload(part);
@@ -1210,14 +1282,30 @@ module.exports = Checkbox.extend({
 
   isUnread: function () {
   
-    return this.hasLabel('unread');
+    return this.hasLabel('unread') > -1;
   
   },
 
-  // Todo: Actually check for message attachment
+  isStarred: function () {
+  
+    return this.hasLabel('starred') > -1;
+  
+  },
+
+  hasParts: function () {
+    var payload = this.get('payload');
+    return !! payload.mimeType.match(/multipart/g);
+  },
+
   hasAttachment: function () {
   
-    return true;
+    var payload = this.get('payload');
+
+    return this.hasParts() && _.find(payload.parts, function (part) {
+
+      return part.body.attachmentId
+    
+    }, false);
 
   },
 
@@ -1230,7 +1318,9 @@ module.exports = Checkbox.extend({
   },
 
   getHeader: function (name) {
+    
     var header = this.getHeaders()[name];
+
     return ! header ? '(No ' + name + ')' : header.replace(/['"]+/g, '');
 
   },
@@ -1331,7 +1421,7 @@ module.exports = Checkbox.extend({
 
 });
 
-},{"../singletons/account.js":23,"../singletons/messages.js":24,"./Checkbox.js":16,"human-time":"human-time","jquery":"jquery","underscore":"underscore"}],20:[function(require,module,exports){
+},{"../singletons/account.js":22,"../singletons/messages.js":23,"./Checkbox.js":15,"human-time":"human-time","jquery":"jquery","underscore":"underscore"}],19:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -1554,6 +1644,8 @@ module.exports = Collection.extend({
     
     //console.log('1: refresh called');
 
+    // Todo: This should enforce the previous query
+
     return this.search.apply(this, arguments);
   
   },
@@ -1597,7 +1689,7 @@ module.exports = Collection.extend({
     
 });
 
-},{"../../../architecture/classes/Collection.js":1,"../singletons/account.js":23,"./Google_Message.js":19,"jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
+},{"../../../architecture/classes/Collection.js":1,"../singletons/account.js":22,"./Google_Message.js":18,"jquery":"jquery","underscore":"underscore"}],20:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -1611,8 +1703,9 @@ module.exports = Router.extend({
   routes: {
     '':              require('../handlers/messages.js'),
     'login':         require('../handlers/login.js'),
-    'messages/:id':  require('../handlers/messages.js'),
-    'account(/:id)': require('../handlers/account.js')
+    //'compose':       require('../handlers/compose.js'),
+    //'messages/:id':  require('../handlers/message.js'),
+    //'account(/:id)': require('../handlers/account.js')
   },
 
   authenticate: function () {
@@ -1643,7 +1736,7 @@ module.exports = Router.extend({
 
 });
 
-},{"../../../architecture/classes/Router.js":3,"../handlers/account.js":12,"../handlers/login.js":13,"../handlers/messages.js":14,"../singletons/account.js":23,"jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
+},{"../../../architecture/classes/Router.js":3,"../handlers/login.js":12,"../handlers/messages.js":13,"../singletons/account.js":22,"jquery":"jquery","underscore":"underscore"}],21:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -1675,136 +1768,28 @@ if (deferred.state() != 'resolved') {
 
 module.exports = deferred;
 
-},{"../config/google.json":10,"jquery":"jquery","underscore":"underscore"}],23:[function(require,module,exports){
+},{"../config/google.json":10,"jquery":"jquery","underscore":"underscore"}],22:[function(require,module,exports){
 'use strict';
 
 var GoogleAccount = require('../models/Google_Account.js');
 
 module.exports = new GoogleAccount();
 
-},{"../models/Google_Account.js":18}],24:[function(require,module,exports){
+},{"../models/Google_Account.js":17}],23:[function(require,module,exports){
 'use strict';
  
 var GoogleMessages = require('../models/Google_Messages.js');
 
 module.exports = new GoogleMessages();
 
-},{"../models/Google_Messages.js":20}],25:[function(require,module,exports){
+},{"../models/Google_Messages.js":19}],24:[function(require,module,exports){
 'use strict';
 
 var Chips = require('../models/Chips.js');
 
 module.exports = new Chips();
 
-},{"../models/Chips.js":17}],26:[function(require,module,exports){
-'use strict';
-
-var View = require('../../../architecture/classes/View.js');
-
-module.exports = View.extend({
-
-  template: require('../../templates/account_actions.html'),
-
-  postrender: function () {
-    componentHandler.upgradeElements(this.el);
-  }
-  
-});
-},{"../../../architecture/classes/View.js":4,"../../templates/account_actions.html":42}],27:[function(require,module,exports){
-'use strict';
-
-var $ = require('jquery');
-
-var _ = require('underscore');
-
-var View = require('../../../architecture/classes/View.js');
-
-module.exports = View.extend({
-
-  template: require('../../templates/account_bar.html'),
-
-  postrender: function () {
-    componentHandler.upgradeElements(this.el);
-  }
-
-});
-
-},{"../../../architecture/classes/View.js":4,"../../templates/account_bar.html":43,"jquery":"jquery","underscore":"underscore"}],28:[function(require,module,exports){
-'use strict';
-
-var $ = require('jquery');
-
-var _ = require('underscore');
-
-var View = require('../../../architecture/classes/View.js');
-
-module.exports = View.extend({
-
-  template: require('../../templates/account_card.html'),
-
-  initialize: function () {
-    this.listenTo(this.model, 'change', this.render);
-  },
-
-  postrender: function () {
-    componentHandler.upgradeElements(this.el);
-  },
-
-  events: {
-    'click #account-grant':   'onGrantClick',
-    'click #account-signout': 'onSignoutClick',
-  },
-
-  onGrantClick: function () {
-    this.model.grantOfflineAccess();
-  },
-
-  onSignoutClick: function () {
-    var transition = _.partial(window.transition.to, 'login');
-    this.model.signOut().done(transition);
-  }
-  
-});
-
-},{"../../../architecture/classes/View.js":4,"../../templates/account_card.html":44,"jquery":"jquery","underscore":"underscore"}],29:[function(require,module,exports){
-'use strict';
-
-var _ = require('underscore');
-
-var View = require('../../../architecture/classes/View.js');
-
-module.exports = View.extend({
-
-  template: require('../../templates/account_page.html'),
-
-  postrender: function () {
-    componentHandler.upgradeElements(this.el);
-  },
-
-  defaultViews: {
-    'header': 'accountBar',
-    'main': 'accountCard',
-    'footer': 'accountActions'
-  },
-
-  accountBar: function () {
-    var AccountBar = require('./Account_Bar.js');
-    return new AccountBar({ model: this.model });
-  },
-
-  accountCard: function () {
-    var AccountCard = require('./Account_Card.js');
-    return new AccountCard({ model: this.model });
-  },
-
-  accountActions: function () {
-    var AccountActions = require('./Account_Actions.js');
-    return new AccountActions({ model: this.model });
-  }
-
-});
-
-},{"../../../architecture/classes/View.js":4,"../../templates/account_page.html":45,"./Account_Actions.js":26,"./Account_Bar.js":27,"./Account_Card.js":28,"underscore":"underscore"}],30:[function(require,module,exports){
+},{"../models/Chips.js":16}],25:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -1888,20 +1873,115 @@ module.exports = View.extend({
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/chips_input.html":46,"../../templates/chips_list.html":47,"../config/keycodes.json":11,"jquery":"jquery","underscore":"underscore"}],31:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/chips_input.html":36,"../../templates/chips_list.html":37,"../config/keycodes.json":11,"jquery":"jquery","underscore":"underscore"}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('underscore');
 
 var View = require('../../../architecture/classes/View.js');
 
+var keycodes = require('../config/keycodes.json');
+
 module.exports = View.extend({
 
-  template: require('../../templates/compose_sheet.html')
+  template: require('../../templates/compose_sheet.html'),
+
+  defaultViews: {
+    '[data-region="to-input"]': 'newToInput'
+  },
+
+  newToInput: function () {
+    var Chips = require('../models/Chips.js');
+    var ChipsInput = require('./Chips_Input.js');
+    var chips = new Chips();
+    this.model.set('to', chips);
+    return new ChipsInput({ collection: chips });
+  },
+
+  events: {
+    'click #close': 'onCloseClick',
+    'click #save': 'onSaveClick',
+    'click #send': 'onSendClick',
+    'blur #chips-input': 'onChipsInputBlur',
+    'keyup #subject': 'onSubjectInputKeyup',
+    'keyup #body': 'onBodyInputKeyup'
+  },
+
+  // Trigger an enter event on chips input blur
+  onChipsInputBlur: function (event) {
+    var e = $.Event("keydown");
+    e.which = keycodes.enter;
+    this.$(event.currentTarget).trigger(e);
+  },
+
+  // Update the subject attribute every keyup
+  onSubjectInputKeyup: function (event) {
+    var $input = this.$(event.currentTarget);
+    var value = $input.val().trim();
+    this.model.set('subject', value);
+  },
+
+  // Update the to attribute every keyup
+  onBodyInputKeyup: function (event) {
+    var $input = this.$(event.currentTarget);
+    var value = $input.val().trim();
+    this.model.set('body', value);
+  },
+
+  // Todo
+  onCloseClick: function () {
+
+    // Prompt save before close?
+
+    return true;
+  },
+
+  onSaveClick: function () {
+
+    // First save draft to localstorage
+    // ...
+    
+    // Then to save the message remotely
+    this.model.save(function (result) {
+
+      // if error handle it
+      // ...
+
+      // else delete the localstorage draft
+      // ...
+
+    });
+
+    // Immediately close for perc. perf.
+    this.$('#close').click();
+
+  },
+
+  onSendClick: function () {
+    
+    // first save draft
+    //...
+    //var backup = this.model.toJSON();
+
+    // send the message
+    this.model.send(function (result) {
+
+      // if error handle it
+      // ...
+
+      // else delete draft
+      //this.destroy();
+
+    });
+
+    // Immediately close for perc. perf.
+    this.$('#close').click();
+
+  }
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/compose_sheet.html":48,"underscore":"underscore"}],32:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/compose_sheet.html":38,"../config/keycodes.json":11,"../models/Chips.js":16,"./Chips_Input.js":25,"underscore":"underscore"}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('underscore');
@@ -1926,7 +2006,7 @@ module.exports = View.extend({
   }
 
 });
-},{"../../../architecture/classes/View.js":4,"../../templates/login_card.html":49,"underscore":"underscore"}],33:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/login_card.html":39,"underscore":"underscore"}],28:[function(require,module,exports){
 'use strict';
 
 var _ = require('underscore');
@@ -1969,7 +2049,7 @@ module.exports = View.extend({
   }
 
 });
-},{"../../../architecture/classes/View.js":4,"../../templates/login_page.html":50,"./Login_Card.js":32,"./Share_Card.js":40,"underscore":"underscore"}],34:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/login_page.html":40,"./Login_Card.js":27,"./Share_Card.js":34,"underscore":"underscore"}],29:[function(require,module,exports){
 'use strict';
 
 var _ = require('underscore');
@@ -1987,11 +2067,20 @@ module.exports = View.extend({
 
   postrender: function () {
     componentHandler.upgradeElements(this.el);
+  },
+
+  events: {
+    'click #star': 'onStarClick'
+  },
+
+  onStarClick: function () {
+    console.log('click');
+    this.model.toggle('starred');
   }
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/message_sheet.html":51,"underscore":"underscore"}],35:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/message_sheet.html":41,"underscore":"underscore"}],30:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -2010,8 +2099,8 @@ module.exports = View.extend({
     this.listenTo(this.collection, 'batch:request', this.render);
     this.listenTo(this.collection, 'batch:sync', this.render);
 
-    // Trigger reredner for things such as removes, merges, etc...
-    this.listenTo(this.collection, 'update', this.render);
+    // Trigger re redner for things such as removes, merges, etc...
+    this.listenTo(this.collection, 'change update', this.render);
   },
 
   postrender: function () {
@@ -2019,6 +2108,7 @@ module.exports = View.extend({
     console.log("Rendering messages list of size %i and is pending %s", this.collection.length, this.collection.isPending());
     
     componentHandler.upgradeElements(this.el);
+    
   },
 
   events: {
@@ -2032,7 +2122,7 @@ module.exports = View.extend({
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/messages_list.html":52,"jquery":"jquery","underscore":"underscore"}],36:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/messages_list.html":42,"jquery":"jquery","underscore":"underscore"}],31:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -2059,34 +2149,28 @@ module.exports = View.extend({
   },
 
   defaultViews: {
-    '[data-region="drawer"]': 'navSheet',
-    '[data-region="content"]': 'messagesSheet'
+    '[data-region="drawer"]': 'newNavSheet',
+    '[data-region="content"]': 'newMessagesSheet'
   },
 
-  navSheet: function () {
+  newNavSheet: function () {
     var account = require('../singletons/account.js');
     var NavSheet = require('./Nav_Sheet.js');
     return new NavSheet({ model: account });
   },
 
-  searchInput: function () {
-    var search = require('../singletons/search.js');
-    var SearchInput = require('./Search_Input.js');
-    return new SearchInput({ collection: search });
-  },
-
-  messagesSheet: function () {
+  newMessagesSheet: function () {
     var messages = require('../singletons/messages.js');
     var MessagesSheet = require('./Messages_Sheet.js');
     return new MessagesSheet({ collection: messages });
   },
 
-  messageSheet: function () {
+  newMessageSheet: function () {
     var MessageSheet = require('./Message_Sheet.js');
     return new MessageSheet({ model: this.model });
   },
 
-  composeSheet: function () {
+  newComposeSheet: function () {
     var ComposeSheet = require('./Compose_Sheet.js');
     return new ComposeSheet({ model: this.model });
   },
@@ -2110,7 +2194,7 @@ module.exports = View.extend({
         w : '.ui-resizable-w'
       }
     });
-    this.setView(this.composeSheet(), '[data-region="secondary"]');
+    this.setView(this.newComposeSheet(), '[data-region="secondary"]');
     $el.show();
   },
 
@@ -2121,7 +2205,10 @@ module.exports = View.extend({
         w : '.ui-resizable-w'
       }
     });
-    this.setView(this.messageSheet(), '[data-region="secondary"]');
+    
+    this.model.unmark('unread');
+
+    this.setView(this.newMessageSheet(), '[data-region="secondary"]');
     $el.show();
   },
 
@@ -2129,7 +2216,6 @@ module.exports = View.extend({
     var previous = this.model;
     var messages = require('../singletons/messages.js');
     var index = messages.indexOf(previous);
-    console.log(index);
     if (index > -1) {
       this.model = messages.at(index+1);
     }
@@ -2193,7 +2279,7 @@ module.exports = View.extend({
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/messages_page.html":53,"../models/Google_Message.js":19,"../singletons/account.js":23,"../singletons/messages.js":24,"../singletons/search.js":25,"./Compose_Sheet.js":31,"./Message_Sheet.js":34,"./Messages_Sheet.js":37,"./Nav_Sheet.js":38,"./Search_Input.js":39,"jquery":"jquery","jquery-ui-browserify":"jquery-ui-browserify","underscore":"underscore"}],37:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/messages_page.html":43,"../models/Google_Message.js":18,"../singletons/account.js":22,"../singletons/messages.js":23,"./Compose_Sheet.js":26,"./Message_Sheet.js":29,"./Messages_Sheet.js":32,"./Nav_Sheet.js":33,"jquery":"jquery","jquery-ui-browserify":"jquery-ui-browserify","underscore":"underscore"}],32:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -2226,19 +2312,7 @@ module.exports = View.extend({
   },
 
   defaultViews: {
-    '[data-region="search-input"]': 'newSearchInput',
-    '[data-region="messages-list"]': 'newMessagesList'
-  },
-
-  newSearchInput: function () {
-
-    // Notice search is a chips type collection
-    var search = require('../singletons/search.js');
-
-    var SearchInput = require('./Search_Input.js');
-    
-    return new SearchInput({ collection: search });
-
+    '[data-region="list"]': 'newMessagesList'
   },
 
   newMessagesList: function () {
@@ -2250,8 +2324,16 @@ module.exports = View.extend({
   },
 
   events: {
-    'click #more': 'onMoreClick',
+    'click #refresh': 'onRefreshClick',
     'keyup #search': 'onSearchKeyup'
+  },
+
+  onRefreshClick: function () {
+
+    // Todo: the refresh function should enforce previous query; not this handler
+    var $el = $('#search');
+    var query = $el.val().trim() || 'in:inbox';
+    this.collection.refresh([ query ]);
   },
 
   onSearchKeyup: function (event) {
@@ -2266,7 +2348,7 @@ module.exports = View.extend({
 
 });
 
-},{"../../../architecture/classes/View.js":4,"../../templates/messages_sheet.html":54,"../config/keycodes.json":11,"../singletons/search.js":25,"./Messages_List.js":35,"./Search_Input.js":39,"jquery":"jquery","underscore":"underscore"}],38:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/messages_sheet.html":44,"../config/keycodes.json":11,"../singletons/search.js":24,"./Messages_List.js":30,"jquery":"jquery","underscore":"underscore"}],33:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -2309,50 +2391,7 @@ module.exports = View.extend({
   }
 
 });
-},{"../../../architecture/classes/View.js":4,"../../templates/nav_sheet.html":55,"../singletons/messages.js":24,"jquery":"jquery","underscore":"underscore"}],39:[function(require,module,exports){
-'use strict';
-
-var $ = require('jquery');
-
-var _ = require('underscore');
-
-var ChipsInput = require('./Chips_Input.js');
-
-module.exports = ChipsInput.extend({
-
-  template: require('../../templates/search_input.html'),
-  
-  events: {
-    'keydown #chips-input': 'onInputKeydown'
-  },
-
-  onInputEnter: function (event) {
-    var $input = this.$(event.currentTarget);
-    var value = $input.val().trim();
-    var collection = this.collection;
-    var attributes = { value: value };
-    if (!!value && !collection.findWhere(attributes)) {
-      collection.push(attributes);
-      $input.val('');
-    }
-  },
-
-  onInputBackspace: function (event) {
-    var $input = this.$(event.currentTarget);
-    var value = $input.val();
-    if (!value) this.collection.pop();
-  },
-
-  onInputKeydown: function (event) {
-    switch (event.which) {
-      case keycodes['backspace']: this.onInputBackspace.apply(this, arguments); break;
-      case keycodes['enter']: this.onInputEnter.apply(this, arguments); break;
-    }
-  }
-
-});
-
-},{"../../templates/search_input.html":56,"./Chips_Input.js":30,"jquery":"jquery","underscore":"underscore"}],40:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/nav_sheet.html":45,"../singletons/messages.js":23,"jquery":"jquery","underscore":"underscore"}],34:[function(require,module,exports){
 'use strict';
 
 var _ = require('underscore');
@@ -2387,7 +2426,7 @@ module.exports = View.extend({
   }
 
 });
-},{"../../../architecture/classes/View.js":4,"../../templates/share_card.html":57,"../models/Chips.js":17,"./Share_Input.js":41,"underscore":"underscore"}],41:[function(require,module,exports){
+},{"../../../architecture/classes/View.js":4,"../../templates/share_card.html":46,"../models/Chips.js":16,"./Share_Input.js":35,"underscore":"underscore"}],35:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -2402,55 +2441,40 @@ module.exports = ChipsInput.extend({
 
 });
 
-},{"../../templates/share_input.html":58,"./Chips_Input.js":30,"jquery":"jquery","underscore":"underscore"}],42:[function(require,module,exports){
-module.exports = "<div class=\"mdl-grid\">\n\n  <div class=\"mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--middle custom-cell--center\">\n    <button class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\" id=\"account-grant\">\n      grant offline access\n    </button>\n    <button class=\"mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect\" id=\"account-signout\">sign out</button>\n  </div>\n\n</div>\n";
+},{"../../templates/share_input.html":47,"./Chips_Input.js":25,"jquery":"jquery","underscore":"underscore"}],36:[function(require,module,exports){
+module.exports = "<div class=\"mdl-textfield \n           mdl-js-textfield\"\n     style=\"height: 32px;\n            padding: 0;\">\n  \n  <div style=\"display: flex;\n              flex-direction: row;\n              flex-wrap: wrap;\">\n    \n    <div id=\"chips-list\"\n         style=\"flex-shrink: 1;\">\n    \n         <!-- Chips list injected here  -->\n    \n    </div>\n    \n    <div style=\"flex-grow: 1; flex-shrink: 2;\">\n    \n      <input class=\"mdl-textfield__input\"\n             type=\"text\"\n             autocomplete=\"off\"\n             list=\"chips-datalist\"\n             id=\"chips-input\"\n             style=\"border: none;\n                    outline: none;\n                    width: initial;\n                    height: 32px;\n                    padding: 0 4px 0 12px;\n                    color: rgba(0,0,0,.54);\">\n    \n      <datalist id=\"chips-datalist\">\n        <!-- Todo: populate the list via ajax or loaded json\n        <% Array(10).fill(\"Chip\").forEach(function (element) { %>\n          <option class=\"chips-option\" value=\"<%= element %>\">\n        <% }) %> -->\n      </datalist>\n    \n    </div>\n  \n  </div>\n    \n</div>\n";
 
-},{}],43:[function(require,module,exports){
-module.exports = "<div class=\"flex-container-horiz\" style=\"height: 70px; background-color: #fff; border-bottom: 1px solid #ebebeb;\">\n  <span style=\"display: inline-block; line-height: 70px; height: 70px; margin: 0 16px; color: rgba(0,0,0,.43);\">\n    <a class=\"mdl-button mdl-js-button mdl-button--icon\">\n      <img src=\"<%= getImageUrl() %>\" width=\"32px\" height=\"32px\" />\n    </a>\n  </span>\n  <span class=\"flex-grow\" style=\"display: inline-block; line-height: 70px; height: 70px; color: rgba(0,0,0,.87); text-align: center; font-size: 16px;\"><%= get('name') %></span>\n  <span style=\"display: inline-block; line-height: 70px; height: 70px; margin: 0 16px; color: rgba(0,0,0,.43);\">\n    <button class=\"mdl-button mdl-js-button mdl-button--icon\">\n      <i class=\"material-icons\">notifications</i>\n    </button>\n    <a href=\"/<\" class=\"mdl-button mdl-js-button mdl-button--icon\">\n      <i class=\"material-icons\">arrow_backward</i>\n    </a>\n  </span>\n</div>";
+},{}],37:[function(require,module,exports){
+module.exports = "<div>\n  \n  <% each(function (chip) { %>\n\n    <span class=\"mdl-chip\n                 mdl-chip--deletable\n                custom-chip\">\n  \n      <%= chip.getValue() %>\n  \n      <button type=\"button\"\n              class=\"mdl-chip__action\n                     chip-delete\"\n              id=\"<%= chip.cid %>\">\n        \n        <i class=\"material-icons\">cancel</i>\n  \n      </button>\n  \n    </span>\n  \n  <% }); %>\n\n</div>";
 
-},{}],44:[function(require,module,exports){
-module.exports = "<div class=\"mdl-grid\">\n  <div class=\"mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--1-offset-tablet mdl-cell--middle custom-cell--center\">\n    <div class=\"mdl-card mdl-shadow--2dp\">\n      <div class=\"mdl-card__actions mdl-card--border\">\n\n      </div>\n    </div>\n  </div>\n</div>";
+},{}],38:[function(require,module,exports){
+module.exports = "<div style=\"width: 100%; height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\">\n      \n      <div class=\"mdl-layout__header-row\"\n           style=\"padding: 0 16px;\n                  border-bottom: 1px solid #e0e0e0;\">\n\n        <div style=\"flex: 1; text-align: left;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"close\">\n            <i class=\"material-icons\">close</i>\n          </button>\n        </div>\n\n        <div style=\"flex: 1; text-align: center;\">\n          <span class=\"mdl-layout-title\"\n                style=\"padding: 16px;\n                       font-size: 16px;\n                       color: rgba(0,0,0,.54);\">\n                Compose\n          </span>\n        </div>\n\n        <div style=\"flex: 1; text-align: right;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"open\">\n            <i class=\"material-icons\">open_in_new</i>\n          </button>\n        </div>\n\n      </div>\n\n      <div class=\"mdl-layout__header-row\"\n           style=\"padding: 0 16px;\n                  border-bottom: 1px solid #e0e0e0;\"\n           data-region=\"to-input\">\n\n           <span style=\"padding-right: 4px;\n                        font-size: 14px;\n                        font-weight: 400;\n                        letter-spacing: 0;\n                        line-height: 24px;\n                        height: 24px;\n                        color: rgba(0,0,0,.54);\">\n              To:\n            </span>\n\n           <!-- To input injeted here -->\n        \n      </div>\n\n      <div class=\"mdl-layout__header-row\"\n           style=\"padding: 0 16px;\n                  border-bottom: 1px solid #e0e0e0;\">\n\n           <span style=\"padding-right: 4px;\n                        font-size: 14px;\n                        font-weight: 400;\n                        letter-spacing: 0;\n                        line-height: 24px;\n                        color: rgba(0,0,0,.54);\n                        height: 24px;\">\n              Subject:\n            </span>\n\n        <div class=\"mdl-textfield\"\n             style=\"height: 32px;\n                    padding: 0;\">\n\n          <input class=\"mdl-textfield__input\"\n                 type=\"text\"\n                 id=\"subject\"\n                 style=\"border: none;\n                        outline: none;\n                        width: initial;\n                        height: 32px;\n                        padding: 0 4px 0 12px;\n                        color: rgba(0,0,0,.54);\">\n\n        </div>\n\n      </div>\n\n    </header>\n\n    <main class=\"mdl-layout__content\n                 mdl-color--white\n                 mdl-color-text--grey-600\"\n          style=\"padding: 16px;\">\n\n      <div class=\"mdl-textfield mdl-js-textfield\" style=\"width: 100%;\">\n        <textarea class=\"mdl-textfield__input\" type=\"text\" rows= \"3\" id=\"body\"\n                  style=\"outline: none;\n                         color: rgba(0,0,0,.54);\"></textarea>\n      </div>\n\n      <footer>\n\n        <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"save\">\n              Save\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"send\">\n              Send\n            </button>\n          </div>\n\n        </div>\n    \n      </footer>\n\n    </main>\n\n  </div>\n\n</div>";
 
-},{}],45:[function(require,module,exports){
-module.exports = "<div>\n  <div class=\"mdl-layout mdl-js-layout\">\n    <header class=\"mdl-layout__header mdl-layout__header--transparent\" style=\"display: flex !important;\"><!-- Header injected here --></header>\n    <main class=\"mdl-layout__content\"><!-- Content injected here --></main>\n    <footer><!-- Footer injected here --></footer>\n  </div>\n</div>\n";
-
-},{}],46:[function(require,module,exports){
-module.exports = "<div class=\"mdl-textfield mdl-js-textfield chips-textfield\" style=\"width: 100%; padding: 0;\">\n  <div style=\"display: flex; flex-direction: row; flex-wrap: wrap; border-bottom: 1px solid rgba(0,0,0,.12);\">\n    <div id=\"chips-list\" style=\"flex-shrink: 1;\"><!-- Chips list injected here  --></div>\n    <div style=\"flex-grow: 1; flex-shrink: 2;\">\n      <input class=\"mdl-textfield__input custom-chips-textfield__input\" type=\"text\" autocomplete=\"off\" list=\"chips-datalist\" id=\"chips-input\">\n      <datalist id=\"chips-datalist\">\n        <!-- Todo: populate the list via ajax or loaded json\n        <% Array(10).fill(\"Chip\").forEach(function (element) { %>\n          <option class=\"chips-option\" value=\"<%= element %>\">\n        <% }) %> -->\n      </datalist>\n    </div>\n  </div>\n  <!-- Todo: css for label alignment -->\n  <label class=\"mdl-textfield__label\" for=\"chips-input\"></label>\n</div>\n";
-
-},{}],47:[function(require,module,exports){
-module.exports = "<div>\n  <% each(function (chip) { %>\n    <span class=\"mdl-chip mdl-chip--deletable search-chip\">\n      <%= chip.getValue() %>\n      <button type=\"button\" class=\"mdl-chip__action chip-delete\" id=\"<%= chip.cid %>\">\n        <i class=\"material-icons\">cancel</i>\n      </button>\n    </span>\n  <% }); %>\n</div>";
-
-},{}],48:[function(require,module,exports){
-module.exports = "<div style=\"width: 100%; height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\n                   border-bottom: 1px solid #e0e0e0;\">\n      \n      <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n        <div style=\"flex: 1; text-align: left;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"close\">\n            <i class=\"material-icons\">close</i>\n          </button>\n        </div>\n\n        <div style=\"flex: 1; text-align: right;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"open\">\n            <i class=\"material-icons\">open_in_new</i>\n          </button>\n        </div>\n\n      </div>\n\n    </header>\n\n    <main class=\"mdl-layout__content\n                 mdl-color-text--grey-600\"\n          style=\"padding: 16px;\">\n\n          Hello WOrld\n\n    </main>\n\n      <footer>\n\n        <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"save\">\n              Save\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"send\">\n              Send\n            </button>\n          </div>\n\n        </div>\n    \n    </footer>\n\n  </div>\n\n</div>";
-
-},{}],49:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = "<div class=\"mdl-grid\">\n  <div class=\"mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--1-offset-tablet mdl-cell--middle custom-cell--center\">\n\n    <div class=\"mdl-card mdl-shadow--2dp\" style=\"width: 100%; padding: 48px;\">\n\n      <div class=\"mdl-card__menu\">\n        <button class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\" id=\"login-share\">\n          <i class=\"material-icons\">share</i>\n        </button>\n      </div>\n\n      <h3 style=\"margin: 0; font-weight: 300;\">Greetings Simpl'ing</h3>\n      <p style=\"margin: 0; font-weight: 300;\">Sign in and tidy up that inbox.</p>\n\n      <div class=\"mdl-card__supporting-text\">\n        <% if ( isPending() ) {%>\n          <div class=\"mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active\"></div>\n        <% } else { %>\n          <button class=\"mdl-button mdl-js-button mdl-js-ripple-effect\" style=\"width: 100%; font-size: 16px; margin: 20px 0 10px; font-weight: 300; height: 58px; border: 1px solid rgba(76,87,102,0.1); color: #000000;\" id=\"signin\">\n            <span style=\"vertical-align: middle; float: left;\">\n              <img src=\"/images/g-logo.png\" height=\"22\" width=\"22\">\n            </span>\n            <span style=\"text-transform: capitalize; vertical-align: middle;\">Continue With Google</span>\n          </button>\n        <% } %>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\">\n        <small>Curious? Behold the live <a href=\"/preview\">preview</a>.</small>\n      </div>\n\n      <div class=\"mdl-card__supporting-text\" style=\"border-top: 1px solid rgba(0,0,0,.1);\">\n        <small>Contribute to this project on <a href=\"https://github.com/danrpts/webmail_DMZ\">github</a>!</small>\n      </div>\n\n    </div>\n\n  </div>\n</div>";
 
-},{}],50:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = "<div>\n  <header>\n    <h2 style=\"font-family: 'Pacifico'; font-weight: 300; color: #000000; text-align: center;\">Simpl.eMail</h2>\n  </header>\n  <main><!-- Content injected here --></main>\n</div>";
 
-},{}],51:[function(require,module,exports){
-module.exports = "<div style=\"width: 100%; height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\n                   border-bottom: 1px solid #e0e0e0;\">\n      \n      <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n        <div style=\"flex: 1; text-align: left;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"close\">\n            <i class=\"material-icons\">close</i>\n          </button>\n        </div>\n\n        <div style=\"flex: 1; text-align: right;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"open\">\n            <i class=\"material-icons\">open_in_new</i>\n          </button>\n        </div>\n\n      </div>\n\n    </header>\n\n    <main class=\"mdl-layout__content\n                 mdl-color-text--grey-600\"\n          style=\"padding: 16px;\">\n\n      <% if ( isPending() ) { %>\n          \n        Loading message...\n        \n      <% } else { %>\n\n        <div class=\"mdl-card mdl-shadow--2dp\" style=\"width: 100%;\">\n\n          <h5 class=\"mdl-card__title\" style=\"margin: 0px; font-weight: 200; padding: 16px 16px 0 16px;\">\n            <div class=\"truncate\">\n              <span class=\"ellipsis\"><%= getSubject() %></span>\n              <span style=\"text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); padding: 0;\">\n                <button class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\">\n                  <i class=\"material-icons\">star_outline</i>\n                </button>\n              </span>\n            </div>\n          </h5>\n\n          <div class=\"mdl-card__title\" style=\"padding: 0 16px;\">\n            <li class=\"mdl-list__item\" style=\"width: 100%; color: rgba(0,0,0,.54); font-size: 14px; font-weight: 400; letter-spacing: 0; padding: 0px;\">\n              <span class=\"mdl-list__item-primary-content\">\n                \n                <div class=\"truncate\">\n                  <span class=\"ellipsis\">\n                    <% if ( isUnread() ) { %>\n                      <i class=\"fa fa-circle\" style=\"color: #03A9F4;\"></i>\n                    <% } else { %>\n                      <i class=\"fa fa-circle-thin\" style=\"color: #03A9F4;\"></i>\n                    <% } %>\n                    <span style=\"text-decoration: underline; padding-left: 12px;\"><%= getFrom()[0] %></span>\n                      &nbsp;to&nbsp;\n                    <span style=\"text-decoration: underline;\"><%= getTo() %></span>\n                  </span>\n                  <span style=\"text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); padding: 0;\">\n                    <% if ( hasAttachment() ) { %>\n                      <i class=\"fa fa-paperclip\">&nbsp;</i>\n                    <% } else { %>\n                      <i class=\"fa fa-fw\">&nbsp;</i>\n                    <% } %>\n                    <%= getHumanDate() %>\n                  </span>\n                </div>\n\n              </span>\n\n            </li>\n          </div>\n\n          <div class=\"mdl-card__supporting-text\" style=\"width: initial;\"><iframe srcdoc=\"<%- getBody() %>\" width=\"100%\"></iframe></div>\n        \n        </div>\n\n      <% } %>\n    \n    </main>\n\n      <footer>\n\n        <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"trash\">\n              Trash\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"snooze\">\n              Snooze\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"forward\">\n              Forward\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"reply\">\n              Reply\n            </button>\n          </div>\n\n        </div>\n\n      </footer>\n\n  </div>\n\n</div>";
+},{}],41:[function(require,module,exports){
+module.exports = "<div style=\"width: 100%; height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\">\n      \n      <div class=\"mdl-layout__header-row\"\n           style=\"padding: 0 16px;\n                  border-bottom: 1px solid #e0e0e0;\">\n                  \n        <div style=\"flex: 1; text-align: left;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"close\">\n            <i class=\"material-icons\">close</i>\n          </button>\n        </div>\n        \n        <div style=\"flex: 1; text-align: center;\">\n          <span class=\"mdl-layout-title\"\n                style=\"padding: 16px;\n                       font-size: 16px;\n                       color: rgba(0,0,0,.54);\">\n                Read\n          </span>\n        </div>\n\n        <div style=\"flex: 1; text-align: right;\">\n          <button class=\"mdl-button\n                         mdl-js-button\n                         mdl-button--icon\"\n                  id=\"open\">\n            <i class=\"material-icons\">open_in_new</i>\n          </button>\n        </div>\n\n      </div>\n\n    </header>\n\n    <main class=\"mdl-layout__content\n                 mdl-color-text--grey-600\"\n          style=\"padding: 16px;\">\n\n      <% if ( isPending() ) { %>\n          \n        Loading message...\n        \n      <% } else { %>\n\n        <div class=\"mdl-card mdl-shadow--2dp\" style=\"width: 100%;\">\n\n          <h5 class=\"mdl-card__title\" style=\"margin: 0px; font-weight: 200; padding: 16px 16px 0 16px;\">\n            \n            <div class=\"truncate\">\n              \n              <span class=\"ellipsis\"><%= getSubject() %></span>\n              \n              <span style=\"text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); padding: 0;\">\n                \n                <label class=\"mdl-icon-toggle\n                              mdl-js-icon-toggle\"\n                       for=\"star\">\n              \n                  <input type=\"checkbox\"\n                         id=\"star\" class=\"mdl-icon-toggle__input\" \n                         <% if ( isStarred() ) { %> checked <% } %> >\n              \n                  <i class=\"mdl-icon-toggle__label material-icons\">star_outline</i>\n              \n                </label>\n              \n              </span>\n            \n            </div>\n          \n          </h5>\n\n          <div class=\"mdl-card__title\" style=\"padding: 0 16px;\">\n            <li class=\"mdl-list__item\" style=\"width: 100%; color: rgba(0,0,0,.54); font-size: 14px; font-weight: 400; letter-spacing: 0; padding: 0px;\">\n              <span class=\"mdl-list__item-primary-content\">\n                \n                <div class=\"truncate\">\n                  <span class=\"ellipsis\">\n                    <% if ( isUnread() ) { %>\n                      <i class=\"fa fa-circle\" style=\"color: #03A9F4;\"></i>\n                    <% } else { %>\n                      <i class=\"fa fa-circle-thin\" style=\"color: #03A9F4;\"></i>\n                    <% } %>\n                    <span style=\"text-decoration: underline; padding-left: 12px;\"><%= getFrom()[0] %></span>\n                      &nbsp;to&nbsp;\n                    <span style=\"text-decoration: underline;\"><%= getTo() %></span>\n                  </span>\n                  <span style=\"text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); padding: 0;\">\n                    <% if ( hasAttachment() ) { %>\n                      <i class=\"fa fa-paperclip\">&nbsp;</i>\n                    <% } else { %>\n                      <i class=\"fa fa-fw\">&nbsp;</i>\n                    <% } %>\n                    <%= getHumanDate() %>\n                  </span>\n                </div>\n\n              </span>\n\n            </li>\n          </div>\n\n          <div class=\"mdl-card__supporting-text\" style=\"width: initial;\"><iframe srcdoc=\"<%- getBody() %>\" width=\"100%\"></iframe></div>\n        \n        </div>\n\n      <% } %>\n\n      <footer>\n\n        <div class=\"mdl-layout__header-row\" style=\"padding: 0 16px;\">\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"trash\">\n              Trash\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"snooze\">\n              Snooze\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"forward\">\n              Forward\n            </button>\n          </div>\n\n          <div style=\"flex: 1; text-align: center;\">\n            <button class=\"mdl-button\n                           mdl-js-button\n                           mdl-button--colored\"\n                    id=\"reply\">\n              Reply\n            </button>\n          </div>\n\n        </div>\n\n      </footer>\n    \n    </main>\n\n  </div>\n\n</div>";
 
-},{}],52:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = "<div>\n\n  <% if ( isPending() ) { %>\n\n    <div class=\"mdl-progress mdl-js-progress mdl-progress__indeterminate custom-progress__indeterminate\"></div>\n\n  <% } %>\n\n  <% if ( isEmpty() ) { %>\n\n    <span>(No Messages)</span>\n\n  <% } else { %>\n      \n    <ul class=\"mdl-list mdl-color--white\">\n\n       <% each(function (message) { %>\n\n        <li class=\"mdl-list__item mdl-list__item--three-line list-border\">\n\n          <span class=\"mdl-list__item-primary-content\" style=\"height: 80px;\">\n\n            <a href=\"/messages/<%= message.id %>\" class=\"clear\">\n              <div class=\"truncate\">\n                <span class=\"ellipsis\" style=\"font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 28px; height: 28px; color: rgba(0,0,0,.54); display: block;\">\n                  <span style=\"padding-left: 6px; <% message.isUnread() && print('font-weight: 500; color: rgba(0,0,0,.87);') %>\">\n                    <%= message.getFrom()[0] %>\n                  </span>\n                </span>\n                <span style=\"text-align: right; font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 28px; height: 28px; color: rgba(0,0,0,.54);\">\n                  <% if ( message.hasAttachment() ) { %>\n                    <i class=\"fa fa-paperclip\">&nbsp;</i>\n                  <% } else { %>\n                    <i class=\"fa fa-fw\">&nbsp;</i>\n                  <% } %>\n                  <%= message.getTimeAgo() %>\n                </span>\n              </div>\n              <div class=\"truncate\">\n                <span class=\"ellipsis\" style=\"font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); display: block;\">\n                  <span style=\"padding-left: 6px;\">\n                  <%= message.getSubject() %>\n                  </span>\n                </span>\n              </div>\n              <div class=\"truncate\">\n                <span class=\"ellipsis\" style=\"font-size: 14px; font-weight: 400; letter-spacing: 0; line-height: 24px; height: 24px; color: rgba(0,0,0,.54); display: block;\">\n                  <span style=\"padding-left: 6px;\">\n                    <%= message.getSnippet() %>\n                  </span>\n                </span>\n              </div>\n            </a>\n          </span>\n        </li>\n\n       <% }); %>\n\n    </ul>\n\n    <footer class=\"mdl-color--white\" style=\"height: 68px; width: 100%;\">\n      <% if ( hasMore() ) { %>\n        <div style=\"padding: 16px 48px; text-align: center;\">\n          <button class=\"mdl-button mdl-js-button mdl-button--accent\" id=\"more\">\n            Load More\n          </button>\n        </div>\n      <% } %>\n    </footer>\n\n  <% } %>\n</div>";
 
-},{}],53:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = "<div style=\"height: 100%; width: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-drawer\">\n    \n    <div class=\"mdl-layout__drawer\" data-region=\"drawer\">\n      \n      <!-- Nav Sheet injected here  -->\n\n    </div>\n\n    <!-- Need 100% height here for scrolling on the injected view to work -->\n\n    <div class=\"mdl-layout__content\" style=\"height: 100%;\">\n\n      <div class=\"flex-container-horiz\">\n        \n        <div data-region=\"content\" style=\"position: relative; flex: 1; min-width: 400px; height: 100%;\">\n\n          <!-- Compose FAB only displayed on small screens -->\n\n          <button class=\"mdl-button mdl-js-button \n                         mdl-button--fab mdl-button--fab \n                         mdl-button--colored \n                         mdl-color-text--white \n                         mdl-layout--small-screen-only\"\n                  style=\"position: absolute;\n                         right: 0;\n                         bottom: 0;\n                         z-index: 999;\n                         margin: 23px;\" \n                  id=\"compose\">\n\n            <i class=\"material-icons\">create</i>\n          \n          </button>\n\n          <!-- Message Sheet or Messages List injected here -->\n        \n        </div>\n\n          <div class=\"resizable\" style=\"display: none; min-width: 400px; width: 400px; height: 100%;\">\n        \n            <div style=\" height: 100%; position: relative; box-sizing: border-box; border-left: 1px solid #e0e0e0;\">\n\n              <span class=\"ui-resizable-handle ui-resizable-w\"></span>\n            \n              <aside data-region=\"secondary\" style=\"width: 100%; height: 100%;\">\n              \n                <!-- Message injected here -->\n              \n              </aside>\n            \n            </div>\n          \n          </div>\n\n      </div>\n\n    </div>\n\n  </div>\n\n</div>\n";
 
-},{}],54:[function(require,module,exports){
-module.exports = "\n<!-- Need 100% height here for scrolling to work -->\n<div style=\"height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\n                   border-bottom: 1px solid #e0e0e0;\">\n\n      <div class=\"mdl-layout__header-row\">\n\n        <div class=\"mdl-layout-spacer\"></div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--expandable\n                    mdl-textfield--floating-label mdl-textfield--align-right\">\n\n          <label class=\"mdl-button mdl-js-button mdl-button--icon\"\n                 for=\"search\">\n\n            <i class=\"material-icons\">search</i>\n          \n          </label>\n          \n          <div class=\"mdl-textfield__expandable-holder\">\n            <input class=\"mdl-textfield__input\" type=\"text\" name=\"query\"\n                   id=\"search\">\n                   \n          </div>\n        \n        </div>\n    \n      </div>\n      \n    </header>\n\n    <div class=\"mdl-layout__content\n                mdl-color-text--grey-600\"\n         data-region=\"messages-list\">\n\n        <!-- Messages list inejected here -->\n\n    </div>\n\n  </div>\n\n</div>\n";
+},{}],44:[function(require,module,exports){
+module.exports = "\n<!-- Need 100% height here for scrolling to work -->\n<div style=\"height: 100%;\">\n\n  <div class=\"mdl-layout mdl-js-layout\n              mdl-layout--fixed-header\">\n\n    <header class=\"mdl-layout__header\n                   mdl-color--white\n                   mdl-color-text--grey-700\"\n            style=\"box-shadow: none;\">\n\n      <div class=\"mdl-layout__header-row\"\n           style=\"padding: 0 16px;\n                  border-bottom: 1px solid #e0e0e0;\">\n\n        <button class=\"mdl-button\n                       mdl-js-button\n                       mdl-button--icon\"\n                id=\"refresh\">\n          <i class=\"material-icons\">refresh</i>\n        </button>\n\n        <div class=\"mdl-layout-spacer\"></div>\n\n        <div class=\"mdl-textfield mdl-js-textfield mdl-textfield--expandable\n                    mdl-textfield--floating-label mdl-textfield--align-right\">\n\n          <label class=\"mdl-button mdl-js-button mdl-button--icon\"\n                 for=\"search\">\n\n            <i class=\"material-icons\">search</i>\n          \n          </label>\n          \n          <div class=\"mdl-textfield__expandable-holder\">\n            <input class=\"mdl-textfield__input\" type=\"text\" name=\"query\"\n                   id=\"search\"\n                   style=\"color: rgba(0,0,0,.54);\">\n                   \n          </div>\n        \n        </div>\n    \n      </div>\n      \n    </header>\n\n    <div class=\"mdl-layout__content\n                mdl-color-text--grey-600\"\n         data-region=\"list\">\n\n        <!-- Messages list inejected here -->\n\n    </div>\n\n  </div>\n\n</div>\n";
 
-},{}],55:[function(require,module,exports){
-module.exports = "<div class=\"mdl-layout mdl-js-layout\n            mdl-layout--fixed-header\">\n\n  <header class=\"mdl-layout__header\n                 mdl-color--white\n                 mdl-color-text--grey-700\"\n          style=\"box-shadow: none;\n                 border-bottom: 1px solid #e0e0e0;\">\n\n    <div class=\"mdl-layout__header-row\" style=\"padding: 0 32px;\">\n\n      <div style=\"width: 100%;\">\n\n\n          <button class=\"mdl-button mdl-js-button mdl-button--icon\" id=\"avatar\">\n            <img src=\"<%= getImageUrl() %>\" width=\"32px\" height=\"32px\" />\n          </button>\n\n          <span>Hello <%= getFirstName() %></span>\n\n      </div>\n\n    </div>\n\n  </header>\n\n  <main class=\"mdl-layout__content\n               mdl-color-text--grey-600\"\n        style=\"padding: 16px 32px;\">\n\n      <div style=\"padding: 16px 0;\">\n        <button class=\"mdl-button mdl-js-button\n                       mdl-button--raised mdl-button--accent\"\n                style=\"width: 100%;\"\n                id=\"compose\">\n          Compose\n        </button>\n      </div>\n\n      <div class=\"labels\">\n        <span style=\"display: block;\">Mailboxes</span>\n        <span class=\"label labels__link\">Inbox</span>\n        <span class=\"label labels__link\">Starred</span>\n        <span class=\"label labels__link\">Sent</span>\n        <span class=\"label labels__link\">Drafts</span>\n        <span class=\"label labels__link\">Trash</span>\n      </div>\n\n      <div class=\"labels\">\n        <span style=\"display: block;\">Labels</span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--orange-300\" aria-hidden=\"true\"></i>&nbsp;Snoozed\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--green-300\" aria-hidden=\"true\"></i>&nbsp;Forwarded\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--blue-300\" aria-hidden=\"true\"></i>&nbsp;Replied\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--purple-300\" aria-hidden=\"true\"></i>&nbsp;Archived\n        </span>\n      </div>\n\n  </main>\n\n  <footer class=\"mdl-color-text--grey-600\"\n          style=\"padding: 4px;\">\n    <button class=\"mdl-button mdl-js-button mdl-button--icon\" style=\"float: right;\">\n      <i class=\"material-icons\" style=\"font-size: 14px;\">settings</i>\n    </button>\n  </footer>\n\n</div>";
+},{}],45:[function(require,module,exports){
+module.exports = "<div class=\"mdl-layout mdl-js-layout\n            mdl-layout--fixed-header\">\n\n  <header class=\"mdl-layout__header\n                 mdl-color--white\n                 mdl-color-text--grey-700\"\n          style=\"box-shadow: none;\">\n\n    <div class=\"mdl-layout__header-row\"\n         style=\"padding: 0 16px;\n                border-bottom: 1px solid #e0e0e0;\">\n\n\n        <div style=\"flex: 1; text-align: left;\">\n          <button class=\"mdl-button mdl-js-button mdl-button--icon\" id=\"avatar\">\n            <img src=\"<%= getImageUrl() %>\" width=\"32px\" height=\"32px\" />\n          </button>\n        </div>\n\n        <div style=\"flex: 2; text-align: center;\">\n          <span class=\"mdl-layout-title\"\n                style=\"font-size: 16px;\n                       color: rgba(0,0,0,.54);\">\n                Hello, <%= getFirstName() %>\n          </span>\n        </div>\n\n        <div style=\"flex: 1; text-align: right;\">\n          <!-- Placeholder -->\n        </div>\n\n    </div>\n\n  </header>\n\n  <main class=\"mdl-layout__content\n               mdl-color-text--grey-600\"\n        style=\"padding: 16px 32px;\">\n\n      <div style=\"padding: 16px 0;\">\n        <button class=\"mdl-button mdl-js-button\n                       mdl-button--raised mdl-button--accent\"\n                style=\"width: 100%;\"\n                id=\"compose\">\n          Compose\n        </button>\n      </div>\n\n      <div class=\"labels\">\n        <span style=\"display: block;\">Mailboxes</span>\n        <span class=\"label labels__link\">Inbox</span>\n        <span class=\"label labels__link\">Starred</span>\n        <span class=\"label labels__link\">Sent</span>\n        <span class=\"label labels__link\">Drafts</span>\n        <span class=\"label labels__link\">Trash</span>\n      </div>\n\n      <div class=\"labels\">\n        <span style=\"display: block;\">Labels</span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--orange-300\" aria-hidden=\"true\"></i>&nbsp;Snoozed\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--green-300\" aria-hidden=\"true\"></i>&nbsp;Forwarded\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--blue-300\" aria-hidden=\"true\"></i>&nbsp;Replied\n        </span>\n        <span class=\"labels__link\">\n          <i class=\"fa fa-circle-thin mdl-color-text--purple-300\" aria-hidden=\"true\"></i>&nbsp;Archived\n        </span>\n      </div>\n\n  </main>\n\n  <footer class=\"mdl-color-text--grey-600\"\n          style=\"padding: 4px;\">\n    <button class=\"mdl-button mdl-js-button mdl-button--icon\" style=\"float: right;\">\n      <i class=\"material-icons\" style=\"font-size: 14px;\">settings</i>\n    </button>\n  </footer>\n\n</div>";
 
-},{}],56:[function(require,module,exports){
-module.exports = "<div class=\"mdl-textfield mdl-js-textfield mdl-textfield--expandable\n            mdl-textfield--floating-label mdl-textfield--align-right\">\n  <label class=\"mdl-button mdl-js-button mdl-button--icon\"\n         for=\"search\">\n    <i class=\"material-icons\">search</i>\n  </label>\n  <div class=\"mdl-textfield__expandable-holder\">\n    <input class=\"mdl-textfield__input\" type=\"text\" name=\"query\"\n           id=\"search\">\n    <!-- <div id=\"chip-list\" style=\"flex-shrink: 1;\"></div> -->\n  </div>\n</div>\n";
-
-},{}],57:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = "<div class=\"mdl-grid\">\n  <div class=\"mdl-cell mdl-cell--4-col mdl-cell--4-offset-desktop mdl-cell--1-offset-tablet mdl-cell--middle custom-cell--center\">\n\n    <div class=\"mdl-card mdl-shadow--2dp\" style=\"width: 100%; padding: 48px;\">\n\n      <div class=\"mdl-card__menu\">\n        <button class=\"mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect\" id=\"share-back\">\n          <i class=\"material-icons\">arrow_backward</i>\n        </button>\n      </div>\n\n      <h3 style=\"margin: 0; font-weight: 300;\">Tell your friends</h3>\n      <p style=\"margin: 0; font-weight: 300;\">A messy inbox is futile.</p>\n\n      <div class=\"mdl-card__supporting-text\" style=\"width: 100%\">\n        <div  style=\"width: 100%; font-size: 16px; margin: 20px 0 10px; font-weight: 300; height: 58px;\">\n          <button class=\"mdl-button mdl-js-button mdl-button--icon\" style=\"background-color: #55acee; color: #ffffff; margin: 0 12px; height: 58px; width: 58px\">\n           <i class=\"fa fa-twitter\"></i>\n          </button>\n          <button class=\"mdl-button mdl-js-button mdl-button--icon\" style=\"background-color: #405499; color: #ffffff; margin: 0 12px; height: 58px; width: 58px\">\n            <i class=\"fa fa-facebook\"></i>\n          </button>\n          <button class=\"mdl-button mdl-js-button mdl-button--icon\" style=\"background-color: #c13c31; color: #ffffff; margin: 0 12px; height: 58px; width: 58px\">\n            <i class=\"fa fa-google-plus\"></i>\n          </button>\n        </div>\n      </div>\n\n\n      <div class=\"mdl-card__supporting-text\" style=\"width: 100%\">\n        <small>Still curious? Behold the live <a href=\"/preview\">preview</a>.</small>\n      </div>\n        \n      <div class=\"mdl-card__supporting-text\" style=\"width: 100%; border-top: 1px solid rgba(0,0,0,.1);\">\n        <small>View this project on <a href=\"https://github.com/danrpts/webmail_DMZ\">github</a>!</small>\n      </div>\n\n    </div>\n\n  </div>\n\n</div>\n";
 
-},{}],58:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module.exports = "<div class=\"mdl-textfield mdl-js-textfield\" style=\"width: 100%\">\n  <input class=\"mdl-textfield__input\" type=\"text\" id=\"share\">\n  <label class=\"mdl-textfield__label\" for=\"share\">Email Addresses</label>\n</div>";
 
-},{}]},{},[15]);
+},{}]},{},[14]);

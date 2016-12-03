@@ -30,19 +30,7 @@ module.exports = View.extend({
   },
 
   defaultViews: {
-    '[data-region="search-input"]': 'newSearchInput',
-    '[data-region="messages-list"]': 'newMessagesList'
-  },
-
-  newSearchInput: function () {
-
-    // Notice search is a chips type collection
-    var search = require('../singletons/search.js');
-
-    var SearchInput = require('./Search_Input.js');
-    
-    return new SearchInput({ collection: search });
-
+    '[data-region="list"]': 'newMessagesList'
   },
 
   newMessagesList: function () {
@@ -54,8 +42,16 @@ module.exports = View.extend({
   },
 
   events: {
-    'click #more': 'onMoreClick',
+    'click #refresh': 'onRefreshClick',
     'keyup #search': 'onSearchKeyup'
+  },
+
+  onRefreshClick: function () {
+
+    // Todo: the refresh function should enforce previous query; not this handler
+    var $el = $('#search');
+    var query = $el.val().trim() || 'in:inbox';
+    this.collection.refresh([ query ]);
   },
 
   onSearchKeyup: function (event) {

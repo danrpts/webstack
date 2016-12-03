@@ -1,10 +1,24 @@
 <div>
+  
   <% each(function (chip) { %>
-    <span class="mdl-chip mdl-chip--deletable search-chip">
+
+    <span class="mdl-chip
+                 mdl-chip--deletable
+                custom-chip">
+  
       <%= chip.getValue() %>
-      <button type="button" class="mdl-chip__action chip-delete" id="<%= chip.cid %>">
+  
+      <button type="button"
+              class="mdl-chip__action
+                     chip-delete"
+              id="<%= chip.cid %>">
+        
         <i class="material-icons">cancel</i>
+  
       </button>
+  
     </span>
+  
   <% }); %>
+
 </div>

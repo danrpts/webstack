@@ -44,6 +44,13 @@ li.mdl-list__item:after {
   border-bottom: 1px solid #E6E6E6;
 }
 
+.custom-chip {
+  margin: 0px;
+  font-size: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .custom-cell--center {
   text-align: center;
 }
@@ -246,13 +253,6 @@ li.mdl-list__item:after {
   display: inline-block;
   vertical-align: middle;
   color: rgba(0,0,0,.87);
-}
-
-.search-chip {
-  margin: 0px;
-  font-size: 16px;
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .search-textfield::-webkit-input-placeholder {

@@ -42,6 +42,14 @@ li.mdl-list__item:after {
   border-bottom: 1px solid #E6E6E6;
 }
 
+
+.custom-chip {
+  margin: 0px;
+  font-size: 16px;
+  display:inline-block;
+  vertical-align:middle;
+}
+
 .custom-cell--center {
   text-align: center;
 }

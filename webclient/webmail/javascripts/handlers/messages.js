@@ -19,8 +19,11 @@ module.exports = function (id, options) {
 
     var search = require('../singletons/search.js');
 
-    // Check the search bar for state
-    var queries = search.getValues();
+    // Check the search bar for state (only in chips style search)
+    // var queries = search.getValues();
+
+    // Default inbox query
+    var queries = [ 'in:inbox' ];
 
     // Thought: Maybe trade the account as a token for the messages
     var messages = require('../singletons/messages.js');

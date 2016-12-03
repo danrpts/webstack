@@ -52,9 +52,13 @@ module.exports = {
 
     var value = _.isFunction(get) ? get.call(context) : get; 
 
-    // Condensed if/else; set returns model so we negate to return value
+    // Condensed if/else; 'set' returns the model so we negate to return the value
     return this.get(attr) || ! this.set(attr, value, { silent: true }) || value;
 
+  },
+
+  toggle: function (attr) {
+    this.set(attr, ! this.get(attr));
   },
 
   isPending: function () {

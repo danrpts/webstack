@@ -6,10 +6,11 @@
     <header class="mdl-layout__header
                    mdl-color--white
                    mdl-color-text--grey-700"
-            style="box-shadow: none;
-                   border-bottom: 1px solid #e0e0e0;">
+            style="box-shadow: none;">
       
-      <div class="mdl-layout__header-row" style="padding: 0 16px;">
+      <div class="mdl-layout__header-row"
+           style="padding: 0 16px;
+                  border-bottom: 1px solid #e0e0e0;">
 
         <div style="flex: 1; text-align: left;">
           <button class="mdl-button
@@ -18,6 +19,15 @@
                   id="close">
             <i class="material-icons">close</i>
           </button>
+        </div>
+
+        <div style="flex: 1; text-align: center;">
+          <span class="mdl-layout-title"
+                style="padding: 16px;
+                       font-size: 16px;
+                       color: rgba(0,0,0,.54);">
+                Compose
+          </span>
         </div>
 
         <div style="flex: 1; text-align: right;">
@@ -31,15 +41,69 @@
 
       </div>
 
+      <div class="mdl-layout__header-row"
+           style="padding: 0 16px;
+                  border-bottom: 1px solid #e0e0e0;"
+           data-region="to-input">
+
+           <span style="padding-right: 4px;
+                        font-size: 14px;
+                        font-weight: 400;
+                        letter-spacing: 0;
+                        line-height: 24px;
+                        height: 24px;
+                        color: rgba(0,0,0,.54);">
+              To:
+            </span>
+
+           <!-- To input injeted here -->
+        
+      </div>
+
+      <div class="mdl-layout__header-row"
+           style="padding: 0 16px;
+                  border-bottom: 1px solid #e0e0e0;">
+
+           <span style="padding-right: 4px;
+                        font-size: 14px;
+                        font-weight: 400;
+                        letter-spacing: 0;
+                        line-height: 24px;
+                        color: rgba(0,0,0,.54);
+                        height: 24px;">
+              Subject:
+            </span>
+
+        <div class="mdl-textfield"
+             style="height: 32px;
+                    padding: 0;">
+
+          <input class="mdl-textfield__input"
+                 type="text"
+                 id="subject"
+                 style="border: none;
+                        outline: none;
+                        width: initial;
+                        height: 32px;
+                        padding: 0 4px 0 12px;
+                        color: rgba(0,0,0,.54);">
+
+        </div>
+
+      </div>
+
     </header>
 
     <main class="mdl-layout__content
+                 mdl-color--white
                  mdl-color-text--grey-600"
           style="padding: 16px;">
 
-          Hello WOrld
-
-    </main>
+      <div class="mdl-textfield mdl-js-textfield" style="width: 100%;">
+        <textarea class="mdl-textfield__input" type="text" rows= "3" id="body"
+                  style="outline: none;
+                         color: rgba(0,0,0,.54);"></textarea>
+      </div>
 
       <footer>
 
@@ -65,7 +129,9 @@
 
         </div>
     
-    </footer>
+      </footer>
+
+    </main>
 
   </div>
 

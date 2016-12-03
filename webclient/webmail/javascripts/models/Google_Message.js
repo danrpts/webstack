@@ -104,28 +104,128 @@ module.exports = Checkbox.extend({
     messages.remove(this);
 
     // Then invoke the remote procedure
-    this.procedure('trash');
+    this.procedure('trash', {
+
+      // Set the attrs option to prevent backbone from serializing the entire model
+      attrs: {}
+
+    });
 
     // If error add back to collection and handle error
   
   },
 
+  // Higher level POST/PUT operation
+  save: function () {
+
+  },
+
+  mark: function (label) {
+
+    var index = this.hasLabel(label);
+
+    // The model doesn't already have the label
+    if (index === -1) {
+
+      this.procedure('modify', {
+
+        // Set the attrs option to prevent backbone from serializing the entire model
+        attrs: {
+
+          'addLabelIds': [ label.toUpperCase() ]
+
+        },
+
+        success: function (model, response) {
+
+          // Merge the result into model
+          model.set(response);
+
+        }
+
+      });
+
+
+    }
+
+  },
+
+  unmark: function (label) {
+
+    var index = this.hasLabel(label);
+
+    // The model has the label
+    if (index > -1) {
+
+      this.procedure('modify', {
+
+        // Set the attrs option to prevent backbone from serializing the entire model
+        attrs: {
+
+          'removeLabelIds': [ label.toUpperCase() ]
+
+        },
+
+        success: function (model, response) {
+
+          // Merge the result into model
+          model.set(response);
+
+        }
+
+      });
+
+
+    }
+
+  },
+
   // Higher level POST operation
   send: function () {
 
-    // Build rfc message from attributes
-    var body = '';
+    var account = require('../singletons/account.js');
 
-    body += 'From: <' + this.get('from') + '>' + '\r\n';
-    body += 'To: <' + this.get('to') + '>' + '\r\n';
-    body += 'Subject: ' + this.get('subject') + '\r\n';
-    body += 'Date: ' + new Date().toUTCString(); + '\r\n\n';
+    var to = this.get('to').getValues();
+
+    // Build RFC5322 payload
+    var payload = '';
+
+    payload += 'From: ' + account.get('name') + ' <' + account.get('email') + '>' + '\r\n';
     
-    body += this.get('body'); + '\r\n\n';
+    payload += _.reduce(to, function (memo, value, index) {
+
+      return memo += ' <' + value + '>' + ( (index + 1 < to.length) ? ',' : '' );
+
+    }, 'To:') + '\r\n';
+
+    payload += 'Subject: ' + this.get('subject') + '\r\n';
     
+    payload += 'Date: ' + new Date().toUTCString() + '\r\n\n';
+    
+    payload += this.get('body'); + '\r\n\n';
+
+    // Save attributes and put back in if unsuccessful at sending
+
+    // Clear the data from the model
+    this.clear({ silent: true });
+
+    // Create a google type base-64 encoded ASCII string
+    payload = window.btoa(payload).replace(/\+/g, '-').replace(/\//g, '\\');
+
+    // Set the string on the model for serialization
+    //this.set('raw', payload);
+
     // Then invoke the remote procedure
-    //this.procedure('send');
-    console.log(body);
+    this.procedure('send', {
+
+      // Set the attrs option to prevent backbone from serializing the entire model
+      attrs: {
+
+        'raw': payload
+
+      }
+
+    });
   
   },
 
@@ -151,7 +251,11 @@ module.exports = Checkbox.extend({
 
     var labels = this.get('labelIds');
 
-    return !! labels && labels.indexOf(label.toUpperCase()) > -1;
+    var index = labels.indexOf(label.toUpperCase());
+
+    // Returns the index -1 or false;
+    // Todo: clean up reutrn value
+    return !! labels &&  index;
 
   },
 
@@ -179,10 +283,13 @@ module.exports = Checkbox.extend({
 
     function recursePayload (payload) {
 
-      return (payload.mimeType === 'text/html') 
+      // Return the encoded body
+      return (payload.body.size > 0) 
 
+      // Body is easy to get
       ? payload.body.data
 
+      // Otherwise we have to get it by parts
       : _.reduce(payload.parts, function (memo, part) {
         
         return memo || recursePayload(part);
@@ -212,14 +319,30 @@ module.exports = Checkbox.extend({
 
   isUnread: function () {
   
-    return this.hasLabel('unread');
+    return this.hasLabel('unread') > -1;
   
   },
 
-  // Todo: Actually check for message attachment
+  isStarred: function () {
+  
+    return this.hasLabel('starred') > -1;
+  
+  },
+
+  hasParts: function () {
+    var payload = this.get('payload');
+    return !! payload.mimeType.match(/multipart/g);
+  },
+
   hasAttachment: function () {
   
-    return true;
+    var payload = this.get('payload');
+
+    return this.hasParts() && _.find(payload.parts, function (part) {
+
+      return part.body.attachmentId
+    
+    }, false);
 
   },
 
@@ -232,7 +355,9 @@ module.exports = Checkbox.extend({
   },
 
   getHeader: function (name) {
+    
     var header = this.getHeaders()[name];
+
     return ! header ? '(No ' + name + ')' : header.replace(/['"]+/g, '');
 
   },
