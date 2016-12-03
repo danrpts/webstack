@@ -551,7 +551,7 @@ module.exports = {
 
 },{"backbone":"backbone","underscore":"underscore"}],10:[function(require,module,exports){
 module.exports={
-  "client_id": "942671175535-6eon0fq1rst4oop13al4l0hasephc55c.apps.googleusercontent.com",
+  "client_id": "Put your Google client id here",
   "redirect_uri": "postmessage"
 }
 },{}],11:[function(require,module,exports){
