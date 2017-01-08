@@ -21,7 +21,7 @@ module.exports = {
   // Custom "low-level" rest helper to trigger a data-handling process on the server for the resource
   procedure: function (name, options) {
 
-      options = _.extend({parse: true}, options);
+      options = _.extend({ parse: true }, options);
 
       // Inject the procedure name into the uri and call save (save is our existing POST method)
       options.url = this.url().replace(/[^\/]$/, '$&/') + encodeURIComponent(name);

@@ -12,28 +12,19 @@ module.exports = {
 
     var options = _.last(arguments);
 
-    $.Deferred().resolveWith(this)
+    if(_.isFunction(this.preremove)) this.preremove(options);
 
-    .then(function () {
-      _.isFunction(this.preremove)
-        && this.preremove(options);
-      this.trigger('pre:remove', options);
-    })
+    this.trigger('pre:remove', options);
+
+    this.rendered = false;
+
+    // Detach from the DOM
+    backbone.View.prototype.remove.apply(this, arguments);
     
-    .then(function () {
-
-      this.rendered = false;
-
-      // Detach from the DOM
-      backbone.View.prototype.remove.apply(this, arguments);
-
-    })
+    // Call the postremove function after current call stack
+    if(_.isFunction(this.postremove)) _.defer(_.bind(this.postremove, this), options);
     
-    .then(function () {
-      _.isFunction(this.postremove)
-        && this.postremove(options);
-      this.trigger('post:remove', options);
-    });
+    this.trigger('post:remove', options);
 
     return this;
 
@@ -98,23 +89,16 @@ module.exports = {
 
     var options = _.last(arguments);
 
-    $.Deferred().resolveWith(this)
+    if (_.isFunction(this.prerender)) this.prerender(options);
 
-    .then(function () {
-      _.isFunction(this.prerender)
-        && this.prerender(options);
-      this.trigger('pre:render', options);
-    })
+    this.trigger('pre:render', options);
+      
+    this.compile(options);
 
-    .then(function () {
-      this.compile(options);
-    })
-
-    .then(function () {
-      _.isFunction(this.postrender)
-        && this.postrender(options);
-      this.trigger('post:render', options);
-    });
+    // Call the postrender function after current call stack
+    if(_.isFunction(this.postrender)) _.defer(_.bind(this.postrender, this), options);
+    
+    this.trigger('post:render', options);
     
     return this;
   
