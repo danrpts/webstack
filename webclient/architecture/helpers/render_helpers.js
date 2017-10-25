@@ -12,7 +12,7 @@ module.exports = {
 
     var options = _.last(arguments);
 
-    if(_.isFunction(this.preremove)) this.preremove(options);
+    if (_.isFunction(this.preremove)) this.preremove(options);
 
     this.trigger('pre:remove', options);
 
@@ -22,7 +22,7 @@ module.exports = {
     backbone.View.prototype.remove.apply(this, arguments);
     
     // Call the postremove function after current call stack
-    if(_.isFunction(this.postremove)) _.defer(_.bind(this.postremove, this), options);
+    if (_.isFunction(this.postremove)) _.defer(_.bind(this.postremove, this), options);
     
     this.trigger('post:remove', options);
 
@@ -96,7 +96,7 @@ module.exports = {
     this.compile(options);
 
     // Call the postrender function after current call stack
-    if(_.isFunction(this.postrender)) _.defer(_.bind(this.postrender, this), options);
+    if (_.isFunction(this.postrender)) _.defer(_.bind(this.postrender, this), options);
     
     this.trigger('post:render', options);
     
