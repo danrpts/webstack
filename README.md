@@ -23,6 +23,13 @@ The project is now being watched for changes, and in another terminal we can ser
 
 By default the application hosted at [http://localhost:3000](http://localhost:3000).
 
-## Authentication
+## Configuration
+This web application consumes [RFC 2822](https://tools.ietf.org/html/rfc2822) messages served from a REST API and authenticates with OAuth 2.0, by default it uses [GMail's REST API](https://developers.google.com/gmail/api/v1/reference/) and [Google's OAuth 2.0 Client Side Flow](https://developers.google.com/identity/protocols/OAuth2UserAgent). When authenticating with Google OAuth 2.0 you must update the `client_id` and `client_secret` [credentials](https://developers.google.com/identity/protocols/OAuth2UserAgent#creatingcred) found in the following files:
+ - webstack/webserver/config/google_config.json and
+ - webstack/webclient/webtasks/javascripts/config/google.json
 
-When authenticating with Google OAuth2 you must update the "client id" and/or "client secret" in the /webserver/config/google_config.json and /webclient/<app_name>/javascripts/config/google.json files.
+## Credits
+Daniel Peterson <danrpts@gmail.com>
+
+## License
+GPLv3
