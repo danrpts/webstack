@@ -2,7 +2,7 @@
 
 A boilerplate stack for building Javascript Single Page Applications. Built on top of Node, Gulp, Express, Backbone and Material Design Lite. Backbone has been augmented with selected patterns to perform view life cycle management.
 
-![webtasks-list](screenshots/webtasks-list.png)
+![webtasks-list](webclient/webtasks/screenshots/frame-webtasks-list.png)
 
 ## Install
 
