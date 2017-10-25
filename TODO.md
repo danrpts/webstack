@@ -3,3 +3,5 @@
 - [ ] Customize express server
 - [ ] Think about ES6
 - [ ] Pushstate
+- [ ] Atomic data bindings
+- [ ] Remove --client, -c arguments and replace with --watch, -w, --build, -b
